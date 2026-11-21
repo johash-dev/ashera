@@ -15,6 +15,6 @@ description: Implement one slice of an approved spec end-to-end — branch, test
 6. **Verify.** `npm run verify` must print `ALL GREEN`. Fix causes, not symptoms. Don't bypass hooks.
 7. **See it.** Start the dev server (browser pane / preview) and look at every affected View (`?view=…`). Save screenshots as PR evidence. If it looks wrong, it is wrong — even with green tests.
 8. **Docs.** Update docs the change affects (room-spec, architecture, glossary…), tick the spec's Done-when boxes, append a `docs/log.md` entry. `npm run docs-check` green.
-9. **Commit** in logical conventional commits, push the branch, open a PR using `.github/pull_request_template.md` — include screenshots and the honest "Not verified" section. Suggest `/review` in a fresh session.
+9. **Commit** in logical conventional commits, push the branch, open a PR using `.github/pull_request_template.md` — include screenshots and the honest "Not verified" section. Don't ask before committing, pushing or opening the PR. Normally this runs inside `/ship`, which reviews, merges on the owner's "looks good" and continues.
 
-Stop and ask the owner when: the spec is ambiguous, the slice needs a one-way-door change without an ADR, or `verify` can't be made green within ~3 attempts. Never merge — the owner merges.
+Stop and ask the owner only when: the spec is ambiguous, the slice needs a one-way-door change without an ADR, a gate would be loosened (docs/adr/0004-owner-approval-model.md), or `verify` can't be made green within ~3 attempts.

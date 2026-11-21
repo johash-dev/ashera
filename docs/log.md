@@ -73,3 +73,10 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - `validateRoom` also rejects a Fitting that overlaps an Opening on its Wall, has a non-positive size, or repeats another Fitting's id (the id is the plate's React key).
 - `__ASHERA__.fittings` now counts the plate meshes mounted in the scene (reported on the first frame) instead of `room.fittings.length`, so the e2e check fails if no plates render.
 - Noticed, not fixed: the doorway height in `room.config.ts` is `43 / 12` (3.58 ft) although its comment and room-spec say 7′ 2″ (`86 / 12`), so the doorway and Door leaf are drawn half height (from slice 2). Also still open from review: a plate low on a Wall can sit inside the Skirting, and a ceiling plate over a Beam is hidden by it; current config is clear of both.
+
+## [2026-11-22] decision | Harness slice 1: owner approves intent and the look, the agent merges
+
+- Retro of 9 sessions + research (Karpathy, Pocock, Huntley, Anthropic, Willison, Beck): the owner was pulled in for merges, snapshot runs, CI re-runs, review-fix choices and "what's next?". ADR 0004 limits owner asks to intent, the look, one-way doors, real-world facts and gate changes.
+- New `/ship` (slice end to end, Approval card, merge on "looks good") and `/next`; `/implement` and `/review` stop asking engineering questions.
+- Enforced: `approval.mjs` records the owner's "looks good"; `git-guard.mjs` allows a PR merge only in auto mode (GitHub waits for checks), never bypassing protection, and only with a fresh approval; `git pull` on main must be fast-forward only. Hook tests in `.claude/hooks/hooks.test.mjs`.
+- Settings: routine git/gh commands allowed; edits to workflows, `verify`, Playwright config, hooks and settings prompt (gate changes).

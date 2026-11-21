@@ -26,10 +26,12 @@ Stylized dark 3D digital twin of Asher's gaming room: React + TypeScript + Vite 
 
 ## Workflow
 
-Feature: `/grill` → `/spec` → `/implement` (one slice per branch/PR, first slice = tracer bullet) → `/review` → PR → owner merges.
-Bug: `/diagnose`. Docs drift: `/docs-check`.
+The owner designs; you do the engineering (docs/adr/0004-owner-approval-model.md). Ask the owner only for intent, the look, one-way doors, real-world facts and gate changes — never "review?", "commit?", "push?", "run the workflow?", "merge?".
 
-- Never commit to `main`; branch `feat/…` or `fix/…`, conventional commits, PR to `main`.
+Feature: `/grill` → `/spec` (owner approves) → `/ship` per slice: implement → review → fix → PR → CI → Approval card → owner says "looks good" → you merge and start the next slice. First slice = tracer bullet.
+"What's next?": `/next`. Bug: `/diagnose`. Docs drift: `/docs-check`.
+
+- Never commit to `main`; branch `feat/…`, `fix/…`, `docs/…` or `chore/…`, conventional commits, PR to `main`.
 - One-way doors (saved-layout schema, device control, new dependencies, coordinate system) need an ADR in `docs/adr/` and the owner's explicit approval.
 - After any feature, bug fix or decision, append an entry to `docs/log.md`.
 - Visual changes: attach screenshots of affected views to the PR. Snapshot baselines update only via the `update-snapshots` workflow.

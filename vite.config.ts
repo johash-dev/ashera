@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: { port: 5173, strictPort: true },
   test: {
-    include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
+    include: ['src/**/*.test.ts', 'src/**/*.test.tsx', '.claude/hooks/*.test.mjs'],
     environment: 'node',
   },
 });
