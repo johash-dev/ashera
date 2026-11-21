@@ -24,8 +24,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      # =all rewrites every baseline; the bare flag (=changed) keeps any that still "match" within
+      # tolerance, so an intended change could leave stale baselines behind.
       - name: Regenerate @visual baselines
-        run: npx playwright test --grep @visual --update-snapshots
+        run: npx playwright test --grep @visual --update-snapshots=all
         env:
           CI: 'true'
       - name: Commit baselines

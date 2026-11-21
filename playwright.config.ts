@@ -17,7 +17,10 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   expect: {
-    toHaveScreenshot: { maxDiffPixelRatio: 0.01 },
+    // threshold = per-pixel colour tolerance. Playwright's default (0.2) can't tell ASHERA's dark
+    // colours apart, so a changed scene still "matched". 0.02 is picked from measurements in
+    // docs/testing.md; maxDiffPixelRatio absorbs the ~0.1% of pixels that differ between machines.
+    toHaveScreenshot: { threshold: 0.02, maxDiffPixelRatio: 0.01 },
   },
   // Never write baselines implicitly; only the update-snapshots workflow (--update-snapshots) does.
   updateSnapshots: 'none',
