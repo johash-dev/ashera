@@ -57,4 +57,47 @@ export const ASHERS_ROOM: Room = {
     depth: 0.75,
     placeholder: true, // depth not measured yet
   },
+  // Positions and sizes estimated from the photos; plates 0.48 × 0.28 ft (double) or 0.28 ft square.
+  fittings: [
+    {
+      id: 'tv-socket',
+      kind: 'double-socket',
+      surface: 'north',
+      centre: [4.1, 1], // from the north-west corner, just above the Skirting
+      size: [0.48, 0.28],
+      placeholder: true,
+    },
+    {
+      id: 'tv-data',
+      kind: 'data-plate',
+      surface: 'north',
+      centre: [4.3, 5],
+      size: [0.28, 0.28],
+      placeholder: true,
+    },
+    {
+      id: 'door-switch',
+      kind: 'switch-plate',
+      surface: 'south',
+      centre: [4.2, 4.2], // from the south-east corner, just west of the doorway
+      size: [0.28, 0.28],
+      placeholder: true,
+    },
+    {
+      id: 'door-socket',
+      kind: 'double-socket',
+      surface: 'south',
+      centre: [3.9, 1],
+      size: [0.48, 0.28],
+      placeholder: true,
+    },
+    {
+      id: 'ceiling-light',
+      kind: 'ceiling-light',
+      surface: 'ceiling',
+      centre: [5, 4.5], // centred on the ceiling
+      size: [2, 2],
+      placeholder: true,
+    },
+  ],
 };

@@ -90,5 +90,17 @@ export function validateRoom(room: Room): string[] {
     }
   }
 
+  for (const fitting of room.fittings) {
+    const [spanU, spanV] =
+      fitting.surface === 'ceiling'
+        ? [room.width, room.depth]
+        : [wallLength(room, fitting.surface), clearHeightAtWall(room, fitting.surface)];
+    const [u, v] = fitting.centre;
+    const [w, h] = fitting.size;
+    if (u - w / 2 < 0 || u + w / 2 > spanU || v - h / 2 < 0 || v + h / 2 > spanV) {
+      problems.push(`Fitting "${fitting.id}" does not fit on the ${fitting.surface}.`);
+    }
+  }
+
   return problems;
 }

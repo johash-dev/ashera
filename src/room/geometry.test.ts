@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ASHERS_ROOM } from './room.config';
 import { clearHeightAtWall, floorBounds, validateRoom, wallLength } from './geometry';
-import type { Room } from './types';
+import type { Fitting, Room } from './types';
 
 describe("Asher's room config", () => {
   it('is physically consistent', () => {
@@ -127,6 +127,36 @@ describe('validateRoom', () => {
     if (!door) throw new Error('config has no door');
     const room: Room = { ...ASHERS_ROOM, doors: [{ ...door, thickness: 0 }] };
     expect(validateRoom(room).some((p) => p.includes('thickness'))).toBe(true);
+  });
+
+  describe('Fittings', () => {
+    const plate: Fitting = {
+      id: 'f',
+      kind: 'switch-plate',
+      surface: 'east',
+      centre: [4.5, 4],
+      size: [0.28, 0.28],
+      placeholder: false,
+    };
+    const withFitting = (fitting: Fitting): Room => ({ ...ASHERS_ROOM, fittings: [fitting] });
+    const outside = (fitting: Fitting) =>
+      validateRoom(withFitting(fitting)).some((p) => p.includes(`Fitting "f"`));
+
+    it('accepts a plate inside its Wall', () => {
+      expect(outside(plate)).toBe(false);
+    });
+
+    it('rejects a plate running past the end of its Wall', () => {
+      expect(outside({ ...plate, centre: [8.9, 4] })).toBe(true);
+    });
+
+    it('rejects a plate rising into the Beam', () => {
+      expect(outside({ ...plate, centre: [4.5, 8.9] })).toBe(true);
+    });
+
+    it('rejects a ceiling plate outside the ceiling', () => {
+      expect(outside({ ...plate, surface: 'ceiling', centre: [9.5, 4.5], size: [2, 2] })).toBe(true);
+    });
   });
 
   it('rejects a wall thickness that is not positive', () => {
