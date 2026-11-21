@@ -42,10 +42,11 @@ export function RoomShell({ room }: { room: Room }) {
 
   // Re-run Cutaway only when the camera has moved; NaN forces the first frame through.
   const lastCamera = useMemo(() => new Vector3(NaN, NaN, NaN), []);
+  const cameraTuple = useMemo<[number, number, number]>(() => [0, 0, 0], []);
   useFrame(({ camera }) => {
     if (camera.position.equals(lastCamera)) return;
     lastCamera.copy(camera.position);
-    const hidden = hiddenSurfaces(room, camera.position.toArray());
+    const hidden = hiddenSurfaces(room, camera.position.toArray(cameraTuple));
     for (const wall of WALLS) {
       const group = walls.current[wall];
       if (group) group.visible = !hidden.walls.includes(wall);

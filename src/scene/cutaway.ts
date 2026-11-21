@@ -1,4 +1,4 @@
-import { floorBounds, type Room, type WallId, WALLS } from '../room';
+import { floorBounds, type Room, type WallId } from '../room';
 
 export interface HiddenSurfaces {
   /** Walls hidden because the camera is on their outer side, in north, east, south, west order. */
@@ -13,14 +13,13 @@ export interface HiddenSurfaces {
  */
 export function hiddenSurfaces(room: Room, [x, y, z]: readonly [number, number, number]): HiddenSurfaces {
   const { minX, maxX, minZ, maxZ } = floorBounds(room);
-  const outside: Record<WallId, boolean> = {
-    north: z < minZ,
-    east: x > maxX,
-    south: z > maxZ,
-    west: x < minX,
-  };
+  const walls: WallId[] = [];
+  if (z < minZ) walls.push('north');
+  if (x > maxX) walls.push('east');
+  if (z > maxZ) walls.push('south');
+  if (x < minX) walls.push('west');
   return {
-    walls: WALLS.filter((wall) => outside[wall]),
+    walls,
     ceiling: y > room.ceilingHeight,
   };
 }
