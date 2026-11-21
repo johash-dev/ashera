@@ -39,7 +39,7 @@ Changes to `Room` (`src/room/types.ts`); none is persisted, so no one-way door.
 - `skirtingHeight` → `skirting: { height: 0.3; depth: 0.05; placeholder: true }` (depth ⅝″) — slice 2.
 - `Door` gains `thickness: 0.125` (1½″) and `placeholder: true` — slice 2. The open leaf lies flat against the east Wall.
 - `floorTile: { length: 4; width: 2; longSide: 'north-south'; placeholder: true }` — new; grid starts at the south-west corner.
-- `fittings: Fitting[]` — new. `Fitting = { id; kind: 'double-socket' | 'switch-plate' | 'data-plate' | 'ceiling-light'; surface: WallId | 'ceiling'; …position and size…; placeholder }`. Initial set from the photos: north double socket + data plate; south switch plate + double socket; ceiling light. All placeholders.
+- `fittings: Fitting[]` — new. `Fitting = { id; kind: 'double-socket' | 'switch-plate' | 'data-plate' | 'ceiling-light'; surface: WallId | 'ceiling'; centre: [u, v]; size: [w, h]; placeholder }` — on a Wall, `u` runs along it from its start corner and `v` is height above the floor; on the ceiling, distances from the west and north Walls (slice 3). Initial set from the photos: north double socket + data plate; south switch plate + double socket; ceiling light. All placeholders.
 - `validateRoom` also rejects a Fitting outside its surface.
 
 No new dependencies. ADR 0001's example line ("north/window wall is at −z") is corrected to the TV wall.
@@ -68,7 +68,8 @@ All must pass:
 - [x] Unit: `hiddenSurfaces` from the `overview` camera hides `south`, `east` and the ceiling; from a camera inside the Room hides nothing
 - [x] Unit: `doorSwing` radius = 37/12 ft (3′ 1″, the doorway width), hinge at the south-east corner, arc sweeps from the doorway to the east Wall
 - [x] Unit: `validateRoom` rejects a non-positive `skirting.depth` and a non-positive Door `thickness`
-- [ ] E2E: `__ASHERA__.room` = `{ width: 10, depth: 9, ceilingHeight: 9.5 }`; `beams` = `['west', 'south', 'east']`; `door.openAngleDeg` = 90; `fittings` = 5
+- [x] Unit: `validateRoom` rejects a Fitting past the end of its Wall, above its clear height, or outside the ceiling
+- [x] E2E: `__ASHERA__.room` = `{ width: 10, depth: 9, ceilingHeight: 9.5 }`; `beams` = `['west', 'south', 'east']`; `door.openAngleDeg` = 90; `fittings` = 5
 - [ ] E2E: each View button (Overview, Top, Entrance, Window, Left, Right) sets `__ASHERA__.view` and the Header label; `?view=<id>` selects the same View on load
 - [ ] E2E: `drawCalls` < 100 in `overview`; no console errors in any View
 - [ ] Owner judges `entrance`, `window`, `left` and `right` screenshots side by side with the matching `docs/reference/photos/` image and approves them in the PR
