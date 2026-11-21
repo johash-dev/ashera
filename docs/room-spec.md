@@ -13,8 +13,6 @@ Sources: [hand sketch](reference/room-sketch.jpeg), [top-view floor plan](refere
 
 Wall names are **real compass directions** (north is geographic north).
 
-> **Pending:** `room.config.ts` and its tests still use the old wall names (TV wall = east). They switch to the names below in Phase 1 slice 1.
-
 ```
                     NORTH — TV wall (10 ft) — no beam
               ┌────────────────────────────────────────┐

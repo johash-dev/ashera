@@ -60,9 +60,9 @@ Visual (`@visual`, CI-only baselines): one snapshot per View; baselines regenera
 All must pass:
 
 - [ ] `npm run verify` prints ALL GREEN
-- [ ] Unit: `wallLength(north) = 10`, `wallLength(west) = 9`; `clearHeightAtWall(north) = 9.5`, `clearHeightAtWall(west) = 9`
-- [ ] Unit: `wallPieces` gives 1 piece for north and east, 4 for west (around the window), 2 for south (around the doorway)
-- [ ] Unit: `hiddenSurfaces` from the `overview` camera hides `south`, `east` and the ceiling; from a camera inside the Room hides nothing
+- [x] Unit: `wallLength(north) = 10`, `wallLength(west) = 9`; `clearHeightAtWall(north) = 9.5`, `clearHeightAtWall(west) = 9`
+- [x] Unit: `wallPieces` gives 1 piece for north and east, 4 for west (around the window), 2 for south (around the doorway)
+- [x] Unit: `hiddenSurfaces` from the `overview` camera hides `south`, `east` and the ceiling; from a camera inside the Room hides nothing
 - [ ] Unit: `doorSwing` radius = 3 ft, hinge at the south-east corner, arc sweeps from the doorway to the east Wall
 - [ ] E2E: `__ASHERA__.room` = `{ width: 10, depth: 9, ceilingHeight: 9.5 }`; `beams` = `['west', 'south', 'east']`; `door.openAngleDeg` = 90; `fittings` = 5
 - [ ] E2E: each View button (Overview, Top, Entrance, Window, Left, Right) sets `__ASHERA__.view` and the Header label; `?view=<id>` selects the same View on load
