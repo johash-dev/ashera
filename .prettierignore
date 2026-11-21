@@ -1,0 +1,8 @@
+dist
+coverage
+playwright-report
+test-results
+.scratch
+package-lock.json
+docs/reference
+e2e/**/*-snapshots

@@ -1,0 +1,16 @@
+node_modules/
+dist/
+coverage/
+test-results/
+playwright-report/
+blob-report/
+*.log
+.DS_Store
+Thumbs.db
+
+# transient working area (research, drafts) — permanent material goes in docs/
+.scratch/
+
+# local-only Claude Code settings
+.claude/settings.local.json
+.claude/.state/

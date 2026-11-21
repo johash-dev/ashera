@@ -1,0 +1,42 @@
+# Docs index
+
+Read this first. Every doc in the repo is listed here with one line; `npm run docs-check` fails if one is missing.
+
+## Start here
+
+- [CLAUDE.md](../CLAUDE.md) — how to work in this repo (commands, rules, workflow)
+- [GLOSSARY.md](../GLOSSARY.md) — domain vocabulary
+- [CODING_STANDARDS.md](../CODING_STANDARDS.md) — review baseline, numbered rules
+
+## Product
+
+- [concept.md](concept.md) — vision, decisions, phases, brand
+- [room-spec.md](room-spec.md) — where the measurements came from and what is still unmeasured
+
+## Engineering
+
+- [architecture.md](architecture.md) — modules, boundaries, data flow, coordinates
+- [r3f.md](r3f.md) — React Three Fiber rendering and performance rules
+- [testing.md](testing.md) — test kinds, TDD rules, visual snapshot process
+
+## Decisions (ADRs)
+
+Only for hard-to-reverse, surprising decisions with a real trade-off.
+
+- [0001 — Units and coordinate system](adr/0001-units-and-coordinates.md)
+- [0002 — Layouts in browser storage with JSON export](adr/0002-layouts-in-browser-storage.md)
+- [0003 — No backend until a phase needs one](adr/0003-no-backend-until-needed.md)
+
+## Specs
+
+One per feature, from [the template](specs/_template.md).
+
+- _(none yet)_
+
+## History
+
+- [log.md](log.md) — append-only work log
+
+## Reference (immutable)
+
+- [reference/](reference/) — room photos, hand sketch, top-view floor plan
