@@ -3,10 +3,12 @@ import { useEffect, useMemo, useRef } from 'react';
 import { type Group, type Mesh, MeshStandardMaterial, Vector3 } from 'three';
 import { type Room, type WallId, WALLS } from '../room';
 import { hiddenSurfaces } from './cutaway';
-import { beamBox, type Box, wallBoxes } from './roomBoxes';
+import { Doors } from './Doors';
+import { beamBox, type Box, skirtingBoxes, wallBoxes } from './roomBoxes';
 import { reportHiddenSurfaces } from './testHandle';
 
 const WALL_COLOR = '#4a4c5c';
+const SKIRTING_COLOR = '#2a2c38';
 const FLOOR_COLOR = '#15161c';
 
 function BoxMesh({ box, material }: { box: Box; material: MeshStandardMaterial }) {
@@ -28,6 +30,7 @@ export function RoomShell({ room }: { room: Room }) {
   const materials = useMemo(
     () => ({
       wall: new MeshStandardMaterial({ color: WALL_COLOR }),
+      skirting: new MeshStandardMaterial({ color: SKIRTING_COLOR }),
       floor: new MeshStandardMaterial({ color: FLOOR_COLOR }),
     }),
     [],
@@ -35,6 +38,7 @@ export function RoomShell({ room }: { room: Room }) {
   useEffect(
     () => () => {
       materials.wall.dispose();
+      materials.skirting.dispose();
       materials.floor.dispose();
     },
     [materials],
@@ -73,9 +77,13 @@ export function RoomShell({ room }: { room: Room }) {
           {wallBoxes(room, wall).map((box, i) => (
             <BoxMesh key={i} box={box} material={materials.wall} />
           ))}
+          {skirtingBoxes(room, wall).map((box, i) => (
+            <BoxMesh key={`skirting-${i}`} box={box} material={materials.skirting} />
+          ))}
           {room.beams.walls.includes(wall) && <BoxMesh box={beamBox(room, wall)} material={materials.wall} />}
         </group>
       ))}
+      <Doors room={room} />
     </group>
   );
 }

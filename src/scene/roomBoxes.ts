@@ -1,4 +1,5 @@
-import { floorBounds, type Room, type WallId, wallLength, wallPieces } from '../room';
+import { type Door, type Room, skirtingRuns, type WallId, wallLength, wallPieces } from '../room';
+import { type WallFrame, wallFrame } from './wallFrame';
 
 type Vec3 = readonly [number, number, number];
 
@@ -6,27 +7,6 @@ type Vec3 = readonly [number, number, number];
 export interface Box {
   readonly position: Vec3;
   readonly size: Vec3;
-}
-
-/** A Wall's start corner, the direction it runs (clockwise from above) and its outward normal. */
-interface WallFrame {
-  readonly start: readonly [number, number];
-  readonly along: readonly [number, number];
-  readonly outward: readonly [number, number];
-}
-
-function wallFrame(room: Room, wall: WallId): WallFrame {
-  const { minX, maxX, minZ, maxZ } = floorBounds(room);
-  switch (wall) {
-    case 'north':
-      return { start: [minX, minZ], along: [1, 0], outward: [0, -1] };
-    case 'east':
-      return { start: [maxX, minZ], along: [0, 1], outward: [1, 0] };
-    case 'south':
-      return { start: [maxX, maxZ], along: [-1, 0], outward: [0, 1] };
-    case 'west':
-      return { start: [minX, maxZ], along: [0, -1], outward: [-1, 0] };
-  }
 }
 
 /** Box centred `u` along the wall and `w` outward from its interior face, sized `length` × `height` × `depth`. */
@@ -76,5 +56,34 @@ export function beamBox(room: Room, wall: WallId): Box {
     length,
     drop,
     depth,
+  );
+}
+
+/** World boxes for a Wall's Skirting, standing against its interior face and broken at doorways. */
+export function skirtingBoxes(room: Room, wall: WallId): Box[] {
+  const frame = wallFrame(room, wall);
+  const { height, depth } = room.skirting;
+  return skirtingRuns(room, wall).map(({ u0, u1 }) =>
+    boxOnWall(frame, (u0 + u1) / 2, -depth / 2, height / 2, u1 - u0, height, depth),
+  );
+}
+
+/**
+ * World box for a Door leaf fixed open 90°: it stands out from the hinge into the Room, flat
+ * against the neighbouring Wall, with its thickness running back across the doorway.
+ */
+export function doorLeafBox(room: Room, door: Door): Box {
+  const opening = room.openings.find((o) => o.id === door.openingId);
+  if (!opening) throw new Error(`Door "${door.id}" refers to missing opening "${door.openingId}".`);
+  const hingeU = door.hinge === 'start' ? opening.offset : opening.offset + opening.width;
+  const towardFreeEnd = door.hinge === 'start' ? 1 : -1;
+  return boxOnWall(
+    wallFrame(room, opening.wall),
+    hingeU + (towardFreeEnd * door.thickness) / 2,
+    -opening.width / 2,
+    opening.height / 2,
+    door.thickness,
+    opening.height,
+    opening.width,
   );
 }

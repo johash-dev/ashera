@@ -3,6 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import { useEffect } from 'react';
 import { type Room, wallPieces } from '../room';
 import { hiddenSurfaces } from './cutaway';
+import { DOOR_OPEN_ANGLE_DEG } from './doorSwing';
 import { RoomShell } from './RoomShell';
 import { publishSceneState } from './testHandle';
 import { type CameraView } from './views';
@@ -20,6 +21,7 @@ export function SceneCanvas({ room, view }: { room: Room; view: CameraView }) {
         west: wallPieces(room, 'west').length,
       },
       beams: room.beams.walls,
+      door: { openAngleDeg: DOOR_OPEN_ANGLE_DEG },
       hidden: hiddenSurfaces(room, view.position),
     });
   }, [room, view]);
