@@ -28,7 +28,7 @@ updated: 2026-11-21
 WebGL output differs between Windows and Linux, so baselines are **Linux-only**, stored in `e2e/__screenshots__/`, and compared **in CI**.
 
 - Locally `npm run verify` skips `@visual` tests (`test:e2e:local`). Take evidence screenshots in the browser instead and attach them to the PR.
-- When a visual change is intended: run the **update-snapshots** GitHub workflow on the PR branch; it regenerates baselines and commits them. Review the image diff in the PR.
+- When a visual change is intended: run the **update-snapshots** GitHub workflow on the PR branch; it regenerates baselines, commits them, and starts CI on the branch. Review the image diff in the PR.
 - A failing visual test in CI with no intended visual change = regression.
 
 ## Pre-commit
