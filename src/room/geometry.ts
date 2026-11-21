@@ -48,6 +48,9 @@ export function validateRoom(room: Room): string[] {
   if (room.walls.thickness <= 0) {
     problems.push('Wall thickness must be positive.');
   }
+  if (room.skirting.height <= 0 || room.skirting.depth <= 0) {
+    problems.push('Skirting depth and height must be positive.');
+  }
 
   const ids = new Set<string>();
   for (const opening of room.openings) {
@@ -79,6 +82,7 @@ export function validateRoom(room: Room): string[] {
   }
 
   for (const door of room.doors) {
+    if (door.thickness <= 0) problems.push(`Door "${door.id}" thickness must be positive.`);
     const opening = room.openings.find((o) => o.id === door.openingId);
     if (!opening) problems.push(`Door "${door.id}" refers to missing opening "${door.openingId}".`);
     else if (opening.kind !== 'doorway') {

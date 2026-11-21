@@ -14,6 +14,12 @@ describe("Asher's room config", () => {
     expect(ASHERS_ROOM.ceilingHeight).toBe(9.5);
   });
 
+  it('has the measured doorway (3′ 1″ × 7′ 2″) and window (5′ 9″ × 5′ 6″)', () => {
+    const find = (id: string) => ASHERS_ROOM.openings.find((o) => o.id === id);
+    expect(find('doorway')).toMatchObject({ width: 37 / 12, height: 43 / 12, placeholder: false });
+    expect(find('window')).toMatchObject({ width: 5.75, height: 5.5, offset: 1.625, sill: 3.5 });
+  });
+
   it('has no beam on the north (TV) wall', () => {
     expect(clearHeightAtWall(ASHERS_ROOM, 'north')).toBe(9.5);
     expect(clearHeightAtWall(ASHERS_ROOM, 'west')).toBe(9);
@@ -97,9 +103,30 @@ describe('validateRoom', () => {
   it('rejects a door pointing at a missing opening', () => {
     const room: Room = {
       ...ASHERS_ROOM,
-      doors: [{ id: 'd', openingId: 'nope', hinge: 'start', swingsInward: true }],
+      doors: [
+        {
+          id: 'd',
+          openingId: 'nope',
+          hinge: 'start',
+          swingsInward: true,
+          thickness: 0.125,
+          placeholder: false,
+        },
+      ],
     };
     expect(validateRoom(room).some((p) => p.includes('missing opening'))).toBe(true);
+  });
+
+  it('rejects a skirting depth that is not positive', () => {
+    const room: Room = { ...ASHERS_ROOM, skirting: { ...ASHERS_ROOM.skirting, depth: 0 } };
+    expect(validateRoom(room).some((p) => p.includes('Skirting depth'))).toBe(true);
+  });
+
+  it('rejects a door thickness that is not positive', () => {
+    const [door] = ASHERS_ROOM.doors;
+    if (!door) throw new Error('config has no door');
+    const room: Room = { ...ASHERS_ROOM, doors: [{ ...door, thickness: 0 }] };
+    expect(validateRoom(room).some((p) => p.includes('thickness'))).toBe(true);
   });
 
   it('rejects a wall thickness that is not positive', () => {
