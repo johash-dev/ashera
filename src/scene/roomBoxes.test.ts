@@ -20,7 +20,7 @@ describe('wallBoxes', () => {
 
   it('leaves the doorway gap at the south-east end of south (x 2.92 to 5)', () => {
     expect(rounded(wallBoxes(ASHERS_ROOM, 'south'))).toEqual([
-      { position: [3.7083, 6.5417, 4.75], size: [3.5833, 5.9167, 0.5] }, // header over the doorway, x 2.92 to 5.5
+      { position: [3.7083, 8.3333, 4.75], size: [3.5833, 2.3333, 0.5] }, // header over the doorway, x 2.92 to 5.5
       { position: [-1.7917, 4.75, 4.75], size: [7.4167, 9.5, 0.5] }, // solid, x -5.5 to 2.92
     ]);
   });
@@ -64,13 +64,13 @@ describe('skirtingBoxes', () => {
 describe('doorLeafBox', () => {
   it('lies flat against the east Wall, from the hinge corner along the doorway width', () => {
     expect(rounded([doorLeafBox(ASHERS_ROOM, DOOR)])).toEqual([
-      { position: [4.9375, 1.7917, 2.9583], size: [0.125, 3.5833, 3.0833] },
+      { position: [4.9375, 3.5833, 2.9583], size: [0.125, 7.1667, 3.0833] },
     ]);
   });
 
   it('mirrors when the hinge is at the far end of the doorway', () => {
     expect(rounded([doorLeafBox(ASHERS_ROOM, { ...DOOR, hinge: 'end' })])).toEqual([
-      { position: [1.9792, 1.7917, 2.9583], size: [0.125, 3.5833, 3.0833] },
+      { position: [1.9792, 3.5833, 2.9583], size: [0.125, 7.1667, 3.0833] },
     ]);
   });
 });

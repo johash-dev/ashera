@@ -16,7 +16,7 @@ describe("Asher's room config", () => {
 
   it('has the measured doorway (3′ 1″ × 7′ 2″) and window (5′ 9″ × 5′ 6″)', () => {
     const find = (id: string) => ASHERS_ROOM.openings.find((o) => o.id === id);
-    expect(find('doorway')).toMatchObject({ width: 37 / 12, height: 43 / 12, placeholder: false });
+    expect(find('doorway')).toMatchObject({ width: 37 / 12, height: 86 / 12, placeholder: false });
     expect(find('window')).toMatchObject({ width: 5.75, height: 5.5, offset: 1.625, sill: 3.5 });
   });
 

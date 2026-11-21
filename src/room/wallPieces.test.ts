@@ -19,7 +19,7 @@ describe('wallPieces', () => {
 
   it('cuts a doorway at the corner into a beside piece and a lintel piece', () => {
     expect(wallPieces(ASHERS_ROOM, 'south')).toEqual([
-      { u0: 0, u1: 37 / 12, v0: 43 / 12, v1: 9.5 },
+      { u0: 0, u1: 37 / 12, v0: 86 / 12, v1: 9.5 },
       { u0: 37 / 12, u1: 10, v0: 0, v1: 9.5 },
     ]);
   });
