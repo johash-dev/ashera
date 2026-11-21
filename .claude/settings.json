@@ -9,6 +9,8 @@
       "Bash(npx tsc *)",
       "Bash(npx eslint *)",
       "Bash(npx prettier *)",
+      "Bash(node scripts/*)",
+      "Bash(node .scratch/*)",
       "Bash(git status*)",
       "Bash(git diff*)",
       "Bash(git log*)",
@@ -17,18 +19,63 @@
       "Bash(git add *)",
       "Bash(git commit *)",
       "Bash(git switch *)",
+      "Bash(git fetch*)",
+      "Bash(git pull --ff-only*)",
       "Bash(git push -u origin feat/*)",
       "Bash(git push -u origin fix/*)",
+      "Bash(git push -u origin docs/*)",
+      "Bash(git push -u origin chore/*)",
+      "Bash(git push origin feat/*)",
+      "Bash(git push origin fix/*)",
+      "Bash(git push origin docs/*)",
+      "Bash(git push origin chore/*)",
+      "Bash(git push)",
       "Bash(gh pr view*)",
+      "Bash(gh pr list*)",
       "Bash(gh pr checks*)",
       "Bash(gh pr diff*)",
       "Bash(gh pr create *)",
+      "Bash(gh pr edit *)",
+      "Bash(gh pr comment *)",
+      "Bash(gh pr merge * --squash --auto*)",
       "Bash(gh run view*)",
-      "Bash(gh run list*)"
+      "Bash(gh run list*)",
+      "Bash(gh run watch*)",
+      "Bash(gh run download*)",
+      "Bash(gh workflow run *)"
     ],
-    "deny": ["Read(./.env)", "Read(./.env.*)", "Edit(./docs/reference/**)", "Write(./docs/reference/**)"]
+    "ask": [
+      "Bash(npm install*)",
+      "Bash(npm i *)",
+      "Edit(./.github/workflows/**)",
+      "Write(./.github/workflows/**)",
+      "Edit(./scripts/verify.mjs)",
+      "Write(./scripts/verify.mjs)",
+      "Edit(./playwright.config.ts)",
+      "Write(./playwright.config.ts)",
+      "Edit(./.claude/hooks/**)",
+      "Write(./.claude/hooks/**)",
+      "Edit(./.claude/settings.json)",
+      "Write(./.claude/settings.json)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Edit(./docs/reference/**)",
+      "Write(./docs/reference/**)",
+      "Edit(./.claude/.state/**)",
+      "Write(./.claude/.state/**)",
+      "Bash(gh pr merge *--admin*)",
+      "Bash(gh api -X DELETE*)",
+      "Bash(gh api --method DELETE*)"
+    ]
   },
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [{ "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/approval.mjs\"" }]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash|PowerShell",
