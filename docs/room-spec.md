@@ -53,7 +53,7 @@ Placeholders are flagged `placeholder: true` in the config.
 - [x] Window width 5′ 9″ and height 5′ 6″ (measured 2026-11-21; in the config)
 - [ ] Window sill height and position along the west wall (placeholder sill 3.5 ft — top then meets the Beam underside at 9 ft — and centred, offset 1′ 7½″)
 - [ ] Beam depth from each wall (placeholder 0.75 ft)
-- [ ] Socket, switch and ceiling-light positions
+- [ ] Socket, switch and ceiling-light positions and sizes (placeholders estimated from the photos, centre of each plate: north double socket 4.1 ft from the NW corner at 1 ft high, data plate 4.3 ft at 5 ft; south switch 4.2 ft from the SE corner at 4.2 ft, double socket 3.9 ft at 1 ft; ceiling light 2 × 2 ft, centred. Plates 0.48 × 0.28 ft double, 0.28 ft square single)
 - [x] Wall thickness 6″ = 0.5 ft, at the doorway jamb (measured 2026-11-21; in the config)
 - [ ] Door leaf thickness (placeholder 1½″ = 0.125 ft)
 - [ ] Skirting depth — how far its face stands off the wall tiles (placeholder ⅝ in = 0.05 ft; height 0.3 ft ≈ 3½ in)

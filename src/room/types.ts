@@ -61,6 +61,23 @@ export interface Skirting {
   readonly placeholder: boolean;
 }
 
+export type FittingKind = 'double-socket' | 'switch-plate' | 'data-plate' | 'ceiling-light';
+
+/** A fixed electrical point, drawn as a flat plate on a Wall or the ceiling. */
+export interface Fitting {
+  readonly id: string;
+  readonly kind: FittingKind;
+  readonly surface: WallId | 'ceiling';
+  /**
+   * Centre of the plate. On a Wall: distance along it from its start corner, then height above
+   * the floor. On the ceiling: distance from the west Wall, then from the north Wall.
+   */
+  readonly centre: readonly [number, number];
+  /** Plate size. On a Wall: along it × up it. On the ceiling: west–east × south–north. */
+  readonly size: readonly [number, number];
+  readonly placeholder: boolean;
+}
+
 export interface Room {
   readonly name: string;
   /** Interior west–east span (length of the north and south walls). */
@@ -73,4 +90,5 @@ export interface Room {
   readonly beams: Beams;
   readonly walls: Walls;
   readonly skirting: Skirting;
+  readonly fittings: readonly Fitting[];
 }

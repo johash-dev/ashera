@@ -22,6 +22,7 @@ export function SceneCanvas({ room, view }: { room: Room; view: CameraView }) {
       },
       beams: room.beams.walls,
       door: { openAngleDeg: DOOR_OPEN_ANGLE_DEG },
+      fittings: 0,
       hidden: hiddenSurfaces(room, view.position),
     });
   }, [room, view]);

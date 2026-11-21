@@ -1,15 +1,19 @@
 import { useFrame } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
-import { type Group, type Mesh, MeshStandardMaterial, Vector3 } from 'three';
-import { type Room, type WallId, WALLS } from '../room';
+import { type Group, MeshStandardMaterial, Vector3 } from 'three';
+import { type Fitting, type Room, type WallId, WALLS } from '../room';
 import { hiddenSurfaces } from './cutaway';
 import { Doors } from './Doors';
+import { fittingPlate } from './fittingPlates';
 import { beamBox, type Box, skirtingBoxes, wallBoxes } from './roomBoxes';
-import { reportHiddenSurfaces } from './testHandle';
+import { reportFittingsDrawn, reportHiddenSurfaces } from './testHandle';
 
 const WALL_COLOR = '#4a4c5c';
 const SKIRTING_COLOR = '#2a2c38';
 const FLOOR_COLOR = '#15161c';
+const FITTING_COLOR = '#8a8fb0';
+/** Object name of every Fitting plate, so the test handle can count what is drawn. */
+const FITTING_PLATE = 'fitting-plate';
 
 function BoxMesh({ box, material }: { box: Box; material: MeshStandardMaterial }) {
   return (
@@ -19,19 +23,48 @@ function BoxMesh({ box, material }: { box: Box; material: MeshStandardMaterial }
   );
 }
 
+function FittingPlates({
+  room,
+  surface,
+  material,
+}: {
+  room: Room;
+  surface: Fitting['surface'];
+  material: MeshStandardMaterial;
+}) {
+  return room.fittings
+    .filter((fitting) => fitting.surface === surface)
+    .map((fitting) => {
+      const plate = fittingPlate(room, fitting);
+      return (
+        <mesh
+          key={fitting.id}
+          name={FITTING_PLATE}
+          position={[...plate.position]}
+          rotation={[...plate.rotation]}
+          material={material}
+        >
+          <planeGeometry args={[...plate.size]} />
+        </mesh>
+      );
+    });
+}
+
 /**
- * The Room's shell: floor, ceiling, four Walls with their Openings cut out, and Beams.
- * Cutaway hides the Walls and ceiling facing the camera whenever the camera moves.
+ * The Room's shell: floor, ceiling, four Walls with their Openings cut out, Beams and Fittings.
+ * Cutaway hides the Walls and ceiling facing the camera, with their Fittings, whenever the camera moves.
  */
 export function RoomShell({ room }: { room: Room }) {
+  const root = useRef<Group>(null);
   const walls = useRef<Partial<Record<WallId, Group>>>({});
-  const ceiling = useRef<Mesh>(null);
+  const ceiling = useRef<Group>(null);
 
   const materials = useMemo(
     () => ({
       wall: new MeshStandardMaterial({ color: WALL_COLOR }),
       skirting: new MeshStandardMaterial({ color: SKIRTING_COLOR }),
       floor: new MeshStandardMaterial({ color: FLOOR_COLOR }),
+      fitting: new MeshStandardMaterial({ color: FITTING_COLOR }),
     }),
     [],
   );
@@ -40,6 +73,7 @@ export function RoomShell({ room }: { room: Room }) {
       materials.wall.dispose();
       materials.skirting.dispose();
       materials.floor.dispose();
+      materials.fitting.dispose();
     },
     [materials],
   );
@@ -49,6 +83,9 @@ export function RoomShell({ room }: { room: Room }) {
   const cameraTuple = useMemo<[number, number, number]>(() => [0, 0, 0], []);
   useFrame(({ camera }) => {
     if (camera.position.equals(lastCamera)) return;
+    if (Number.isNaN(lastCamera.x) && root.current) {
+      reportFittingsDrawn(root.current.getObjectsByProperty('name', FITTING_PLATE).length);
+    }
     lastCamera.copy(camera.position);
     const hidden = hiddenSurfaces(room, camera.position.toArray(cameraTuple));
     for (const wall of WALLS) {
@@ -60,13 +97,16 @@ export function RoomShell({ room }: { room: Room }) {
   });
 
   return (
-    <group>
+    <group ref={root}>
       <mesh rotation-x={-Math.PI / 2} material={materials.floor}>
         <planeGeometry args={[room.width, room.depth]} />
       </mesh>
-      <mesh ref={ceiling} position-y={room.ceilingHeight} rotation-x={Math.PI / 2} material={materials.wall}>
-        <planeGeometry args={[room.width, room.depth]} />
-      </mesh>
+      <group ref={ceiling}>
+        <mesh position-y={room.ceilingHeight} rotation-x={Math.PI / 2} material={materials.wall}>
+          <planeGeometry args={[room.width, room.depth]} />
+        </mesh>
+        <FittingPlates room={room} surface="ceiling" material={materials.fitting} />
+      </group>
       {WALLS.map((wall) => (
         <group
           key={wall}
@@ -81,6 +121,7 @@ export function RoomShell({ room }: { room: Room }) {
             <BoxMesh key={`skirting-${i}`} box={box} material={materials.skirting} />
           ))}
           {room.beams.walls.includes(wall) && <BoxMesh box={beamBox(room, wall)} material={materials.wall} />}
+          <FittingPlates room={room} surface={wall} material={materials.fitting} />
         </group>
       ))}
       <Doors room={room} />

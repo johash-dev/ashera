@@ -16,6 +16,8 @@ export interface SceneTestState {
   beams: readonly WallId[];
   /** The Door is fixed open; angle in degrees from closed. */
   door: { openAngleDeg: number };
+  /** Number of Fitting plates mounted in the scene; 0 until the first frame is drawn. */
+  fittings: number;
   /** Current Cutaway; updated whenever the camera moves. */
   hidden: HiddenSurfaces;
 }
@@ -28,6 +30,10 @@ declare global {
 
 export function publishSceneState(state: SceneTestState): void {
   if (import.meta.env.DEV) window.__ASHERA__ = state;
+}
+
+export function reportFittingsDrawn(count: number): void {
+  if (import.meta.env.DEV && window.__ASHERA__) window.__ASHERA__.fittings = count;
 }
 
 export function reportHiddenSurfaces(hidden: HiddenSurfaces): void {
