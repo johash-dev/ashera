@@ -73,3 +73,10 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - `validateRoom` also rejects a Fitting that overlaps an Opening on its Wall, has a non-positive size, or repeats another Fitting's id (the id is the plate's React key).
 - `__ASHERA__.fittings` now counts the plate meshes mounted in the scene (reported on the first frame) instead of `room.fittings.length`, so the e2e check fails if no plates render.
 - Noticed, not fixed: the doorway height in `room.config.ts` is `43 / 12` (3.58 ft) although its comment and room-spec say 7′ 2″ (`86 / 12`), so the doorway and Door leaf are drawn half height (from slice 2). Also still open from review: a plate low on a Wall can sit inside the Skirting, and a ceiling plate over a Beam is hidden by it; current config is clear of both.
+
+## [2026-11-22] bug | Doorway, header and Door leaf drawn at half height
+
+- Symptom: in `?view=overview` the doorway, the Wall header above it and the Door leaf were about half the expected height.
+- Cause: `doorway.height` in `room.config.ts` was `43 / 12` (3.58 ft) although the comment and `docs/room-spec.md` say 7′ 2″ = 86 in; slice 2 (PR #4) converted 43 in, not 86 in, and the tests pinned the wrong value.
+- Fix: `height: 86 / 12`; pinned values in `geometry.test.ts`, `wallPieces.test.ts`, `roomBoxes.test.ts` corrected (header 2.3333 ft tall, Door leaf 7.1667 ft tall). `validateRoom(ASHERS_ROOM)` still empty (test: "has the measured doorway (3′ 1″ × 7′ 2″) and window (5′ 9″ × 5′ 6″)").
+- @visual baselines need regenerating via the `update-snapshots` workflow.

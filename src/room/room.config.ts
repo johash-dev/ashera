@@ -26,7 +26,7 @@ export const ASHERS_ROOM: Room = {
       wall: 'south',
       offset: 0, // starts at the south-east corner
       width: 37 / 12, // 3′ 1″ inside the ~1″ frame, which is drawn as part of the Wall
-      height: 43 / 12, // 7′ 2″
+      height: 86 / 12, // 7′ 2″
       sill: 0,
       placeholder: false,
     },
