@@ -17,7 +17,7 @@ The owner approves intent and the look, nothing else (docs/adr/0004-owner-approv
    - Title: `Slice N — <name> · PR #n · CI green`
    - Screenshots of every changed View, before and after (send with SendUserFile and attach to the PR).
    - What changed, in 3 plain-language lines (no code terms).
-   - What you compared against `docs/reference/` and any difference you saw.
+   - What you compared against `docs/reference/` and any difference you saw. Before writing the card, open the photo or sketch that shows the same part of the room next to your after-screenshot and look for differences in proportion and position (a door half as tall as in the photo is a bug, whatever the tests say). Fix real bugs first; list the rest here.
    - Not verified.
    - Design questions from review, if any.
    - Ending: _Reply "looks good" to merge, or tell me what looks wrong._

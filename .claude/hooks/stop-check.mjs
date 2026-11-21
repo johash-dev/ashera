@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 /**
  * Stop hook: before Claude ends a turn, run fast checks on uncommitted changes.
- * Code changed → typecheck + unit tests. Docs changed → docs-check.
+ * Script/code files changed → eslint on them. Code changed → typecheck + unit tests.
+ * Docs changed → docs-check.
  * On failure exit 2 so Claude keeps working and fixes it. Runs at most once per stop
  * (stop_hook_active) so it can never loop forever.
  */
 import { spawnSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 
 const input = JSON.parse((await new Response(process.stdin).text()) || '{}');
 if (input.stop_hook_active) process.exit(0);
@@ -22,7 +25,13 @@ const changed = status.stdout
 const codeChanged = changed.some((p) => /^(src|e2e)\/|\.config\.ts$|^tsconfig/.test(p));
 const docsChanged = changed.some((p) => p.endsWith('.md') || p.startsWith('docs/'));
 
+const lintable = changed.filter(
+  (p) => /\.(ts|tsx|js|mjs)$/.test(p) && !p.startsWith('.scratch/') && existsSync(join(cwd, p)),
+);
+
 const checks = [];
+if (lintable.length > 0)
+  checks.push(`npx eslint --max-warnings 0 ${lintable.map((p) => `"${p}"`).join(' ')}`);
 if (codeChanged) checks.push('npm run typecheck', 'npm test');
 if (docsChanged) checks.push('npm run docs-check');
 
