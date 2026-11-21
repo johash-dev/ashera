@@ -94,6 +94,7 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - git-guard judges each part of a chained command on the branch it runs on (no more "push to main" for `--base main`, or "merge to main" after `git switch feat/x`). Tests added.
 - `docs/log.md` merges with `merge=union`; `docs-check` enforces log headers (`feature|bug|fix|decision|refactor|docs|chore`).
 - Not done: Vite `strictPort: false` — the preview tool needs a fixed port, so the second launch entry (5174) stays the answer to parallel chats.
+
 ## [2026-11-22] decision | Harness slice 2: baselines and CI with no owner clicks
 
 - `update-snapshots` now uploads a `baselines` artifact instead of committing as the bot; the agent downloads, commits and pushes it, so CI runs on the PR normally (the bot commit on PR #6 left it with no checks).
