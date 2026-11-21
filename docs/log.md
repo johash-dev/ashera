@@ -67,3 +67,9 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Five Fittings, all placeholders estimated from the photos (no measurements yet): north double socket and data plate, south switch plate and double socket, 2 × 2 ft ceiling light centred. Values in docs/room-spec.md.
 - `validateRoom` rejects a Fitting outside its surface (past a Wall's end, above its clear height, or off the ceiling). `fittingPlate` (scene) places each as a flat plane 0.01 ft off its surface, facing into the Room; it is drawn in its Wall's group, or in a new ceiling group, so Cutaway hides it with its surface.
 - `__ASHERA__.fittings` (count) added. Plates share one plain placeholder colour; the ceiling light becomes emissive in slice 4.
+
+## [2026-11-21] fix | Slice 3 review fixes: Fitting validation and drawn count
+
+- `validateRoom` also rejects a Fitting that overlaps an Opening on its Wall, has a non-positive size, or repeats another Fitting's id (the id is the plate's React key).
+- `__ASHERA__.fittings` now counts the plate meshes mounted in the scene (reported on the first frame) instead of `room.fittings.length`, so the e2e check fails if no plates render.
+- Noticed, not fixed: the doorway height in `room.config.ts` is `43 / 12` (3.58 ft) although its comment and room-spec say 7′ 2″ (`86 / 12`), so the doorway and Door leaf are drawn half height (from slice 2). Also still open from review: a plate low on a Wall can sit inside the Skirting, and a ceiling plate over a Beam is hidden by it; current config is clear of both.
