@@ -1,3 +1,5 @@
+import { type WallId } from '../room';
+import { type HiddenSurfaces } from './cutaway';
 import type { ViewId } from './views';
 
 /**
@@ -8,6 +10,12 @@ export interface SceneTestState {
   ready: boolean;
   view: ViewId;
   room: { width: number; depth: number; ceilingHeight: number };
+  /** Number of solid pieces each Wall is built from (around its Openings). */
+  pieces: Record<WallId, number>;
+  /** Walls with a Beam. */
+  beams: readonly WallId[];
+  /** Current Cutaway; updated whenever the camera moves. */
+  hidden: HiddenSurfaces;
 }
 
 declare global {
@@ -18,4 +26,8 @@ declare global {
 
 export function publishSceneState(state: SceneTestState): void {
   if (import.meta.env.DEV) window.__ASHERA__ = state;
+}
+
+export function reportHiddenSurfaces(hidden: HiddenSurfaces): void {
+  if (import.meta.env.DEV && window.__ASHERA__) window.__ASHERA__.hidden = hidden;
 }
