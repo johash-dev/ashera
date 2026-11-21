@@ -90,15 +90,29 @@ export function validateRoom(room: Room): string[] {
     }
   }
 
+  const fittingIds = new Set<string>();
   for (const fitting of room.fittings) {
+    if (fittingIds.has(fitting.id)) problems.push(`Duplicate fitting id "${fitting.id}".`);
+    fittingIds.add(fitting.id);
+
+    const { surface } = fitting;
     const [spanU, spanV] =
-      fitting.surface === 'ceiling'
+      surface === 'ceiling'
         ? [room.width, room.depth]
-        : [wallLength(room, fitting.surface), clearHeightAtWall(room, fitting.surface)];
+        : [wallLength(room, surface), clearHeightAtWall(room, surface)];
     const [u, v] = fitting.centre;
     const [w, h] = fitting.size;
-    if (u - w / 2 < 0 || u + w / 2 > spanU || v - h / 2 < 0 || v + h / 2 > spanV) {
-      problems.push(`Fitting "${fitting.id}" does not fit on the ${fitting.surface}.`);
+    const [left, right, bottom, top] = [u - w / 2, u + w / 2, v - h / 2, v + h / 2];
+    const inOpening = room.openings.some(
+      (o) =>
+        o.wall === surface &&
+        left < o.offset + o.width &&
+        o.offset < right &&
+        bottom < o.sill + o.height &&
+        o.sill < top,
+    );
+    if (w <= 0 || h <= 0 || left < 0 || right > spanU || bottom < 0 || top > spanV || inOpening) {
+      problems.push(`Fitting "${fitting.id}" does not fit on the ${surface}.`);
     }
   }
 

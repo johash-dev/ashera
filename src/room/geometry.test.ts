@@ -157,6 +157,19 @@ describe('validateRoom', () => {
     it('rejects a ceiling plate outside the ceiling', () => {
       expect(outside({ ...plate, surface: 'ceiling', centre: [9.5, 4.5], size: [2, 2] })).toBe(true);
     });
+
+    it('rejects a plate inside an Opening of its Wall', () => {
+      expect(outside({ ...plate, surface: 'south', centre: [1.5, 2] })).toBe(true);
+    });
+
+    it('rejects a plate size that is not positive', () => {
+      expect(outside({ ...plate, size: [-0.28, 0.28] })).toBe(true);
+    });
+
+    it('rejects duplicate Fitting ids', () => {
+      const room: Room = { ...ASHERS_ROOM, fittings: [plate, { ...plate, centre: [2, 1] }] };
+      expect(validateRoom(room).some((p) => p.includes('Duplicate fitting id "f"'))).toBe(true);
+    });
   });
 
   it('rejects a wall thickness that is not positive', () => {
