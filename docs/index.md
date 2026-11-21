@@ -31,7 +31,7 @@ Only for hard-to-reverse, surprising decisions with a real trade-off.
 
 One per feature, from [the template](specs/_template.md).
 
-- _(none yet)_
+- [empty-room-twin](specs/empty-room-twin.md) — Phase 1: the empty Room built from config, Cutaway, Door, Fittings, dark look, photo Views
 
 ## History
 
