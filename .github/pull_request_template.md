@@ -8,7 +8,7 @@
 
 ## Evidence
 
-<!-- Screenshots of every affected View (?view=…). Before/after for visual changes. -->
+<!-- Visual changes: the changed baselines in e2e/__screenshots__ (Files tab image diff) plus the before/after pair shown on the owner's Approval card. "No visual change" otherwise. -->
 
 ## Checks
 

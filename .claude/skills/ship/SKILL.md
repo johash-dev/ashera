@@ -12,7 +12,7 @@ The owner approves intent and the look, nothing else (docs/adr/0004-owner-approv
 1. **Sync.** `git switch main` · `git pull --ff-only`.
 2. **Implement** the next unchecked slice by following `.claude/skills/implement/SKILL.md` (branch, test-first, verify, screenshots, docs, PR).
 3. **Review.** Follow `.claude/skills/review/SKILL.md`: launch the `reviewer` subagent, verify each finding, fix every confirmed Must fix and Should fix, drop Nits. A finding that is a taste or design choice goes on the Approval card as a question instead. Re-run `npm run verify` → `ALL GREEN`, push.
-4. **CI.** `gh pr checks <n> --watch`. If only `@visual` fails because the scene changed on purpose, update baselines as `docs/testing.md` describes. Any other failure: fix and push (up to 3 attempts, then stop and ask).
+4. **CI.** `gh pr checks <n> --watch`. If only `@visual` fails because the scene changed on purpose, update baselines as `docs/testing.md` describes (workflow artifact → commit → push). If the integrity check fails, you weakened a gate: undo it, or stop and ask the owner for the `gate-change` label. Any other failure: fix and push (up to 3 attempts, then stop and ask).
 5. **Approval card.** One message, nothing else in it:
    - Title: `Slice N — <name> · PR #n · CI green`
    - Screenshots of every changed View, before and after (send with SendUserFile and attach to the PR).

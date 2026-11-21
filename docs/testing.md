@@ -27,9 +27,17 @@ updated: 2026-11-21
 
 WebGL output differs between Windows and Linux, so baselines are **Linux-only**, stored in `e2e/__screenshots__/`, and compared **in CI**.
 
-- Locally `npm run verify` skips `@visual` tests (`test:e2e:local`). Take evidence screenshots in the browser instead and attach them to the PR.
-- When a visual change is intended: run the **update-snapshots** GitHub workflow on the PR branch; it regenerates baselines, commits them, and starts CI on the branch. Review the image diff in the PR.
+- Locally `npm run verify` skips `@visual` tests (`test:e2e:local`). For the owner's Approval card, `node scripts/screenshots.mjs <outDir>` saves every View from the running dev server (run it on `main` for "before" and on the branch for "after").
+- When a visual change is intended, the agent updates baselines itself, no owner click:
+  1. `gh workflow run update-snapshots.yml --ref <branch>` — regenerates Linux baselines and uploads them as the `baselines` artifact (it does not commit).
+  2. `gh run watch <id>`, then `gh run download <id> -n baselines -D e2e/__screenshots__`.
+  3. Commit (`test: update visual snapshot baselines`) and push. A normal push, so CI runs on the PR and attaches the `verify` check.
+  4. GitHub's image diff of the changed baselines (Files tab) is the PR's visual evidence; the owner's "looks good" on the Approval card approves it.
 - A failing visual test in CI with no intended visual change = regression.
+
+### Integrity check
+
+The first step of CI's `verify` job, `scripts/integrity-check.mjs`, fails a PR that adds `.only`/`.skip`/`.fixme`, has fewer test cases than its base, or touches a gate file (`verify`, Playwright/Vite/ESLint/TS config, workflows, Claude hooks or settings). Only the owner can allow it, by adding the `gate-change` label; git-guard stops the agent from adding it. See docs/adr/0004-owner-approval-model.md.
 
 ### Comparison tolerance
 
