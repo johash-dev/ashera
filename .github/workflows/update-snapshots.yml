@@ -1,15 +1,17 @@
 name: Update visual snapshots
 
-# Run manually on a feature branch when a visual change is intended (Actions → Update visual
-# snapshots → Run workflow → pick the branch). Regenerates Linux baselines and commits them.
-# Commits pushed by GITHUB_TOKEN don't trigger CI, so this workflow starts CI on the branch itself.
+# Regenerates the Linux @visual baselines for a feature branch and uploads them as the `baselines`
+# artifact. It does not commit: the agent downloads the artifact, commits it under the owner's
+# identity and pushes, so CI runs on the PR as usual (GITHUB_TOKEN commits don't trigger CI).
+#   gh workflow run update-snapshots.yml --ref <branch>
+#   gh run download <run-id> -n baselines -D e2e/__screenshots__
+# See docs/testing.md.
 
 on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  actions: write
+  contents: read
 
 jobs:
   update:
@@ -30,17 +32,9 @@ jobs:
         run: npx playwright test --grep @visual --update-snapshots=all
         env:
           CI: 'true'
-      - name: Commit baselines
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add e2e/__screenshots__
-          if git diff --cached --quiet; then
-            echo "Baselines unchanged."
-          else
-            git commit -m "test: update visual snapshot baselines"
-            git push
-            gh workflow run ci.yml --ref "${{ github.ref_name }}"
-          fi
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Upload baselines
+        uses: actions/upload-artifact@v4
+        with:
+          name: baselines
+          path: e2e/__screenshots__/
+          retention-days: 7

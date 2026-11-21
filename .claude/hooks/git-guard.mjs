@@ -55,6 +55,7 @@ const rules = [
   [/--no-verify\b/, 'bypassing hooks with --no-verify is not allowed — fix the failing check'],
   [/\bgit\s+(filter-branch|filter-repo)\b/, 'history rewriting is not allowed'],
   [/\bgh\s+pr\s+merge\b.*--admin\b/, '`--admin` bypasses branch protection'],
+  [/\bgh\b.*\bgate-change\b/, 'only the owner adds the `gate-change` label'],
 ];
 
 if (onMain) {

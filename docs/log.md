@@ -87,3 +87,9 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - New `/ship` (slice end to end, Approval card, merge on "looks good") and `/next`; `/implement` and `/review` stop asking engineering questions.
 - Enforced: `approval.mjs` records the owner's "looks good"; `git-guard.mjs` allows a PR merge only in auto mode (GitHub waits for checks), never bypassing protection, and only with a fresh approval; `git pull` on main must be fast-forward only. Hook tests in `.claude/hooks/hooks.test.mjs`.
 - Settings: routine git/gh commands allowed; edits to workflows, `verify`, Playwright config, hooks and settings prompt (gate changes).
+
+## [2026-11-22] decision | Harness slice 2: baselines and CI with no owner clicks
+
+- `update-snapshots` now uploads a `baselines` artifact instead of committing as the bot; the agent downloads, commits and pushes it, so CI runs on the PR normally (the bot commit on PR #6 left it with no checks).
+- New integrity check, first step of CI `verify`: fails on added `.only`/`.skip`, fewer test cases, or a touched gate file, unless the owner adds the `gate-change` label (git-guard blocks the agent from adding it). Tests: `scripts/integrity-check.test.mjs`.
+- `scripts/screenshots.mjs` saves every View for the owner's Approval card; PR evidence is GitHub's image diff of the changed baselines, no PNGs committed elsewhere.

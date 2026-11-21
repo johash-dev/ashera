@@ -13,7 +13,7 @@ description: Implement one slice of an approved spec end-to-end — branch, test
 4. **Test first for pure logic** — one failing test → minimal code to pass → refactor → next test. Never write all tests up front, never weaken a test to make it pass.
 5. **Build the rest of the slice** (scene/ui). Keep components thin; rules live in pure modules. Extend `window.__ASHERA__` and e2e tests when behaviour is observable in the app.
 6. **Verify.** `npm run verify` must print `ALL GREEN`. Fix causes, not symptoms. Don't bypass hooks.
-7. **See it.** Start the dev server (browser pane / preview) and look at every affected View (`?view=…`). Save screenshots as PR evidence. If it looks wrong, it is wrong — even with green tests.
+7. **See it.** Start the dev server (browser pane / preview) and look at every affected View (`?view=…`). Save before (on `main`) and after shots with `node scripts/screenshots.mjs <outDir>` for the Approval card; don't commit PNGs outside `e2e/__screenshots__`. If it looks wrong, it is wrong — even with green tests. Intended visual change → update baselines as `docs/testing.md` describes.
 8. **Docs.** Update docs the change affects (room-spec, architecture, glossary…), tick the spec's Done-when boxes, append a `docs/log.md` entry. `npm run docs-check` green.
 9. **Commit** in logical conventional commits, push the branch, open a PR using `.github/pull_request_template.md` — include screenshots and the honest "Not verified" section. Don't ask before committing, pushing or opening the PR. Normally this runs inside `/ship`, which reviews, merges on the owner's "looks good" and continues.
 
