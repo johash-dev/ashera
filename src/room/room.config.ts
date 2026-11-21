@@ -10,10 +10,14 @@ export const ASHERS_ROOM: Room = {
   width: 10,
   depth: 9,
   ceilingHeight: 9.5,
-  skirtingHeight: 0.3,
+  skirting: {
+    height: 0.3, // about 3½ in
+    depth: 0.05, // ⅝ in
+    placeholder: true, // depth not measured yet
+  },
   walls: {
-    thickness: 0.5, // grows outward from the interior faces
-    placeholder: true, // measure at the doorway jamb
+    thickness: 0.5, // 6 in, measured at the doorway jamb; grows outward from the interior faces
+    placeholder: false,
   },
   openings: [
     {
@@ -21,23 +25,32 @@ export const ASHERS_ROOM: Room = {
       kind: 'doorway',
       wall: 'south',
       offset: 0, // starts at the south-east corner
-      width: 3,
-      height: 7,
+      width: 37 / 12, // 3′ 1″ inside the ~1″ frame, which is drawn as part of the Wall
+      height: 43 / 12, // 7′ 2″
       sill: 0,
-      placeholder: true, // height not measured yet
+      placeholder: false,
     },
     {
       id: 'window',
       kind: 'window',
       wall: 'west',
-      offset: 2.25, // centred on the 9 ft wall
-      width: 4.5,
-      height: 4,
+      offset: 1.625, // centred on the 9 ft wall
+      width: 5.75, // 5′ 9″
+      height: 5.5, // 5′ 6″; top meets the Beam underside at 9 ft
       sill: 3.5,
-      placeholder: true,
+      placeholder: true, // sill and position not measured yet
     },
   ],
-  doors: [{ id: 'door', openingId: 'doorway', hinge: 'start', swingsInward: true }],
+  doors: [
+    {
+      id: 'door',
+      openingId: 'doorway',
+      hinge: 'start',
+      swingsInward: true,
+      thickness: 0.125, // 1½ in
+      placeholder: true, // thickness not measured yet
+    },
+  ],
   beams: {
     walls: ['west', 'south', 'east'],
     drop: 0.5,

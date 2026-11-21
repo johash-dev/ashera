@@ -33,8 +33,11 @@ Items and furniture; opening/closing the Door; clicking anything in the scene; d
 
 Changes to `Room` (`src/room/types.ts`); none is persisted, so no one-way door.
 
-- Wall names re-assigned (config values and tests). `width` = 10, `depth` = 9. Doorway on `south`, offset 0 (from the SE corner), hinge `start`; window on `west`, offset 2.25; Beams on `west`, `south`, `east`.
-- `walls: { thickness: 0.5; placeholder: true }` — new.
+- Wall names re-assigned (config values and tests). `width` = 10, `depth` = 9. Doorway on `south`, offset 0 (from the SE corner), hinge `start`; window on `west` (offset 1.625 from slice 2); Beams on `west`, `south`, `east`.
+- `walls: { thickness: 0.5; placeholder: true }` — new. Measured 6″ in slice 2 → `placeholder: false`.
+- Measured in slice 2 (room-spec.md): doorway `width` 3′ 1″ (37/12 ft), `height` 7′ 2″ (43/12 ft), measured inside its ~1″ frame; the frame is drawn as part of the Wall; `placeholder: false`. Window `width` 5′ 9″ (5.75), `height` 5′ 6″ (5.5), `offset` 1.625 (centred), `sill` 3.5 — sill and position stay `placeholder: true`.
+- `skirtingHeight` → `skirting: { height: 0.3; depth: 0.05; placeholder: true }` (depth ⅝″) — slice 2.
+- `Door` gains `thickness: 0.125` (1½″) and `placeholder: true` — slice 2. The open leaf lies flat against the east Wall.
 - `floorTile: { length: 4; width: 2; longSide: 'north-south'; placeholder: true }` — new; grid starts at the south-west corner.
 - `fittings: Fitting[]` — new. `Fitting = { id; kind: 'double-socket' | 'switch-plate' | 'data-plate' | 'ceiling-light'; surface: WallId | 'ceiling'; …position and size…; placeholder }`. Initial set from the photos: north double socket + data plate; south switch plate + double socket; ceiling light. All placeholders.
 - `validateRoom` also rejects a Fitting outside its surface.
@@ -49,7 +52,7 @@ Unit (Vitest, `src/room` and `src/scene` pure helpers):
 - `hiddenSurfaces(room, cameraPosition)` — which Walls and whether the ceiling are Cutaway.
 - `doorSwing(room, door)` — hinge point, radius (= doorway width) and the swept quarter-circle.
 - `floorTileLines(room)` — grid line positions from `floorTile`.
-- `validateRoom` — new Fitting and wall-thickness rules.
+- `validateRoom` — new Fitting, wall-thickness, skirting-depth and Door-thickness rules.
 
 E2E (Playwright, via `window.__ASHERA__`): `room`, per-Wall `pieces` and `hidden`, `beams`, `door`, `fittings`, `view`, `drawCalls` (`renderer.info.render.calls`). View buttons and `?view=`.
 
@@ -63,7 +66,8 @@ All must pass:
 - [x] Unit: `wallLength(north) = 10`, `wallLength(west) = 9`; `clearHeightAtWall(north) = 9.5`, `clearHeightAtWall(west) = 9`
 - [x] Unit: `wallPieces` gives 1 piece for north and east, 4 for west (around the window), 2 for south (around the doorway)
 - [x] Unit: `hiddenSurfaces` from the `overview` camera hides `south`, `east` and the ceiling; from a camera inside the Room hides nothing
-- [ ] Unit: `doorSwing` radius = 3 ft, hinge at the south-east corner, arc sweeps from the doorway to the east Wall
+- [x] Unit: `doorSwing` radius = 37/12 ft (3′ 1″, the doorway width), hinge at the south-east corner, arc sweeps from the doorway to the east Wall
+- [x] Unit: `validateRoom` rejects a non-positive `skirting.depth` and a non-positive Door `thickness`
 - [ ] E2E: `__ASHERA__.room` = `{ width: 10, depth: 9, ceilingHeight: 9.5 }`; `beams` = `['west', 'south', 'east']`; `door.openAngleDeg` = 90; `fittings` = 5
 - [ ] E2E: each View button (Overview, Top, Entrance, Window, Left, Right) sets `__ASHERA__.view` and the Header label; `?view=<id>` selects the same View on load
 - [ ] E2E: `drawCalls` < 100 in `overview`; no console errors in any View
@@ -76,7 +80,7 @@ All must pass:
 Each slice is one PR, leaves `verify` green, and regenerates visual baselines.
 
 1. **Tracer — walls from data.** Wall names fixed in config, tests and ADR 0001; `walls.thickness` added; floor, ceiling, four Walls with the doorway and window cut out (`wallPieces`), Beams; Cutaway (`hiddenSurfaces`); plain dark material; `PlaceholderRoom` removed; `__ASHERA__` gains `pieces`/`hidden`/`beams`.
-2. **Skirting and Door.** Skirting along every Wall, broken at the doorway; Door leaf fixed open 90° against the east Wall; faint Door swing arc (`doorSwing`); `__ASHERA__.door`.
+2. **Skirting and Door.** Measured doorway, window and wall values into config; `skirting` group and Door `thickness`; Skirting (`skirting.height` × `skirting.depth`) along every Wall, broken at the doorway; Door leaf (`thickness` thick) fixed open 90° flat against the east Wall; faint Door swing arc (`doorSwing`); `__ASHERA__.door`.
 3. **Fittings.** `fittings` in config and `validateRoom`; flat plates on Walls and ceiling at photo-estimated placeholder positions; `__ASHERA__.fittings`.
 4. **Dark look.** Final materials with the one accent colour, few lights, emissive ceiling light; window frame + dark glass; faint floor-tile lines (`floorTileLines`); `drawCalls` exposed and asserted.
 5. **Views.** `entrance`, `window`, `left`, `right` presets (camera ~5 ft high, placed and aimed from each photo); View buttons in the Header; owner photo comparison.
@@ -84,6 +88,8 @@ Each slice is one PR, leaves `verify` green, and regenerates visual baselines.
 ## Open questions
 
 - Floor-tile direction and grid start (placeholder: long side north–south, from the south-west corner).
-- Wall thickness — measure at the doorway jamb (placeholder 0.5 ft).
+- Window sill height, position along the west Wall, and whether 5′ 6″ includes its frame (placeholder sill 3.5 ft, centred).
+- Skirting depth (placeholder ⅝″) and Door leaf thickness (placeholder 1½″) — measure when convenient.
+- Whether the real open Door stops short of the east Wall on its floor door-stop (assumed flat against the Wall).
 - Fitting positions and sizes — measure before slice 3 (else photo estimates stay placeholders).
 - Where each reference photo was taken from (standing spot, facing) — the Owner confirms during slice 5.

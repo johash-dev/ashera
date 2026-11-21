@@ -32,6 +32,11 @@ test('walls are built around their openings, with beams', async ({ page }) => {
   expect(state?.beams).toEqual(['west', 'south', 'east']);
 });
 
+test('the door is fixed open at 90 degrees', async ({ page }) => {
+  await openView(page, 'overview');
+  expect(await page.evaluate(() => window.__ASHERA__?.door)).toEqual({ openAngleDeg: 90 });
+});
+
 test('cutaway hides the surfaces facing an outside camera', async ({ page }) => {
   await openView(page, 'overview');
   await page.waitForFunction(() => window.__ASHERA__?.hidden.ceiling === true);

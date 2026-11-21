@@ -32,6 +32,9 @@ export interface Door {
   readonly hinge: 'start' | 'end';
   /** The door leaf swings into the room. */
   readonly swingsInward: true;
+  /** Thickness of the door leaf. */
+  readonly thickness: number;
+  readonly placeholder: boolean;
 }
 
 export interface Beams {
@@ -50,6 +53,14 @@ export interface Walls {
   readonly placeholder: boolean;
 }
 
+export interface Skirting {
+  /** How tall the skirting board is. */
+  readonly height: number;
+  /** How far its face stands off the wall. */
+  readonly depth: number;
+  readonly placeholder: boolean;
+}
+
 export interface Room {
   readonly name: string;
   /** Interior west–east span (length of the north and south walls). */
@@ -61,5 +72,5 @@ export interface Room {
   readonly doors: readonly Door[];
   readonly beams: Beams;
   readonly walls: Walls;
-  readonly skirtingHeight: number;
+  readonly skirting: Skirting;
 }
