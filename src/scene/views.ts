@@ -24,7 +24,7 @@ export const VIEWS: Record<ViewId, CameraView> = {
   top: {
     id: 'top',
     label: 'Top-down plan',
-    position: [0, 24, 0.001],
+    position: [0, 30, 0.001],
     target: [0, 0, 0],
     fov: 40,
   },

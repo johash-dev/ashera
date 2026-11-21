@@ -30,3 +30,20 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Cause: Playwright's default per-pixel `threshold` (0.2) treats ASHERA's dark colours as equal (15% of pixels really differ, 0.26% counted). Bare `--update-snapshots` (=changed) then kept the stale baselines.
 - Fix: `threshold: 0.02` in `playwright.config.ts` (measurements in docs/testing.md); update-snapshots uses `--update-snapshots=all`.
 - Test: `e2e/visual-threshold.spec.ts` — "visual comparison catches a dark-on-dark change".
+
+## [2026-11-21] decision | Wall compass names re-assigned
+
+- TV wall (faced on entering) is now **north**; Window wall **west**; Door wall **south**; the wall the open Door rests against **east**. These are real compass directions (owner confirmed), so no ADR. Previously TV = east, Window = north, Door = west.
+- Footprint becomes 10 ft west–east × 9 ft south–north; Beams on west/south/east; no Beam on the north (TV) wall. GLOSSARY.md and room-spec.md updated; `room.config.ts`, its tests and ADR 0001's example still use the old names (to change in the Phase 1 spec).
+
+## [2026-11-21] decision | Phase 1 empty-room twin grilled
+
+- Cutaway (walls/ceiling facing an outside camera hidden); Door fixed open against the east wall with its swing arc on the floor; View buttons in the Header (`?view=` kept for tests).
+- Walls 0.5 ft thick (placeholder), growing outward; faint 4 × 2 ft floor-tile lines; window = frame + dark glass, no curtains; wall fittings drawn as flat plates at photo-estimated placeholder positions.
+- Photo Views judged by eye against docs/reference/photos; e2e checks camera positions only. Out of scope: Items, Door interaction, scene clicking, distances, lighting previews.
+
+## [2026-11-21] feature | Empty-room twin slice 1: walls from data
+
+- `room.config.ts` uses the real compass names (TV = north, Window = west, Door = south), 10 × 9 ft; `walls.thickness` added (0.5 ft placeholder, grows outward); ADR 0001 example fixed.
+- Scene builds floor, ceiling, Walls cut around their Openings (`wallPieces`) and Beams from config; `PlaceholderRoom` removed. Cutaway (`hiddenSurfaces`) re-runs whenever the camera moves; a Wall's Beam hides with it.
+- `__ASHERA__` gains `pieces`, `beams`, `hidden`. Top View camera raised from 24 to 30 ft so the thick Walls fit the frame.
