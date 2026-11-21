@@ -37,6 +37,11 @@ test('the door is fixed open at 90 degrees', async ({ page }) => {
   expect(await page.evaluate(() => window.__ASHERA__?.door)).toEqual({ openAngleDeg: 90 });
 });
 
+test('all five fittings are drawn', async ({ page }) => {
+  await openView(page, 'overview');
+  expect(await page.evaluate(() => window.__ASHERA__?.fittings)).toBe(5);
+});
+
 test('cutaway hides the surfaces facing an outside camera', async ({ page }) => {
   await openView(page, 'overview');
   await page.waitForFunction(() => window.__ASHERA__?.hidden.ceiling === true);

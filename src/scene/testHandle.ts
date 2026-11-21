@@ -16,6 +16,8 @@ export interface SceneTestState {
   beams: readonly WallId[];
   /** The Door is fixed open; angle in degrees from closed. */
   door: { openAngleDeg: number };
+  /** Number of Fittings drawn. */
+  fittings: number;
   /** Current Cutaway; updated whenever the camera moves. */
   hidden: HiddenSurfaces;
 }
