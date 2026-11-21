@@ -24,6 +24,13 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - npm on Windows omitted `yaml` and rolldown's wasm-binding deps (`@emnapi/core`, `@emnapi/runtime`) from package-lock.json; `npm ci` on Linux rejects the lock.
 - Fix: refreshed the lock and pinned both `@emnapi/*` packages (2.0.0-beta.2) as devDependencies so every OS records them. Remove once npm/rolldown fix optional-dep locking.
 
+## [2026-11-21] bug | @visual snapshots passed after the whole scene changed
+
+- Symptom: on `feat/empty-room-twin-1` the solid-wall room matched the old wireframe baselines; CI passed and update-snapshots said "Baselines unchanged."
+- Cause: Playwright's default per-pixel `threshold` (0.2) treats ASHERA's dark colours as equal (15% of pixels really differ, 0.26% counted). Bare `--update-snapshots` (=changed) then kept the stale baselines.
+- Fix: `threshold: 0.02` in `playwright.config.ts` (measurements in docs/testing.md); update-snapshots uses `--update-snapshots=all`.
+- Test: `e2e/visual-threshold.spec.ts` — "visual comparison catches a dark-on-dark change".
+
 ## [2026-11-21] decision | Wall compass names re-assigned
 
 - TV wall (faced on entering) is now **north**; Window wall **west**; Door wall **south**; the wall the open Door rests against **east**. These are real compass directions (owner confirmed), so no ADR. Previously TV = east, Window = north, Door = west.
