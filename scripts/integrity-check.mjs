@@ -17,7 +17,7 @@ import { pathToFileURL } from 'node:url';
 export const OVERRIDE_LABEL = 'gate-change';
 
 const GATE_FILES = [
-  /^scripts\/(verify|integrity-check)\.mjs$/,
+  /^scripts\/(verify\.mjs|integrity-check(\.test)?\.mjs)$/,
   /^(playwright|vite)\.config\.ts$/,
   /^eslint\.config\.js$/,
   /^tsconfig\.json$/,
@@ -28,6 +28,8 @@ const GATE_FILES = [
 const TEST_FILE = /(\.test\.(ts|tsx|mjs)|\.spec\.ts)$/;
 const SKIPPED = /\b(it|test|describe)\.(only|skip|fixme)\b|\b(xit|xdescribe|fit)\(/;
 const TEST_CASE = /\b(it|test)(\.each)?\s*\(/g;
+
+const isGateFile = (path) => GATE_FILES.some((re) => re.test(path));
 
 /** Counts test declarations in one file's source. */
 export const countTests = (source) => source.match(TEST_CASE)?.length ?? 0;
@@ -40,11 +42,12 @@ export const countTests = (source) => source.match(TEST_CASE)?.length ?? 0;
 export function findViolations({ changed, addedLines, testsBefore, testsAfter, labels }) {
   if (labels.includes(OVERRIDE_LABEL)) return [];
   const violations = [];
-  for (const path of changed.filter((p) => GATE_FILES.some((re) => re.test(p)))) {
+  for (const path of changed.filter(isGateFile)) {
     violations.push(`gate file changed: ${path}`);
   }
+  // A gate file is already flagged as a whole (and this script's own tests quote `.only` as data).
   for (const { path, line } of addedLines) {
-    if (TEST_FILE.test(path) && SKIPPED.test(line))
+    if (TEST_FILE.test(path) && !isGateFile(path) && SKIPPED.test(line))
       violations.push(`test skipped or focused in ${path}: ${line.trim()}`);
   }
   if (testsAfter < testsBefore) violations.push(`test cases dropped from ${testsBefore} to ${testsAfter}`);
