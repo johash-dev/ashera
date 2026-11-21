@@ -1,7 +1,7 @@
 # Work log
 
 Append-only, newest at the bottom. One entry per feature, bug fix, decision or refactor.
-Format: `## [YYYY-MM-DD] feature|bug|decision|refactor|docs | title`, then 1–4 bullets (what, why, links).
+Format: `## [YYYY-MM-DD] feature|bug|fix|decision|refactor|docs|chore | title`, then 1–4 bullets (what, why, links). `npm run docs-check` enforces the header.
 Recent entries: `grep "^## \[" docs/log.md | tail -5`
 
 ## [2026-11-21] decision | Concept agreed
@@ -94,6 +94,13 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - `docs/room-spec.md` gets a "Measured values" table (config path, value as measured); `src/room/measurements.test.ts` converts each and checks `room.config.ts`. With the doorway at `43 / 12` it fails on `openings.doorway.height = 7′ 2″` — the bug that passed tests and two reviews.
 - `reviewer` runs `verify --fast`, re-derives every number in the diff (unit conversions included) and starts with a verdict line.
 - `/ship` compares the after-screenshot with the matching reference photo before the Approval card; the Stop hook also lints changed script and code files.
+
+## [2026-11-22] chore | Harness slice 4: plain-language discussion and hygiene
+
+- `/grill`: plain words with terms explained inline, a recommended answer per question, restate room facts from the photos before asking, settle engineering choices without asking, then go straight to `/spec`. `/spec` and the template: "you'll see" per slice, measured-values row in Done when, `/ship` starts on approval. `/diagnose` writes its own brief from a one-sentence report.
+- git-guard judges each part of a chained command on the branch it runs on (no more "push to main" for `--base main`, or "merge to main" after `git switch feat/x`). Tests added.
+- `docs/log.md` merges with `merge=union`; `docs-check` enforces log headers (`feature|bug|fix|decision|refactor|docs|chore`).
+- Not done: Vite `strictPort: false` — the preview tool needs a fixed port, so the second launch entry (5174) stays the answer to parallel chats.
 
 ## [2026-11-22] decision | Harness slice 2: baselines and CI with no owner clicks
 

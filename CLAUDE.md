@@ -23,6 +23,7 @@ Stylized dark 3D digital twin of Asher's gaming room: React + TypeScript + Vite 
 - **Success criteria, not steps.** Turn each task into checkable outcomes and verify them.
 - **Fail loud.** Every summary ends with what was _not_ verified or was skipped. Never claim done without `verify` output.
 - Plans: terse, and end with a list of unresolved questions.
+- Talk to the owner in plain language (no code terms) — see `/grill`. Multi-line scripts go in a file under `.scratch/` (`node .scratch/x.mjs`), not inline heredocs.
 
 ## Workflow
 

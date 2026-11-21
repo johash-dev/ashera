@@ -2,3 +2,6 @@
 *.png binary
 *.jpg binary
 *.jpeg binary
+
+# Parallel branches each append to the log; keep both sides instead of conflicting.
+docs/log.md merge=union

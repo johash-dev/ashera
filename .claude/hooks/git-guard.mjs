@@ -37,9 +37,7 @@ function block(reason) {
   process.exit(2);
 }
 
-const branch = git('rev-parse --abbrev-ref HEAD');
 const hasCommits = git('rev-parse --verify HEAD') !== null;
-const onMain = hasCommits && (branch === 'main' || branch === 'master');
 
 const rules = [
   [/\bgit\s+push\b.*(\s--force\b|\s-f\b|\s--force-with-lease\b|\s\+\S)/, 'force push is not allowed'],
@@ -58,18 +56,30 @@ const rules = [
   [/\bgh\b.*\bgate-change\b/, 'only the owner adds the `gate-change` label'],
 ];
 
-if (onMain) {
-  rules.push(
-    [/\bgit\s+commit\b/, 'never commit to main — first run `git switch -c feat/<name>` as its own command'],
-    [/\bgit\s+push\b/, 'you are on main — push a feature branch instead'],
-    [/\bgit\s+rebase\b/, 'rebasing main is not allowed'],
-    [/\bgit\s+merge\b/, 'merges to main happen through PRs on GitHub'],
-    [/\bgit\s+pull\b(?!.*--ff-only)/, 'on main use `git pull --ff-only` so no merge commit is created'],
-  );
-}
+const mainRules = [
+  [/\bgit\s+commit\b/, 'never commit to main — first run `git switch -c feat/<name>`'],
+  [/\bgit\s+push\b/, 'you are on main — push a feature branch instead'],
+  [/\bgit\s+rebase\b/, 'rebasing main is not allowed'],
+  [/\bgit\s+merge\b/, 'merges to main happen through PRs on GitHub'],
+  [/\bgit\s+pull\b(?!.*--ff-only)/, 'on main use `git pull --ff-only` so no merge commit is created'],
+];
 
-for (const [pattern, reason] of rules) {
-  if (pattern.test(command)) block(reason);
+// Judge each part of a chained command on its own, on the branch it will actually run on:
+// `git switch feat/x && git merge main` merges into feat/x, and `--base main` in a later
+// `gh pr create` is not a push to main.
+let branch = git('rev-parse --abbrev-ref HEAD');
+for (const segment of command.split(/&&|\|\||;|\||\n/)) {
+  const onMain = hasCommits && (branch === 'main' || branch === 'master');
+  for (const [pattern, reason] of onMain ? [...rules, ...mainRules] : rules) {
+    if (pattern.test(segment)) block(reason);
+  }
+  const switched = /\bgit\s+(?:switch|checkout)\b((?:\s+\S+)+)/.exec(segment);
+  const target = switched?.[1]
+    ?.trim()
+    .split(/\s+/)
+    .filter((arg) => !arg.startsWith('-'))
+    .at(-1);
+  if (target && !switched[1].includes(' -- ')) branch = target;
 }
 
 if (/\bgh\s+pr\s+merge\b/.test(command)) {

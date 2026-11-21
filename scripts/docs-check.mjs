@@ -5,6 +5,7 @@
  *   1. a relative markdown link points to a file that doesn't exist
  *   2. a doc under docs/ (or a root doc) is not listed in docs/index.md
  *   3. a doc that needs front matter (docs/*.md, adr, specs) has no `status:`
+ *   4. a docs/log.md entry header has the wrong shape or an unknown type
  */
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve, sep } from 'node:path';
@@ -72,6 +73,17 @@ for (const p of mustBeIndexed.filter((p) => p.startsWith('docs/') && !NO_FRONT_M
   const text = readFileSync(join(root, p), 'utf8');
   if (!/^---\r?\n[\s\S]*?^status:\s*\S+/m.test(text))
     problems.push(`${p}: front matter needs a status field`);
+}
+
+// 4. Log headers: `## [YYYY-MM-DD] <type> | <title>` with a known type.
+const LOG_TYPES = ['feature', 'bug', 'fix', 'decision', 'refactor', 'docs', 'chore'];
+const logPath = join(root, 'docs/log.md');
+const logText = existsSync(logPath) ? readFileSync(logPath, 'utf8') : '';
+for (const header of logText.split('\n').filter((line) => line.startsWith('## '))) {
+  const match = /^## \[\d{4}-\d{2}-\d{2}\] (\w+) \| \S/.exec(header);
+  if (!match || !LOG_TYPES.includes(match[1])) {
+    problems.push(`docs/log.md: header must be "## [YYYY-MM-DD] ${LOG_TYPES.join('|')} | title": ${header}`);
+  }
 }
 
 if (problems.length) {
