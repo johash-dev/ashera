@@ -6,12 +6,14 @@ import { hiddenSurfaces } from './cutaway';
 import { Doors } from './Doors';
 import { fittingPlate } from './fittingPlates';
 import { beamBox, type Box, skirtingBoxes, wallBoxes } from './roomBoxes';
-import { reportHiddenSurfaces } from './testHandle';
+import { reportFittingsDrawn, reportHiddenSurfaces } from './testHandle';
 
 const WALL_COLOR = '#4a4c5c';
 const SKIRTING_COLOR = '#2a2c38';
 const FLOOR_COLOR = '#15161c';
 const FITTING_COLOR = '#8a8fb0';
+/** Object name of every Fitting plate, so the test handle can count what is drawn. */
+const FITTING_PLATE = 'fitting-plate';
 
 function BoxMesh({ box, material }: { box: Box; material: MeshStandardMaterial }) {
   return (
@@ -37,6 +39,7 @@ function FittingPlates({
       return (
         <mesh
           key={fitting.id}
+          name={FITTING_PLATE}
           position={[...plate.position]}
           rotation={[...plate.rotation]}
           material={material}
@@ -52,6 +55,7 @@ function FittingPlates({
  * Cutaway hides the Walls and ceiling facing the camera, with their Fittings, whenever the camera moves.
  */
 export function RoomShell({ room }: { room: Room }) {
+  const root = useRef<Group>(null);
   const walls = useRef<Partial<Record<WallId, Group>>>({});
   const ceiling = useRef<Group>(null);
 
@@ -79,6 +83,9 @@ export function RoomShell({ room }: { room: Room }) {
   const cameraTuple = useMemo<[number, number, number]>(() => [0, 0, 0], []);
   useFrame(({ camera }) => {
     if (camera.position.equals(lastCamera)) return;
+    if (Number.isNaN(lastCamera.x) && root.current) {
+      reportFittingsDrawn(root.current.getObjectsByProperty('name', FITTING_PLATE).length);
+    }
     lastCamera.copy(camera.position);
     const hidden = hiddenSurfaces(room, camera.position.toArray(cameraTuple));
     for (const wall of WALLS) {
@@ -90,7 +97,7 @@ export function RoomShell({ room }: { room: Room }) {
   });
 
   return (
-    <group>
+    <group ref={root}>
       <mesh rotation-x={-Math.PI / 2} material={materials.floor}>
         <planeGeometry args={[room.width, room.depth]} />
       </mesh>
