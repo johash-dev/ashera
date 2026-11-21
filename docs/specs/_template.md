@@ -37,15 +37,16 @@ All must pass:
 - [ ] `npm run verify` prints ALL GREEN
 - [ ] <specific, checkable outcome>
 - [ ] <specific, checkable outcome>
-- [ ] Screenshots of affected Views attached to the PR
+- [ ] Every new real-world dimension has a row in `docs/room-spec.md` "Measured values" (checked by `src/room/measurements.test.ts`)
+- [ ] Owner said "looks good" on before/after screenshots of every affected View
 - [ ] docs updated, `docs/log.md` entry added
 
 ## Slices
 
-Vertical, each shippable as its own PR. Slice 1 is the tracer bullet — thinnest end-to-end path.
+Vertical, each shippable as its own PR. Slice 1 is the tracer bullet — thinnest end-to-end path. Each slice ends with what the owner will see.
 
-1. …
-2. …
+1. … — _you'll see: <one plain sentence, which View>_
+2. … — _you'll see: …_
 
 ## Open questions
 

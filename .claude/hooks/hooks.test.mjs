@@ -30,6 +30,10 @@ describe('git-guard on main', () => {
     ['git commit -m x', 2],
     ['git push -u origin feat/x', 2],
     ['git merge feat/x', 2],
+    ['git switch -q feat/y && git merge --ff-only main', 0],
+    ['git switch -c feat/y && git commit -m x', 0],
+    ['git status && git commit -m x', 2],
+    ['git switch feat/y && git switch main && git commit -m x', 2],
   ])('%s → exit %i', (command, status) => {
     expect(guard(command)).toBe(status);
   });
@@ -43,6 +47,8 @@ describe('git-guard on a feature branch', () => {
     ['git push -u origin feat/x', 0],
     ['git push --force origin feat/x', 2],
     ['git push origin main', 2],
+    ['git push -u origin feat/x 2>&1 | tail -1 && gh pr create --base main --title t', 0],
+    ['git push -u origin feat/x; git push origin main', 2],
     ['git reset --hard HEAD', 2],
     ['git commit --no-verify -m x', 2],
     ['gh pr merge 6 --squash --auto --admin', 2],
