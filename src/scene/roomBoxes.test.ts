@@ -67,4 +67,10 @@ describe('doorLeafBox', () => {
       { position: [4.9375, 1.7917, 2.9583], size: [0.125, 3.5833, 3.0833] },
     ]);
   });
+
+  it('mirrors when the hinge is at the far end of the doorway', () => {
+    expect(rounded([doorLeafBox(ASHERS_ROOM, { ...DOOR, hinge: 'end' })])).toEqual([
+      { position: [1.9792, 1.7917, 2.9583], size: [0.125, 3.5833, 3.0833] },
+    ]);
+  });
 });

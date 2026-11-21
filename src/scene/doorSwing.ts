@@ -3,7 +3,10 @@ import { wallFrame } from './wallFrame';
 
 type Vec2 = readonly [number, number];
 
-/** The Door is fixed open at this angle; opening and closing it is out of scope for Phase 1. */
+/**
+ * The one pose the scene draws, reported as `__ASHERA__.door.openAngleDeg`. Not configurable: the leaf
+ * (`doorLeafBox`) and the swing's quarter circle are both built for exactly 90°.
+ */
 export const DOOR_OPEN_ANGLE_DEG = 90;
 
 /** Segments in the drawn arc; enough to look round at Room scale. */
@@ -40,7 +43,7 @@ export function doorSwing(room: Room, door: Door): DoorSwing {
   const closedAngle = Math.atan2(closedEnd[1] - hinge[1], closedEnd[0] - hinge[0]);
   const cross =
     (closedEnd[0] - hinge[0]) * (openEnd[1] - hinge[1]) - (closedEnd[1] - hinge[1]) * (openEnd[0] - hinge[0]);
-  const sweepRad = Math.sign(cross) * ((DOOR_OPEN_ANGLE_DEG * Math.PI) / 180);
+  const sweepRad = Math.sign(cross) * (Math.PI / 2);
   const arc = Array.from({ length: ARC_SEGMENTS + 1 }, (_, i): Vec2 => {
     const angle = closedAngle + (sweepRad * i) / ARC_SEGMENTS;
     return [hinge[0] + radius * Math.cos(angle), hinge[1] + radius * Math.sin(angle)];
