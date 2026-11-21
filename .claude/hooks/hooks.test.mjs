@@ -54,6 +54,7 @@ describe('git-guard on a feature branch', () => {
     ['gh pr merge 6 --squash --auto --admin', 2],
     ['gh pr merge 6 --squash', 2],
     ['echo {} > .claude/.state/approval.json', 2],
+    ['gh pr edit 8 --add-label gate-change', 2],
   ])('%s → exit %i', (command, status) => {
     expect(guard(command)).toBe(status);
   });

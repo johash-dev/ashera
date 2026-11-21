@@ -35,7 +35,8 @@ Feature: `/grill` → `/spec` (owner approves) → `/ship` per slice: implement 
 - Never commit to `main`; branch `feat/…`, `fix/…`, `docs/…` or `chore/…`, conventional commits, PR to `main`.
 - One-way doors (saved-layout schema, device control, new dependencies, coordinate system) need an ADR in `docs/adr/` and the owner's explicit approval.
 - After any feature, bug fix or decision, append an entry to `docs/log.md`.
-- Visual changes: attach screenshots of affected views to the PR. Snapshot baselines update only via the `update-snapshots` workflow.
+- Visual changes: before/after screenshots of every View (`node scripts/screenshots.mjs`) go on the owner's Approval card. Baselines update only via the `update-snapshots` workflow artifact, committed by you (`docs/testing.md`).
+- Never weaken a gate (tests, thresholds, `verify`, workflows, hooks, settings) without the owner: CI's integrity check fails unless the owner adds the `gate-change` label.
 
 ## Topic docs
 

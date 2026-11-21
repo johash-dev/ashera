@@ -2,9 +2,10 @@ name: CI
 
 on:
   pull_request:
+    # labeled/unlabeled: re-run when the owner adds or removes `gate-change`.
+    types: [opened, synchronize, reopened, labeled, unlabeled]
   push:
     branches: [main]
-  # Started by update-snapshots after it commits new baselines (bot pushes don't trigger CI).
   workflow_dispatch:
 
 concurrency:
@@ -17,10 +18,20 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
+      # Inside the required `verify` job on purpose: a separate failing job would skip `verify`,
+      # and GitHub treats a skipped required check as passing.
+      - name: Integrity (no weakened gates without the owner's gate-change label)
+        if: ${{ github.event_name == 'pull_request' }}
+        run: node scripts/integrity-check.mjs
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - name: Verify (typecheck, lint, docs, unit, build, e2e incl. @visual)
