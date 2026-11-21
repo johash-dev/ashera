@@ -13,7 +13,7 @@ All room measurements were taken in feet. Every module (room, editor, scene, per
 
 - **Units:** feet, everywhere — config, geometry, scene and saved Layouts. 1 three.js unit = 1 ft.
 - **Origin:** centre of the floor.
-- **Axes:** +x east, +y up, +z south (so the north/window wall is at −z). Right-handed, three.js default up.
+- **Axes:** +x east, +y up, +z south (so the north/TV wall is at −z). Right-handed, three.js default up.
 - **Walls** run clockwise viewed from above (north NW→NE, east NE→SE, south SE→SW, west SW→NW); an opening's `offset` is measured from its wall's start corner.
 
 ## Consequences

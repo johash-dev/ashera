@@ -1,5 +1,8 @@
 import type { Opening, Room, WallId } from './types';
 
+/** Every Wall, in compass order. */
+export const WALLS: readonly WallId[] = ['north', 'east', 'south', 'west'];
+
 /** Interior length of a wall. */
 export function wallLength(room: Room, wall: WallId): number {
   return wall === 'north' || wall === 'south' ? room.width : room.depth;
@@ -41,6 +44,9 @@ export function validateRoom(room: Room): string[] {
   }
   if (room.beams.drop >= room.ceilingHeight) {
     problems.push('Beam drop must be less than the ceiling height.');
+  }
+  if (room.walls.thickness <= 0) {
+    problems.push('Wall thickness must be positive.');
   }
 
   const ids = new Set<string>();

@@ -7,16 +7,20 @@ import type { Room } from './types';
  */
 export const ASHERS_ROOM: Room = {
   name: "Asher's gaming room",
-  width: 9,
-  depth: 10,
+  width: 10,
+  depth: 9,
   ceilingHeight: 9.5,
   skirtingHeight: 0.3,
+  walls: {
+    thickness: 0.5, // grows outward from the interior faces
+    placeholder: true, // measure at the doorway jamb
+  },
   openings: [
     {
       id: 'doorway',
       kind: 'doorway',
-      wall: 'west',
-      offset: 0, // starts at the south-west corner
+      wall: 'south',
+      offset: 0, // starts at the south-east corner
       width: 3,
       height: 7,
       sill: 0,
@@ -25,7 +29,7 @@ export const ASHERS_ROOM: Room = {
     {
       id: 'window',
       kind: 'window',
-      wall: 'north',
+      wall: 'west',
       offset: 2.25, // centred on the 9 ft wall
       width: 4.5,
       height: 4,
@@ -35,7 +39,7 @@ export const ASHERS_ROOM: Room = {
   ],
   doors: [{ id: 'door', openingId: 'doorway', hinge: 'start', swingsInward: true }],
   beams: {
-    walls: ['north', 'west', 'south'],
+    walls: ['west', 'south', 'east'],
     drop: 0.5,
     depth: 0.75,
     placeholder: true, // depth not measured yet

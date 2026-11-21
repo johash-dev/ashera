@@ -44,6 +44,12 @@ export interface Beams {
   readonly placeholder: boolean;
 }
 
+export interface Walls {
+  /** Wall thickness; walls grow outward from the interior faces, so the interior is unchanged. */
+  readonly thickness: number;
+  readonly placeholder: boolean;
+}
+
 export interface Room {
   readonly name: string;
   /** Interior west–east span (length of the north and south walls). */
@@ -54,5 +60,6 @@ export interface Room {
   readonly openings: readonly Opening[];
   readonly doors: readonly Door[];
   readonly beams: Beams;
+  readonly walls: Walls;
   readonly skirtingHeight: number;
 }

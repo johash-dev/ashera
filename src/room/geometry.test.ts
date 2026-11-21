@@ -8,21 +8,21 @@ describe("Asher's room config", () => {
     expect(validateRoom(ASHERS_ROOM)).toEqual([]);
   });
 
-  it('matches the measured footprint (9 ft × 10 ft, 9.5 ft ceiling)', () => {
-    expect(wallLength(ASHERS_ROOM, 'north')).toBe(9);
-    expect(wallLength(ASHERS_ROOM, 'east')).toBe(10);
+  it('matches the measured footprint (10 ft × 9 ft, 9.5 ft ceiling)', () => {
+    expect(wallLength(ASHERS_ROOM, 'north')).toBe(10);
+    expect(wallLength(ASHERS_ROOM, 'west')).toBe(9);
     expect(ASHERS_ROOM.ceilingHeight).toBe(9.5);
   });
 
-  it('has no beam on the east (TV) wall', () => {
-    expect(clearHeightAtWall(ASHERS_ROOM, 'east')).toBe(9.5);
-    expect(clearHeightAtWall(ASHERS_ROOM, 'north')).toBe(9);
+  it('has no beam on the north (TV) wall', () => {
+    expect(clearHeightAtWall(ASHERS_ROOM, 'north')).toBe(9.5);
+    expect(clearHeightAtWall(ASHERS_ROOM, 'west')).toBe(9);
   });
 });
 
 describe('floorBounds', () => {
   it('centres the footprint on the origin', () => {
-    expect(floorBounds(ASHERS_ROOM)).toEqual({ minX: -4.5, maxX: 4.5, minZ: -5, maxZ: 5 });
+    expect(floorBounds(ASHERS_ROOM)).toEqual({ minX: -5, maxX: 5, minZ: -4.5, maxZ: 4.5 });
   });
 });
 
@@ -35,7 +35,7 @@ describe('validateRoom', () => {
         {
           id: 'w',
           kind: 'window',
-          wall: 'north',
+          wall: 'west',
           offset: 6,
           width: 4,
           height: 2,
@@ -54,7 +54,7 @@ describe('validateRoom', () => {
         {
           id: 'w',
           kind: 'window',
-          wall: 'north',
+          wall: 'west',
           offset: 1,
           width: 2,
           height: 6,
@@ -100,5 +100,10 @@ describe('validateRoom', () => {
       doors: [{ id: 'd', openingId: 'nope', hinge: 'start', swingsInward: true }],
     };
     expect(validateRoom(room).some((p) => p.includes('missing opening'))).toBe(true);
+  });
+
+  it('rejects a wall thickness that is not positive', () => {
+    const room: Room = { ...ASHERS_ROOM, walls: { thickness: 0, placeholder: false } };
+    expect(validateRoom(room).some((p) => p.includes('thickness'))).toBe(true);
   });
 });
