@@ -87,6 +87,13 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - New `/ship` (slice end to end, Approval card, merge on "looks good") and `/next`; `/implement` and `/review` stop asking engineering questions.
 - Enforced: `approval.mjs` records the owner's "looks good"; `git-guard.mjs` allows a PR merge only in auto mode (GitHub waits for checks), never bypassing protection, and only with a fresh approval; `git pull` on main must be fast-forward only. Hook tests in `.claude/hooks/hooks.test.mjs`.
 - Settings: routine git/gh commands allowed; edits to workflows, `verify`, Playwright config, hooks and settings prompt (gate changes).
+- Tracer: PR #6 (doorway fix) merged through the gate on the owner's "looks good" — one owner reply, no GitHub clicks.
+
+## [2026-11-22] decision | Harness slice 3: correctness the owner can't eyeball
+
+- `docs/room-spec.md` gets a "Measured values" table (config path, value as measured); `src/room/measurements.test.ts` converts each and checks `room.config.ts`. With the doorway at `43 / 12` it fails on `openings.doorway.height = 7′ 2″` — the bug that passed tests and two reviews.
+- `reviewer` runs `verify --fast`, re-derives every number in the diff (unit conversions included) and starts with a verdict line.
+- `/ship` compares the after-screenshot with the matching reference photo before the Approval card; the Stop hook also lints changed script and code files.
 
 ## [2026-11-22] chore | Harness slice 4: plain-language discussion and hygiene
 

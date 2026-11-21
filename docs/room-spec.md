@@ -9,6 +9,26 @@ The **numbers** live in [`src/room/room.config.ts`](../src/room/room.config.ts) 
 
 Sources: [hand sketch](reference/room-sketch.jpeg), [top-view floor plan](reference/floor-plan-top-view.png), [photos](reference/photos/).
 
+## Measured values (checked by tests)
+
+Every real measurement, written as measured. `src/room/measurements.test.ts` converts each one to feet and fails if `room.config.ts` disagrees, so a wrong conversion (like 7′ 2″ entered as 43 in) can't pass. Add a row whenever a placeholder gets measured. The first column is the config path; a list entry is picked by its `id`.
+
+<!-- measurements:start -->
+
+| Config path               | Measured |
+| ------------------------- | -------- |
+| `width`                   | 10′      |
+| `depth`                   | 9′       |
+| `ceilingHeight`           | 9′ 6″    |
+| `walls.thickness`         | 6″       |
+| `openings.doorway.width`  | 3′ 1″    |
+| `openings.doorway.height` | 7′ 2″    |
+| `openings.window.width`   | 5′ 9″    |
+| `openings.window.height`  | 5′ 6″    |
+| `beams.drop`              | 6″       |
+
+<!-- measurements:end -->
+
 ## Layout (top view)
 
 Wall names are **real compass directions** (north is geographic north).
