@@ -18,3 +18,8 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Vite + React + R3F skeleton with module boundaries; room config + `validateRoom` with tests.
 - `npm run verify`, husky pre-commit, Playwright e2e + Linux visual baselines in CI.
 - CLAUDE.md, glossary, standards, ADRs 0001–0003, Claude Code hooks/skills/reviewer agent.
+
+## [2026-11-21] bug | CI `npm ci` failed: lock file missing Linux-only optional deps
+
+- npm on Windows omitted `yaml` and rolldown's wasm-binding deps (`@emnapi/core`, `@emnapi/runtime`) from package-lock.json; `npm ci` on Linux rejects the lock.
+- Fix: refreshed the lock and pinned both `@emnapi/*` packages (2.0.0-beta.2) as devDependencies so every OS records them. Remove once npm/rolldown fix optional-dep locking.

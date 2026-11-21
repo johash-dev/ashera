@@ -2,13 +2,14 @@ name: Update visual snapshots
 
 # Run manually on a feature branch when a visual change is intended (Actions → Update visual
 # snapshots → Run workflow → pick the branch). Regenerates Linux baselines and commits them.
-# Commits pushed by GITHUB_TOKEN don't retrigger CI — re-run the PR's CI job afterwards.
+# Commits pushed by GITHUB_TOKEN don't trigger CI, so this workflow starts CI on the branch itself.
 
 on:
   workflow_dispatch:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   update:
@@ -37,4 +38,7 @@ jobs:
           else
             git commit -m "test: update visual snapshot baselines"
             git push
+            gh workflow run ci.yml --ref "${{ github.ref_name }}"
           fi
+        env:
+          GH_TOKEN: ${{ github.token }}

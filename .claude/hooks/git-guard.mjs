@@ -41,7 +41,7 @@ const rules = [
 
 if (onMain) {
   rules.push(
-    [/\bgit\s+commit\b/, 'never commit to main — create a branch first: git switch -c feat/<name>'],
+    [/\bgit\s+commit\b/, 'never commit to main — first run `git switch -c feat/<name>` as its own command'],
     [/\bgit\s+push\b/, 'you are on main — push a feature branch instead'],
     [/\bgit\s+rebase\b/, 'rebasing main is not allowed'],
     [/\bgit\s+merge\b/, 'merges to main happen through PRs on GitHub'],
