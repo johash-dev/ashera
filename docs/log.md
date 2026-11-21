@@ -80,3 +80,10 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Cause: `doorway.height` in `room.config.ts` was `43 / 12` (3.58 ft) although the comment and `docs/room-spec.md` say 7′ 2″ = 86 in; slice 2 (PR #4) converted 43 in, not 86 in, and the tests pinned the wrong value.
 - Fix: `height: 86 / 12`; pinned values in `geometry.test.ts`, `wallPieces.test.ts`, `roomBoxes.test.ts` corrected (header 2.3333 ft tall, Door leaf 7.1667 ft tall). `validateRoom(ASHERS_ROOM)` still empty (test: "has the measured doorway (3′ 1″ × 7′ 2″) and window (5′ 9″ × 5′ 6″)").
 - @visual baselines need regenerating via the `update-snapshots` workflow.
+
+## [2026-11-22] decision | Harness slice 1: owner approves intent and the look, the agent merges
+
+- Retro of 9 sessions + research (Karpathy, Pocock, Huntley, Anthropic, Willison, Beck): the owner was pulled in for merges, snapshot runs, CI re-runs, review-fix choices and "what's next?". ADR 0004 limits owner asks to intent, the look, one-way doors, real-world facts and gate changes.
+- New `/ship` (slice end to end, Approval card, merge on "looks good") and `/next`; `/implement` and `/review` stop asking engineering questions.
+- Enforced: `approval.mjs` records the owner's "looks good"; `git-guard.mjs` allows a PR merge only in auto mode (GitHub waits for checks), never bypassing protection, and only with a fresh approval; `git pull` on main must be fast-forward only. Hook tests in `.claude/hooks/hooks.test.mjs`.
+- Settings: routine git/gh commands allowed; edits to workflows, `verify`, Playwright config, hooks and settings prompt (gate changes).

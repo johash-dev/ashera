@@ -26,6 +26,7 @@ Only for hard-to-reverse, surprising decisions with a real trade-off.
 - [0001 — Units and coordinate system](adr/0001-units-and-coordinates.md)
 - [0002 — Layouts in browser storage with JSON export](adr/0002-layouts-in-browser-storage.md)
 - [0003 — No backend until a phase needs one](adr/0003-no-backend-until-needed.md)
+- [0004 — The owner approves intent and the look; the agent does the engineering](adr/0004-owner-approval-model.md)
 
 ## Specs
 
