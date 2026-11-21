@@ -47,3 +47,15 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - `room.config.ts` uses the real compass names (TV = north, Window = west, Door = south), 10 × 9 ft; `walls.thickness` added (0.5 ft placeholder, grows outward); ADR 0001 example fixed.
 - Scene builds floor, ceiling, Walls cut around their Openings (`wallPieces`) and Beams from config; `PlaceholderRoom` removed. Cutaway (`hiddenSurfaces`) re-runs whenever the camera moves; a Wall's Beam hides with it.
 - `__ASHERA__` gains `pieces`, `beams`, `hidden`. Top View camera raised from 24 to 30 ft so the thick Walls fit the frame.
+
+## [2026-11-21] decision | Doorway, window, wall and skirting measurements grilled
+
+- Measured: Doorway 7′ 2″ × 3′ 1″ inside its ~1″ frame (frame drawn as part of the Wall, so the Door swing radius becomes 3′ 1″); window 5′ 9″ wide × 5′ 6″ tall; Walls 6″ (0.5 ft) thick.
+- Placeholders: skirting depth ⅝″ (0.05 ft; height stays 0.3 ft); Door leaf thickness 1½″ (0.125 ft); window sill 3.5 ft (top meets the Beam underside at 9 ft) and centred on the west Wall.
+- Recorded in docs/room-spec.md; `room.config.ts` changes in the next slice.
+
+## [2026-11-21] feature | Empty-room twin slice 2: skirting and Door
+
+- Measured doorway (3′ 1″ × 7′ 2″), window (5′ 9″ × 5′ 6″, centred, offset 1.625) and 6″ Walls now in `room.config.ts`; `skirtingHeight` became `skirting { height, depth, placeholder }`; `Door` gained `thickness` and `placeholder`; `validateRoom` rejects non-positive skirting depth/height and Door thickness.
+- `skirtingRuns` (room) breaks Skirting wherever an Opening reaches below its top (the doorway, not the window); the scene draws it inside each Wall's group so Cutaway hides it with its Wall. `doorSwing` gives the hinge, 3′ 1″ radius and quarter-circle arc; the Door leaf is fixed open 90° flat against the east Wall with a faint arc on the floor. `wallFrame` moved out of `roomBoxes.ts` so both share it.
+- `__ASHERA__.door.openAngleDeg` added. Skirting and leaf use plain placeholder colours until the dark look (slice 4).

@@ -49,9 +49,12 @@ TV 55" or 65" (undecided — compare in the app) on the north wall; TV stand 8 f
 
 Placeholders are flagged `placeholder: true` in the config.
 
-- [ ] Doorway height (placeholder 7 ft)
-- [ ] Window width, height, sill and position (placeholder 4.5 × 4 ft, sill 3.5 ft, centred)
+- [x] Doorway height 7′ 2″ and width 3′ 1″, inside the frame (measured 2026-11-21; in the config). The frame is about 1″ and is drawn as part of the Wall.
+- [x] Window width 5′ 9″ and height 5′ 6″ (measured 2026-11-21; in the config)
+- [ ] Window sill height and position along the west wall (placeholder sill 3.5 ft — top then meets the Beam underside at 9 ft — and centred, offset 1′ 7½″)
 - [ ] Beam depth from each wall (placeholder 0.75 ft)
 - [ ] Socket, switch and ceiling-light positions
-- [ ] Wall thickness, at the doorway jamb (placeholder 0.5 ft)
+- [x] Wall thickness 6″ = 0.5 ft, at the doorway jamb (measured 2026-11-21; in the config)
+- [ ] Door leaf thickness (placeholder 1½″ = 0.125 ft)
+- [ ] Skirting depth — how far its face stands off the wall tiles (placeholder ⅝ in = 0.05 ft; height 0.3 ft ≈ 3½ in)
 - [ ] Floor-tile direction and where the grid starts (placeholder: long side north–south, from the south-west corner)
