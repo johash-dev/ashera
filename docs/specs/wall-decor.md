@@ -1,5 +1,5 @@
 ---
-status: in-progress # draft | approved | in-progress | done | superseded
+status: done # draft | approved | in-progress | done | superseded
 updated: 2026-11-23
 phase: 2
 ---
@@ -72,7 +72,7 @@ All must pass:
 - [x] The three frames' backs are on the south wall face, centred on the sofa, bottom at 4 ft, above the sofa's top, clear of the Fittings, same spot with either sofa (unit + e2e)
 - [x] Draw calls stay < 100 in every View (e2e)
 - [x] No new Room measurements, so no new "Measured values" rows (stated in the log entry)
-- [ ] Owner said "looks good" on before/after screenshots of every View (plus `overview` with the L-shaped sofa)
+- [x] Owner said "looks good" on before/after screenshots of every View (plus `overview` with the L-shaped sofa)
 - [x] docs updated (architecture if the editor's role changes, GLOSSARY, room-spec "Planned items"), `docs/log.md` entry added
 
 ## Slices

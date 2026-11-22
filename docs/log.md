@@ -246,3 +246,9 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Drawn as a black body with dark art inset in front and a thin accent-violet line across the art (placeholder art); three boxes per frame. Draw calls stay under the budget in every View.
 - All three slices are in; the spec is marked done once the owner approves this slice.
 - No new Room measurements, so no new "Measured values" rows.
+
+## [2026-11-23] decision | Wall décor spec done
+
+- Slice 3 merged (#28) after the owner's "looks good"; all three slices (#26–#28) went through Approval cards with before/after screenshots. All Done-when items checked.
+- Changes the owner asked for on the cards: none.
+- Still open: real sizes for the pegboard, headphones, shelf and frames (typical until measured); the pegboard's holes are not drawn; real pictures for the frames (later feature).
