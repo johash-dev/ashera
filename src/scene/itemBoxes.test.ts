@@ -4,6 +4,7 @@ import { type Item, starterArrangement } from '../editor';
 import {
   chairBoxes,
   deskBoxes,
+  frameBoxes,
   headphonesBoxes,
   keyboardBoxes,
   monitorBoxes,
@@ -372,5 +373,35 @@ describe('headphonesBoxes', () => {
     expect((north ?? 0) + (south ?? 0)).toBeCloseTo(2 * HEADPHONES.position[2]);
     for (const cup of cups) expect(cup.position[1] + cup.size[1] / 2).toBeLessThanOrEqual(band.position[1]);
     expect(hook.position[0]).toBeGreaterThan(band.position[0]); // towards the wall (east)
+  });
+});
+
+// A picture frame on the south wall (z = 4.5), facing north.
+const FRAME: Item = {
+  id: 'frame-1',
+  type: 'frame',
+  position: [-2, 4.75, 4.5 - 1 / 24],
+  size: [1, 1.5, 1 / 12],
+  facing: 'north',
+};
+
+describe('frameBoxes', () => {
+  it('keeps the body, art and accent line within the Item box', () => {
+    const { body, art, line } = frameBoxes(FRAME);
+    const box = { position: FRAME.position, size: [1, 1.5, 1 / 12] as const };
+    for (const part of [body, art, line]) expect(within(part, box)).toBe(true);
+  });
+
+  it('puts the art on the frame’s front, north of the frame body, leaving a border', () => {
+    const { body, art } = frameBoxes(FRAME);
+    expect(art.position[2]).toBeLessThan(body.position[2]);
+    expect(art.size[0]).toBeLessThan(FRAME.size[0]);
+    expect(art.size[1]).toBeLessThan(FRAME.size[1]);
+  });
+
+  it('puts the accent line across the art, in front of it', () => {
+    const { art, line } = frameBoxes(FRAME);
+    expect(line.position[2]).toBeLessThan(art.position[2]);
+    expect(line.size[0]).toBeLessThan(art.size[0]);
   });
 });

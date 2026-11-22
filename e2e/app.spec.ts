@@ -63,6 +63,9 @@ test('the TV stand is drawn at its real size, hung on the TV wall, with the 55�
     'pegboard',
     'headphones',
     'shelf',
+    'frame',
+    'frame',
+    'frame',
   ]);
   expect(items?.[0]).toEqual({
     type: 'tv-stand',
@@ -112,6 +115,29 @@ test('the headphones and shelf hang on the pegboard’s front face, headphones n
   expect(shelf?.position[2]).toBeCloseTo(-1.4375 + 4 / 3); // south third
   expect(shelf?.position[1]).toBeCloseTo(5.5);
   expect([headphones?.facing, shelf?.facing]).toEqual(['west', 'west']);
+});
+
+const framesOnPage = (page: Page) =>
+  page.evaluate(() =>
+    window.__ASHERA__?.items
+      .filter((item) => item.type === 'frame')
+      .map(({ size, position, facing }) => ({ size, position, facing })),
+  );
+
+test('three frames hang on the south wall above the sofa, in the same spot with either sofa', async ({
+  page,
+}) => {
+  await openView(page, 'overview');
+  const compact = await framesOnPage(page);
+  // 1 × 1½ ft × 1 in, bottom edge 4 ft up, backs on the south wall (z = 4.5), centred on the sofa (x = -2.25).
+  expect(compact).toHaveLength(3);
+  expect(compact?.[1]?.position[0]).toBeCloseTo(-2.25);
+  expect(compact?.[1]?.position[1]).toBeCloseTo(4.75);
+  expect(compact?.[1]?.position[2]).toBeCloseTo(4.5 - 1 / 24);
+  expect(compact?.[0]?.facing).toBe('north');
+  await page.goto('/?view=overview&sofa=l');
+  await page.waitForFunction(() => window.__ASHERA__?.ready === true);
+  expect(await framesOnPage(page)).toEqual(compact);
 });
 
 const tvWidth = (page: Page) =>

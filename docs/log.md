@@ -239,3 +239,10 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Catalog gains the headphones (7 × 8 × 3½ in, hung on a hook) and a small pegboard shelf (12 × 1 × 4 in), both typical placeholders. `wallDecorItems` stands them on the pegboard's front face: headphones in its north third (Asher's left as he sits), top ½ ft below the board's top; shelf in its south third at the board's mid-height. Unit tests: right Catalog size, on the board's face and within its outline, which third each sits in, shelf at mid-height; the starter arrangement's checks run over them for every TV size and sofa.
 - Drawn from simple boxes: headphones as a band, two cups and a hook; the shelf as one board. Near-black, lighter than the board so they read.
 - No new Room measurements, so no new "Measured values" rows.
+
+## [2026-11-23] feature | Wall décor slice 3: three picture frames
+
+- Catalog gains the picture frame (1 ft × 1½ ft × 1 in, typical placeholder). `wallDecorItems` hangs three on the south wall, facing north, backs on the wall face, bottom edge 4 ft up (above the sofa's 2½ ft top), 6 in apart, the middle one centred on the sofa's long side; the same spot for both sofas. Unit tests per sofa: Catalog size, wall face, height, spacing, centred on the sofa, below the Beam, clear of both south-wall Fittings. An e2e checks the spot and that `?sofa=l` leaves the frames unchanged.
+- Drawn as a black body with dark art inset in front and a thin accent-violet line across the art (placeholder art); three boxes per frame. Draw calls stay under the budget in every View.
+- All three slices are in; the spec is marked done once the owner approves this slice.
+- No new Room measurements, so no new "Measured values" rows.

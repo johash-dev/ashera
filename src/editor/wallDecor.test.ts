@@ -3,6 +3,7 @@ import { ASHERS_ROOM, clearHeightAtWall, floorBounds } from '../room';
 import { CATALOG } from './catalog';
 import { deskItems } from './desk';
 import { clearOfDoorSwing, itemBox } from './items';
+import { SOFA_CHOICES, sofaItems } from './sofa';
 import { wallDecorItems } from './wallDecor';
 
 const pegboard = () => {
@@ -104,5 +105,54 @@ describe('wallDecorItems: where the pegboard things hang', () => {
   it('puts the shelf at the mid-height of the pegboard', () => {
     const shelf = decor('shelf');
     expect((shelf.bottom + shelf.top) / 2).toBeCloseTo((edges().bottom + edges().top) / 2);
+  });
+});
+
+const frames = () => wallDecorItems(ASHERS_ROOM).filter((i) => i.type === 'frame');
+
+describe.each(SOFA_CHOICES)('wallDecorItems: the picture frames above the %s sofa', (sofa) => {
+  const sofaLong = () => {
+    const found = sofaItems(ASHERS_ROOM, sofa).find((i) => i.id === 'sofa');
+    if (!found) throw new Error('no sofa');
+    return itemBox(found);
+  };
+  const boxes = () => frames().map(itemBox);
+
+  it('has three frames of the Catalog size, facing north', () => {
+    expect(frames()).toHaveLength(3);
+    for (const frame of frames()) {
+      expect(frame.size).toEqual(CATALOG.frame.size);
+      expect(frame.facing).toBe('north');
+    }
+  });
+
+  it('hangs them on the south wall face, bottom 4 ft up, above the sofa', () => {
+    const { maxZ } = floorBounds(ASHERS_ROOM);
+    for (const { position, size } of boxes()) {
+      expect(position[2] + size[2] / 2).toBeCloseTo(maxZ);
+      expect(position[1] - size[1] / 2).toBeCloseTo(4);
+    }
+    const sofaTop = sofaLong().position[1] + sofaLong().size[1] / 2;
+    expect(4).toBeGreaterThan(sofaTop);
+  });
+
+  it('spaces them 6 in apart in a row centred on the sofa', () => {
+    const [a, b, c] = boxes().sort((p, q) => p.position[0] - q.position[0]);
+    if (!a || !b || !c) throw new Error('expected three frames');
+    expect(b.position[0]).toBeCloseTo(sofaLong().position[0]);
+    expect(b.position[0] - a.position[0]).toBeCloseTo(c.position[0] - b.position[0]);
+    expect(b.position[0] - a.position[0] - a.size[0]).toBeCloseTo(0.5);
+  });
+
+  it('stays below the Beam and clear of every south wall Fitting', () => {
+    const { maxX } = floorBounds(ASHERS_ROOM);
+    const row = boxes();
+    for (const { position, size } of row)
+      expect(position[1] + size[1] / 2).toBeLessThan(clearHeightAtWall(ASHERS_ROOM, 'south'));
+    for (const fitting of ASHERS_ROOM.fittings.filter((f) => f.surface === 'south')) {
+      const plateX = maxX - fitting.centre[0]; // measured from the south-east corner
+      for (const { position, size } of row)
+        expect(Math.abs(position[0] - plateX)).toBeGreaterThan((size[0] + fitting.size[0]) / 2);
+    }
   });
 });
