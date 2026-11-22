@@ -226,3 +226,10 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Changes the owner asked for on the cards: none. On slice 2 the owner noted the gaming chair's position and look will be revisited when Layouts arrive (roadmap feature 4).
 - Spec correction made in slice 4: the L-shaped sofa's short side is 2 × 2½ × 3 ft (2 ft along the window wall, 3 ft deep).
 - Still open: product sizes for the desk, monitor, tower, chair, sofas and rug (all typical); the L's corner has no back along the window wall; whether the chair should stand on the rug.
+
+## [2026-11-23] feature | Wall décor slice 1: pegboard
+
+- Spec `wall-decor` written and approved after a grill: pegboard with headphones and shelf above the desk, three frames above the sofa, typical sizes, dark placeholder art.
+- Catalog gains the pegboard (4 ft × 2 ft × 1 in, typical, placeholder). `wallDecorItems` hangs it on the east wall face, facing west, centred on the desk, bottom edge 4½ ft up (above the monitor's top, below the Beam). Unit tests for its size, place, height and Door swing; the starter arrangement's inside-Room, below-Beam, no-overlap and Door-swing checks run over it for every TV size and sofa. `__ASHERA__.items` lists it; an e2e checks its spot.
+- Drawn as one flat black box. In the overview the open Door leaf hides most of it; it shows clearly in the right-from-entrance and entrance Views.
+- No new Room measurements, so no new "Measured values" rows.

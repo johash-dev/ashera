@@ -78,7 +78,13 @@ The rest of the Room (grill, 2026-11-22):
 - **Sofa:** low back (about 2½ ft, below the window sill), slim arms, dark charcoal fabric. Two options to compare with a switch, like the TV size: a compact 2–3 seater (about 5½ × 3 ft) on the south wall from the window corner, facing the TV; or an L-shaped corner sofa, about 5½ ft along the south wall and 5 ft up the window wall, 3 ft deep, its short leg below the window sill and about 2½ ft short of the TV stand.
 - **Gaming chair** at the desk (typical, about 2½ × 2½ ft) and a **dark rug** (about 5 × 3½ ft) between the sofa and the TV.
 - Fixed in place for now, like the TV wall; moving furniture comes later as its own feature.
-- Also wanted, planned later: lamps (lighting), a pegboard, wall picture frames.
+- Also wanted, planned later: lamps (lighting).
+
+Wall décor (grill, 2026-11-23; all sizes typical until measured):
+
+- **Pegboard:** black, 4 ft wide × 2 ft tall, on the east wall above the desk, centred on it, bottom edge about 4½ ft up (just above the monitor top). Headphones on a hook and a small shelf hang on it.
+- **Picture frames:** three black portrait frames, each 1 ft wide × 1½ ft tall, on the south wall, evenly spaced and centred over the compact sofa, hung about 4 ft up. Same spot with the L-shaped sofa. Plain dark placeholder art for now; real pictures are a later feature.
+- Everything stays below the Beam underside (9 ft) and clear of the open Door leaf, which rests against the east wall's south end.
 
 ## Still to measure
 

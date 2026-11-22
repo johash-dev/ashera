@@ -34,6 +34,8 @@ export const LOOK = {
   sofaCushion: '#2b2d3c',
   /** Rug: dark, with a faint violet cast, a shade lighter than the floor so its edge reads. */
   rug: '#2a2840',
+  /** Pegboard: a black board that stands out against the lighter wall tiles. */
+  pegboard: '#15161d',
   /** Slat panel: black slats a shade lighter than the felt behind them, so the ribs read. */
   slat: '#17181f',
   slatBacking: '#050507',

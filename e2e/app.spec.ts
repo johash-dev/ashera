@@ -60,6 +60,7 @@ test('the TV stand is drawn at its real size, hung on the TV wall, with the 55�
     'gaming-chair',
     'sofa-compact',
     'rug',
+    'pegboard',
   ]);
   expect(items?.[0]).toEqual({
     type: 'tv-stand',
@@ -80,6 +81,17 @@ test('the desk stands against the east wall, facing west, between the TV stand a
   const desk = await page.evaluate(() => window.__ASHERA__?.items.find((item) => item.type === 'desk'));
   // 2 ft deep off the east wall (x = 5), its 4 ft run starting at the TV stand's front (z = -3.4375).
   expect(desk).toEqual({ type: 'desk', size: [4, 2.5, 2], position: [4, 1.25, -1.4375], facing: 'west' });
+});
+
+test('the pegboard hangs on the east wall above the desk, facing west', async ({ page }) => {
+  await openView(page, 'right');
+  const board = await page.evaluate(() => window.__ASHERA__?.items.find((item) => item.type === 'pegboard'));
+  // 4 × 2 ft, 1 in deep off the east wall (x = 5), centred on the desk (z = -1.4375), bottom edge 4½ ft up.
+  expect(board?.size).toEqual([4, 2, 1 / 12]);
+  expect(board?.position[0]).toBeCloseTo(5 - 1 / 24);
+  expect(board?.position[1]).toBeCloseTo(5.5);
+  expect(board?.position[2]).toBeCloseTo(-1.4375);
+  expect(board?.facing).toBe('west');
 });
 
 const tvWidth = (page: Page) =>
