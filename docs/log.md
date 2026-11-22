@@ -115,3 +115,10 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Window: four frame bars and one dark pane (`windowBoxes`), centred in the Wall; new `windowFrame` in config (placeholder). Floor-tile joints from `floorTileLines` (`floorTile` in config, placeholder), drawn as one line set.
 - `__ASHERA__.drawCalls` (previous frame's `renderer.info.render.calls`): 19 in `overview`; e2e asserts < 100.
 - Noticed: the frame's top and left bars hide inside the Wall reveal from `overview`; they show head-on in the slice 5 window View. "No console errors in any View" is only checked for `overview` until slice 5 adds the other Views.
+
+## [2026-11-22] feature | Empty-room twin slice 5: Views
+
+- Photo Views `entrance`, `window`, `left`, `right` at eye height (5 ft), fov 65°, standpoints estimated from `docs/reference/photos` (owner confirms on the Approval card). View buttons in the Header; `CameraRig` moves camera and orbit target on a View change.
+- Canvas now `frameloop="demand"` (docs/r3f.md): with full-screen photo Views and six parallel e2e workers on software WebGL, continuous rendering starved the CPU and e2e timed out (even the non-WebGL swatch test took 41 s). Draw calls are now read after each rendered frame (`addAfterEffect`).
+- Look tweaks seen in the photo Views: the ceiling light's cast light moved below the Beams; window glass rougher (the light's reflection read as a moon).
+- Photos are portrait, the app landscape: each View matches the photo's height and aim, but shows more to the sides.

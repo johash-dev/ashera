@@ -18,7 +18,7 @@ Vocabulary only — one line per term. Use these words in code, docs and convers
 | **Skirting**     | Dark trim along the bottom of every wall; its depth is how far it stands off the wall face.                               |
 | **Fitting**      | A fixed electrical point in the Room: socket, switch plate, data plate or ceiling light.                                  |
 | **Cutaway**      | Hiding the Walls and ceiling that face an outside camera, so the Room's inside stays visible.                             |
-| **View**         | A preset camera position (e.g. overview, top), selected with `?view=`.                                                    |
+| **View**         | A preset camera position (overview, top, or a reference-photo standpoint), picked with a Header button or `?view=`.       |
 | **Item**         | A placeable piece of furniture or equipment in the Twin (Phase 2).                                                        |
 | **Catalog**      | The set of Item types Asher can place (Phase 2).                                                                          |
 | **Layout**       | A named arrangement of Items in the Room; saved and loaded as a whole (Phase 2).                                          |
