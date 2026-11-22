@@ -135,3 +135,10 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Phase 2 starts with the props, not the controls: the owner wants the furniture pieces built first and moving them left to a later phase. The first feature is the TV wall (`docs/specs/tv-wall.md`, 4 slices), based on the owner's sketch and a mood picture shared in chat.
 - Agreed: a floating black stand (8 × 1.5 × 1 ft, hung 6 in off the floor), the TV on its own feet on the stand (the owner chose this over wall-mounting twice, although the picture shows the TV on the wall), a top-bar 55″/65″ switch, the PS5 upright on the left, a soundbar, and a Slat panel over the whole TV wall with cut-outs for its Fittings. The controller, the plant and the green under-glow come later.
 - No new Room measurements. TV, PS5, soundbar and slat sizes are typical sizes until the owner names product models.
+
+## [2026-11-22] feature | TV wall slice 1: the TV stand
+
+- The `editor` module is live: `CATALOG` with the TV stand (8 × 1.5 × 1 ft, two doors, from the owner's sketch) and `tvWallItems(room)`, the starter arrangement — the stand centred on the TV wall, its back against the Wall, underside 0.5 ft and top 2 ft above the floor.
+- Drawn as a near-black body with two door fronts a shade lighter (`standBoxes`, colours in `look.ts`); the first, all-black version hid the doors in every View. `__ASHERA__.items` lists type, size and centre of each Item drawn.
+- No new Room measurements, so no new "Measured values" rows. The low TV socket is hidden behind the stand, as the spec expected.
+- Door-swing and Item-to-Item checks wait for slice 3, when there is more than one Item on the north Wall; the stand stands about 4.9 ft clear of the Door swing.

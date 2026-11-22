@@ -1,6 +1,6 @@
 ---
 status: active
-updated: 2026-11-21
+updated: 2026-11-22
 ---
 
 # Architecture
@@ -9,14 +9,14 @@ updated: 2026-11-21
 
 Each folder in `src/` is a module with one public entry point, `index.ts`. Other modules import only that entry (`../room`, never `../room/geometry`) — ESLint enforces it. Inside a module, structure is free.
 
-| Module        | Owns                                                                                                          | May import       |
-| ------------- | ------------------------------------------------------------------------------------------------------------- | ---------------- |
-| `room`        | Room types, the measured config, pure geometry and invariants. No React, no three.js.                         | —                |
-| `editor`      | (Phase 2) Catalog, Item placement, snapping, collision, Door-swing clearance, editor state. Pure logic first. | `room`           |
-| `persistence` | (Phase 2) Layout save/load in browser storage, JSON export/import, schema versioning.                         | `room`, `editor` |
-| `scene`       | Everything rendered with React Three Fiber: room meshes, Items, lighting, camera Views.                       | `room`, `editor` |
-| `ui`          | HTML overlay: HUD, panels, controls. No 3D.                                                                   | `room`, `editor` |
-| `devices`     | (Phase 4, not created yet) Device state and the Home Assistant connection.                                    | `room`           |
+| Module        | Owns                                                                                                                                         | May import       |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| `room`        | Room types, the measured config, pure geometry and invariants. No React, no three.js.                                                        | —                |
+| `editor`      | Catalog and the starter arrangement (live); later Item placement, snapping, collision, Door-swing clearance, editor state. Pure logic first. | `room`           |
+| `persistence` | (Phase 2) Layout save/load in browser storage, JSON export/import, schema versioning.                                                        | `room`, `editor` |
+| `scene`       | Everything rendered with React Three Fiber: room meshes, Items, lighting, camera Views.                                                      | `room`, `editor` |
+| `ui`          | HTML overlay: HUD, panels, controls. No 3D.                                                                                                  | `room`, `editor` |
+| `devices`     | (Phase 4, not created yet) Device state and the Home Assistant connection.                                                                   | `room`           |
 
 `App.tsx` composes the modules; `main.tsx` mounts the app.
 
