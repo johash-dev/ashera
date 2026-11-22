@@ -9,6 +9,9 @@ export const LOOK = {
   windowGlass: '#10142a',
   /** Brown wood of the Door leaf, as in docs/reference/photos. */
   doorWood: '#7a4a28',
+  /** The floating TV stand: near-black body, its doors a shade lighter so the seams show. */
+  standBody: '#101016',
+  standDoor: '#262838',
   /** Soft white of the ceiling panel light and the light it casts. */
   ceilingLight: '#e8e6ff',
   /** The one accent colour, shared with the Header (--accent in styles.css): the floor-tile joints. */
