@@ -7,7 +7,7 @@
 import { mkdirSync } from 'node:fs';
 import { chromium } from '@playwright/test';
 
-const VIEWS = ['overview', 'top']; // ViewId in src/scene/views.ts
+const VIEWS = ['overview', 'top', 'entrance', 'window', 'left', 'right']; // ViewId in src/scene/views.ts
 const [outDir = '.scratch/screens', baseUrl = 'http://localhost:5173'] = process.argv.slice(2);
 
 mkdirSync(outDir, { recursive: true });

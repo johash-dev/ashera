@@ -1,13 +1,22 @@
+import { useState } from 'react';
 import { ASHERS_ROOM } from './room';
-import { SceneCanvas, viewFromSearch } from './scene';
+import { cameraViews, isViewId, SceneCanvas, VIEW_ORDER, viewFromSearch } from './scene';
 import { Header } from './ui';
 
+const VIEWS = cameraViews(ASHERS_ROOM);
+
 export function App() {
-  const view = viewFromSearch(window.location.search);
+  const [view, setView] = useState(() => viewFromSearch(VIEWS, window.location.search));
   return (
     <div className="app">
       <SceneCanvas room={ASHERS_ROOM} view={view} />
-      <Header viewLabel={view.label} />
+      <Header
+        views={VIEW_ORDER.map((id) => VIEWS[id])}
+        currentId={view.id}
+        onSelect={(id) => {
+          if (isViewId(id)) setView(VIEWS[id]);
+        }}
+      />
     </div>
   );
 }

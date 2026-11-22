@@ -42,6 +42,55 @@ test('all five fittings are drawn', async ({ page }) => {
   await expect.poll(() => page.evaluate(() => window.__ASHERA__?.fittings)).toBe(5);
 });
 
+const VIEWS = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'top', label: 'Top-down plan' },
+  { id: 'entrance', label: 'Entrance' },
+  { id: 'window', label: 'Window' },
+  { id: 'left', label: 'Left' },
+  { id: 'right', label: 'Right' },
+];
+
+for (const { id, label } of VIEWS) {
+  test(`?view=${id} loads the ${label} View with no console errors`, async ({ page }) => {
+    const errors = await openView(page, id);
+    await expect(page.getByTestId('view-label')).toHaveText(label);
+    expect(await page.evaluate(() => window.__ASHERA__?.view)).toBe(id);
+    await expect.poll(() => page.evaluate(() => window.__ASHERA__?.drawCalls)).toBeGreaterThan(0);
+    expect(errors).toEqual([]);
+  });
+}
+
+test('each View button switches the View and the Header label', async ({ page }) => {
+  const errors = await openView(page, 'overview');
+  for (const { id, label } of [...VIEWS].reverse()) {
+    await page.getByRole('button', { name: label, exact: true }).click();
+    await expect(page.getByTestId('view-label')).toHaveText(label);
+    expect(await page.evaluate(() => window.__ASHERA__?.view)).toBe(id);
+    await expect(page.getByRole('button', { name: label, exact: true })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+  }
+  expect(errors).toEqual([]);
+});
+
+test('switching View keeps the room facts, such as the drawn fittings', async ({ page }) => {
+  await openView(page, 'overview');
+  await expect.poll(() => page.evaluate(() => window.__ASHERA__?.fittings)).toBe(5);
+  await page.getByRole('button', { name: 'Window', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => window.__ASHERA__?.view)).toBe('window');
+  expect(await page.evaluate(() => window.__ASHERA__?.fittings)).toBe(5);
+});
+
+test('the photo Views stand inside the Room, so Cutaway hides nothing', async ({ page }) => {
+  await openView(page, 'overview');
+  await page.getByRole('button', { name: 'Window', exact: true }).click();
+  await expect
+    .poll(() => page.evaluate(() => window.__ASHERA__?.hidden))
+    .toEqual({ walls: [], ceiling: false });
+});
+
 test('the scene stays within the draw-call budget', async ({ page }) => {
   const errors = await openView(page, 'overview');
   await expect.poll(() => page.evaluate(() => window.__ASHERA__?.drawCalls)).toBeGreaterThan(0);
@@ -51,20 +100,20 @@ test('the scene stays within the draw-call budget', async ({ page }) => {
 
 test('cutaway hides the surfaces facing an outside camera', async ({ page }) => {
   await openView(page, 'overview');
-  await page.waitForFunction(() => window.__ASHERA__?.hidden.ceiling === true);
+  await page.waitForFunction(() => window.__ASHERA__?.hidden?.ceiling === true);
   expect(await page.evaluate(() => window.__ASHERA__?.hidden)).toEqual({
     walls: ['east', 'south'],
     ceiling: true,
   });
 
   await openView(page, 'top');
-  await page.waitForFunction(() => window.__ASHERA__?.hidden.ceiling === true);
-  expect(await page.evaluate(() => window.__ASHERA__?.hidden.walls)).toEqual([]);
+  await page.waitForFunction(() => window.__ASHERA__?.hidden?.ceiling === true);
+  expect(await page.evaluate(() => window.__ASHERA__?.hidden?.walls)).toEqual([]);
 });
 
 test('cutaway follows the camera while orbiting', async ({ page }) => {
   await openView(page, 'overview');
-  await page.waitForFunction(() => window.__ASHERA__?.hidden.ceiling === true);
+  await page.waitForFunction(() => window.__ASHERA__?.hidden?.ceiling === true);
   const canvas = page.getByTestId('scene-canvas').locator('canvas');
   const box = await canvas.boundingBox();
   if (!box) throw new Error('canvas has no bounding box');
@@ -73,11 +122,11 @@ test('cutaway follows the camera while orbiting', async ({ page }) => {
   await page.mouse.move(box.x + box.width / 2 + 400, box.y + box.height / 2, { steps: 10 });
   await page.mouse.up();
   await expect
-    .poll(() => page.evaluate(() => window.__ASHERA__?.hidden.walls))
+    .poll(() => page.evaluate(() => window.__ASHERA__?.hidden?.walls))
     .not.toEqual(['east', 'south']);
 });
 
-for (const view of ['overview', 'top']) {
+for (const view of ['overview', 'top', 'entrance', 'window', 'left', 'right']) {
   test(`${view} view matches baseline @visual`, async ({ page }) => {
     await openView(page, view);
     await page.waitForTimeout(500); // let the first frames settle

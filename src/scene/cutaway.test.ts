@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { ASHERS_ROOM } from '../room';
 import { hiddenSurfaces } from './cutaway';
-import { VIEWS } from './views';
+import { cameraViews } from './views';
+
+const VIEWS = cameraViews(ASHERS_ROOM);
 
 describe('hiddenSurfaces', () => {
   it('hides the walls and ceiling facing the overview camera', () => {

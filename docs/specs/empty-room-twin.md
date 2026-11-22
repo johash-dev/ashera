@@ -71,8 +71,8 @@ All must pass:
 - [x] Unit: `validateRoom` rejects a non-positive `skirting.depth` and a non-positive Door `thickness`
 - [x] Unit: `validateRoom` rejects a Fitting past the end of its Wall, above its clear height, or outside the ceiling
 - [x] E2E: `__ASHERA__.room` = `{ width: 10, depth: 9, ceilingHeight: 9.5 }`; `beams` = `['west', 'south', 'east']`; `door.openAngleDeg` = 90; `fittings` = 5
-- [ ] E2E: each View button (Overview, Top, Entrance, Window, Left, Right) sets `__ASHERA__.view` and the Header label; `?view=<id>` selects the same View on load
-- [ ] E2E: `drawCalls` < 100 in `overview`; no console errors in any View
+- [x] E2E: each View button (Overview, Top, Entrance, Window, Left, Right) sets `__ASHERA__.view` and the Header label; `?view=<id>` selects the same View on load
+- [x] E2E: `drawCalls` < 100 in `overview`; no console errors in any View
 - [ ] Owner judges `entrance`, `window`, `left` and `right` screenshots side by side with the matching `docs/reference/photos/` image and approves them in the PR
 - [ ] Screenshots of affected Views attached to each PR
 - [ ] room-spec.md, architecture.md (if module APIs change) and `docs/log.md` updated per slice

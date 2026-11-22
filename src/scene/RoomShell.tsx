@@ -1,4 +1,4 @@
-import { useFrame } from '@react-three/fiber';
+import { addAfterEffect, useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
 import { type Group, MeshStandardMaterial, Vector3 } from 'three';
 import { type Fitting, floorTileLines, type Room, type WallId, WALLS } from '../room';
@@ -17,8 +17,8 @@ import { reportDrawCalls, reportFittingsDrawn, reportHiddenSurfaces } from './te
 
 /** Lifts the floor-tile joints just off the floor so they do not z-fight with it. */
 const TILE_LINE_LIFT = 0.01;
-/** The cast light sits this far below its panel, so the panel itself is not inside it. */
-const CEILING_LIGHT_DROP = 0.3;
+/** The cast light sits this far below the Beam undersides, so it lights them as well. */
+const LIGHT_BELOW_BEAMS = 1;
 /** Object name of every Fitting plate, so the test handle can count what is drawn. */
 const FITTING_PLATE = 'fitting-plate';
 
@@ -104,7 +104,7 @@ export function RoomShell({ room }: { room: Room }) {
         emissiveIntensity: CEILING_LIGHT_GLOW,
       }),
       windowFrame: new MeshStandardMaterial({ color: LOOK.windowFrame }),
-      windowGlass: new MeshStandardMaterial({ color: LOOK.windowGlass, roughness: 0.15 }),
+      windowGlass: new MeshStandardMaterial({ color: LOOK.windowGlass, roughness: 0.7 }),
     }),
     [],
   );
@@ -121,11 +121,14 @@ export function RoomShell({ room }: { room: Room }) {
     [materials],
   );
 
+  // Draw calls are counted after each frame is rendered (frames are drawn on demand only).
+  const gl = useThree((state) => state.gl);
+  useEffect(() => addAfterEffect(() => reportDrawCalls(gl.info.render.calls)), [gl]);
+
   // Re-run Cutaway only when the camera has moved; NaN forces the first frame through.
   const lastCamera = useMemo(() => new Vector3(NaN, NaN, NaN), []);
   const cameraTuple = useMemo<[number, number, number]>(() => [0, 0, 0], []);
-  useFrame(({ camera, gl }) => {
-    reportDrawCalls(gl.info.render.calls); // calls of the previous frame
+  useFrame(({ camera }) => {
     if (camera.position.equals(lastCamera)) return;
     if (Number.isNaN(lastCamera.x) && root.current) {
       reportFittingsDrawn(root.current.getObjectsByProperty('name', FITTING_PLATE).length);
@@ -149,11 +152,11 @@ export function RoomShell({ room }: { room: Room }) {
       {room.fittings
         .filter((fitting) => fitting.kind === 'ceiling-light')
         .map((fitting) => {
-          const [x, y, z] = fittingPlate(room, fitting).position;
+          const [x, , z] = fittingPlate(room, fitting).position;
           return (
             <pointLight
               key={fitting.id}
-              position={[x, y - CEILING_LIGHT_DROP, z]}
+              position={[x, room.ceilingHeight - room.beams.drop - LIGHT_BELOW_BEAMS, z]}
               color={LOOK.ceilingLight}
               intensity={CEILING_LIGHT_INTENSITY}
               distance={CEILING_LIGHT_RANGE}

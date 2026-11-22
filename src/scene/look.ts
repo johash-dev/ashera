@@ -7,6 +7,8 @@ export const LOOK = {
   fitting: '#8a8fb0',
   windowFrame: '#5c6080',
   windowGlass: '#10142a',
+  /** Brown wood of the Door leaf, as in docs/reference/photos. */
+  doorWood: '#7a4a28',
   /** Soft white of the ceiling panel light and the light it casts. */
   ceilingLight: '#e8e6ff',
   /** The one accent colour, shared with the Header (--accent in styles.css): the floor-tile joints. */
