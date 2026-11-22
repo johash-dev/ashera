@@ -530,7 +530,7 @@ describe('chairBoxes', () => {
     for (const stripe of stripes) {
       expect(stripe.position[0]).toBeGreaterThan(back.position[0] + back.size[0] / 2 - 1e-9);
     }
-    expect(stripes.map((stripe) => Math.sign(stripe.position[2]))).toEqual([-1, 1]);
+    expect(stripes.map((stripe) => Math.sign(stripe.position[2] - CHAIR.position[2]))).toEqual([-1, 1]);
   });
 });
 

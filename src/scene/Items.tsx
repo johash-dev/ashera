@@ -67,9 +67,10 @@ function MergedBoxes({ boxes, material }: { boxes: readonly DrawnBox[]; material
 function DeskMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
   const { top, legs, rails } = useMemo(() => deskBoxes(item), [item]);
   const frame = useMemo(() => [...legs, ...rails], [legs, rails]);
+  const topBoxes = useMemo(() => [top], [top]);
   return (
     <>
-      <MergedBoxes boxes={[top]} material={materials.deskTop} />
+      <MergedBoxes boxes={topBoxes} material={materials.deskTop} />
       <MergedBoxes boxes={frame} material={materials.deskLeg} />
     </>
   );
