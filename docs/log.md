@@ -165,5 +165,6 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - `SLAT_PANEL` in the Catalog (1 in slats, ½ in gaps, ¾ in deep overall: ¼ in felt backing plus ½ in slats; ½ in clearance round each Fitting; placeholder). `slatPanelSlats` / `slatPanelBacking` give 80 slat columns centred corner to corner on the TV wall, floor to ceiling, each broken around the cut-outs from `slatPanelCutouts` (one per TV-wall Fitting).
 - Drawn as two instanced meshes (`SlatPanel.tsx`): black slats a shade lighter than the felt so the ribs read. Draw calls: 33 in `overview`, 38 in `entrance` (budget < 100).
 - Every Item now stands off the panel face: the stand's back moved ¾ in forward (centre z −4 → −3.9375; the e2e expectation changed with it). The TV, PS5 and soundbar move with the stand.
-- The data plate shows through its cut-out, set back ¾ in behind the slat faces. The slats at each end run up inside the east and west Beams, which hide them.
+- The data plate shows through its cut-out, set back ¾ in behind the slat faces. Under the east and west Beams the slats stop at the Beam underside (9 ft).
+- Review found Cutaway left the panel standing when the north Wall hid (camera north of the Room); `RoomShell` now takes `wallContents`, drawn inside each Wall's group, and the panel is the north Wall's. Checked by orbiting behind the TV wall; no automated test for it.
 - No new Room measurements, so no new "Measured values" rows.
