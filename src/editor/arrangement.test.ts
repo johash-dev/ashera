@@ -7,7 +7,7 @@ import { TV_SIZES } from './tvWall';
 describe.each(TV_SIZES)('starterArrangement with the %i″ TV', (tvSize) => {
   const items = starterArrangement(ASHERS_ROOM, tvSize);
 
-  it('has the TV wall and the desk', () => {
+  it('has the TV wall, the desk and its setup', () => {
     expect(items.map((i) => i.type)).toContain('tv-stand');
     expect(items.map((i) => i.type)).toContain('desk');
   });
