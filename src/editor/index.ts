@@ -9,5 +9,7 @@ export type { ItemType, ItemTypeId, Size } from './catalog';
 export { starterArrangement } from './arrangement';
 export { clearOfDoorSwing, itemBox, itemsIntersect } from './items';
 export type { Facing, Item, ItemBox } from './items';
+export { sofaFromSearch, SOFA_CHOICES } from './sofa';
+export type { SofaChoice } from './sofa';
 export { tvSizeFromSearch, tvWallItems } from './tvWall';
 export type { TvSize } from './tvWall';

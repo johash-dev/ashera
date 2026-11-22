@@ -2,13 +2,17 @@ import { describe, expect, it } from 'vitest';
 import { ASHERS_ROOM, clearHeightAtWall, floorBounds, WALLS } from '../room';
 import { starterArrangement } from './arrangement';
 import { clearOfDoorSwing, itemBox, itemsIntersect } from './items';
+import { SOFA_CHOICES, sofaItems } from './sofa';
 import { TV_SIZES } from './tvWall';
 
-describe.each(TV_SIZES)('starterArrangement with the %i″ TV', (tvSize) => {
-  const items = starterArrangement(ASHERS_ROOM, tvSize);
+const COMBINATIONS = TV_SIZES.flatMap((tvSize) => SOFA_CHOICES.map((sofa) => [tvSize, sofa] as const));
+
+describe.each(COMBINATIONS)('starterArrangement with the %i″ TV and the %s sofa', (tvSize, sofa) => {
+  const items = starterArrangement(ASHERS_ROOM, tvSize, sofa);
 
   it('has the TV wall, the desk and its setup, and the sofa', () => {
     const types = items.map((i) => i.type);
+    const sofaTypes = sofaItems(ASHERS_ROOM, sofa).map((i) => i.type);
     for (const type of [
       'tv-stand',
       'desk',
@@ -17,7 +21,7 @@ describe.each(TV_SIZES)('starterArrangement with the %i″ TV', (tvSize) => {
       'keyboard',
       'mouse',
       'gaming-chair',
-      'sofa-compact',
+      ...sofaTypes,
     ])
       expect(types).toContain(type);
   });

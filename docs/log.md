@@ -202,3 +202,11 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Drawn from a base, a low back, two slim arms and two seat cushions (`sofaBoxes`); charcoal frame with slightly lighter cushions.
 - Owner on the slice 2 card: the chair looks fine for now; its position and look will be revisited when Layouts arrive (feature 4).
 - No new Room measurements, so no new "Measured values" rows.
+
+## [2026-11-23] feature | Desk and sofa slice 4: L-shaped sofa and the sofa switch
+
+- Sofa choice (`compact` or `l`) is app state like the TV size: a Header button ("Sofa: compact / L-shaped"), `?sofa=compact|l` (`sofaFromSearch`), and `window.__ASHERA__.sofa`. `starterArrangement` takes it.
+- The L-shaped sofa is two Items: the long side (5½ × 2½ × 3 ft, same spot as the compact sofa) and a short side on the window wall face facing east, touching the long side's front. Spec correction: the short side is 2 ft along the wall × 3 ft deep (the spec table said 3 × 2); that is what makes the 5 ft up the window wall overall (3 + 2) and matches "3 ft deep" in docs/room-spec.md. Unit tests: both sofas × both TV sizes stay inside the Room, clear of each other and the Door swing; every sofa piece is below the window sill.
+- Drawn with one `sofaBoxes` for all three pieces: arms only at the free ends (the L's two sides join at the corner), one cushion on the narrow short side. Draw calls with the L: 47–74 across the Views (budget < 100).
+- New `overview-sofa-l` visual baseline (spec: one extra baseline at `?sofa=l`).
+- No new Room measurements, so no new "Measured values" rows.

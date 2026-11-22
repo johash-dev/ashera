@@ -7,6 +7,7 @@ import {
   keyboardBoxes,
   monitorBoxes,
   ps5Boxes,
+  sofaArmSides,
   sofaBoxes,
   soundbarBoxes,
   standBoxes,
@@ -41,6 +42,22 @@ function BoxMesh({ box, material }: { box: Box; material: MeshStandardMaterial }
     <mesh position={[...box.position]} material={material}>
       <boxGeometry args={[...box.size]} />
     </mesh>
+  );
+}
+
+function SofaMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
+  const { base, back, arms, cushions } = sofaBoxes(item, sofaArmSides(item.type));
+  return (
+    <>
+      <BoxMesh box={base} material={materials.sofaFrame} />
+      <BoxMesh box={back} material={materials.sofaFrame} />
+      {arms.map((box, i) => (
+        <BoxMesh key={i} box={box} material={materials.sofaFrame} />
+      ))}
+      {cushions.map((box, i) => (
+        <BoxMesh key={i} box={box} material={materials.sofaCushion} />
+      ))}
+    </>
   );
 }
 
@@ -134,21 +151,10 @@ function ItemMeshes({ item, materials }: { item: Item; materials: ItemMaterials 
     }
     case 'mouse':
       return <BoxMesh box={itemBox(item)} material={materials.deviceTrim} />;
-    case 'sofa-compact': {
-      const { base, back, arms, cushions } = sofaBoxes(item);
-      return (
-        <>
-          <BoxMesh box={base} material={materials.sofaFrame} />
-          <BoxMesh box={back} material={materials.sofaFrame} />
-          {arms.map((box, i) => (
-            <BoxMesh key={i} box={box} material={materials.sofaFrame} />
-          ))}
-          {cushions.map((box, i) => (
-            <BoxMesh key={i} box={box} material={materials.sofaCushion} />
-          ))}
-        </>
-      );
-    }
+    case 'sofa-compact':
+    case 'sofa-l-long':
+    case 'sofa-l-short':
+      return <SofaMeshes item={item} materials={materials} />;
     case 'gaming-chair': {
       const { base, column, seat, back, arms } = chairBoxes(item);
       return (

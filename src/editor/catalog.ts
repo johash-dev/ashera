@@ -13,7 +13,9 @@ export type ItemTypeId =
   | 'keyboard'
   | 'mouse'
   | 'gaming-chair'
-  | 'sofa-compact';
+  | 'sofa-compact'
+  | 'sofa-l-long'
+  | 'sofa-l-short';
 
 /** An Item type Asher can place: its name and real size. */
 export interface ItemType {
@@ -102,6 +104,18 @@ export const CATALOG: Readonly<Record<ItemTypeId, ItemType>> = {
     id: 'sofa-compact',
     name: 'Compact sofa',
     size: [5.5, 2.5, 3], // agreed in the grill: low back, slim arms, typical 2–3 seater
+    placeholder: true,
+  },
+  'sofa-l-long': {
+    id: 'sofa-l-long',
+    name: 'L-shaped sofa, long side',
+    size: [5.5, 2.5, 3], // agreed in the grill
+    placeholder: true,
+  },
+  'sofa-l-short': {
+    id: 'sofa-l-short',
+    name: 'L-shaped sofa, short side',
+    size: [2, 2.5, 3], // 2 ft along the window wall past the long side's 3 ft depth: 5 ft overall
     placeholder: true,
   },
 };

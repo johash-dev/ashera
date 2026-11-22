@@ -1,4 +1,4 @@
-import { type TvSize } from '../editor';
+import { type SofaChoice, type TvSize } from '../editor';
 
 export interface ViewOption {
   readonly id: string;
@@ -11,6 +11,8 @@ export function Header({
   onSelect,
   tvSize,
   onToggleTvSize,
+  sofa,
+  onToggleSofa,
 }: {
   views: readonly ViewOption[];
   currentId: string;
@@ -18,6 +20,9 @@ export function Header({
   /** TV size shown, in inches. */
   tvSize: TvSize;
   onToggleTvSize: () => void;
+  /** Sofa shown. */
+  sofa: SofaChoice;
+  onToggleSofa: () => void;
 }) {
   const current = views.find((view) => view.id === currentId);
   return (
@@ -48,6 +53,15 @@ export function Header({
         onClick={onToggleTvSize}
       >
         TV {tvSize}″
+      </button>
+      <button
+        type="button"
+        className="hud-view-button hud-sofa-button"
+        data-testid="sofa-choice"
+        title="Switch the sofa between the compact one and the L-shaped one"
+        onClick={onToggleSofa}
+      >
+        Sofa: {sofa === 'compact' ? 'compact' : 'L-shaped'}
       </button>
     </header>
   );

@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { type Item } from '../editor';
+import { ASHERS_ROOM } from '../room';
+import { type Item, starterArrangement } from '../editor';
 import {
   chairBoxes,
   deskBoxes,
   keyboardBoxes,
   monitorBoxes,
   ps5Boxes,
+  sofaArmSides,
   sofaBoxes,
   soundbarBoxes,
   standBoxes,
@@ -161,6 +163,39 @@ function within(inner: Box, outer: Box): boolean {
   });
 }
 
+describe('sofaArmSides', () => {
+  const armCentres = (choice: 'compact' | 'l') =>
+    starterArrangement(ASHERS_ROOM, 55, choice)
+      .filter((item) => item.type.startsWith('sofa'))
+      .map((item) => ({
+        item,
+        arms: sofaBoxes(item, sofaArmSides(item.type)).arms,
+      }));
+
+  it('puts arms at both ends of the compact sofa', () => {
+    const compact = armCentres('compact')[0];
+    if (!compact) throw new Error('no compact sofa');
+    const { item, arms } = compact;
+    expect(arms).toHaveLength(2);
+    expect(Math.min(...arms.map((a) => a.position[0]))).toBeLessThan(item.position[0]);
+    expect(Math.max(...arms.map((a) => a.position[0]))).toBeGreaterThan(item.position[0]);
+  });
+
+  it('puts the L’s long-side arm at its east end, away from the corner', () => {
+    const long = armCentres('l').find(({ item }) => item.type === 'sofa-l-long');
+    if (!long) throw new Error('no long side');
+    expect(long.arms).toHaveLength(1);
+    expect(long.arms[0]?.position[0]).toBeGreaterThan(long.item.position[0]);
+  });
+
+  it('puts the L’s short-side arm at its north end, away from the corner', () => {
+    const short = armCentres('l').find(({ item }) => item.type === 'sofa-l-short');
+    if (!short) throw new Error('no short side');
+    expect(short.arms).toHaveLength(1);
+    expect(short.arms[0]?.position[2]).toBeLessThan(short.item.position[2]);
+  });
+});
+
 describe('sofaBoxes', () => {
   // The compact sofa on the south wall, facing north: its back is on the south side.
   const SOFA: Item = {
@@ -171,15 +206,16 @@ describe('sofaBoxes', () => {
     facing: 'north',
   };
   const box = { position: SOFA.position, size: SOFA.size };
+  const BOTH_ARMS = [-1, 1] as const;
 
   it('keeps every part within the Item box, the back reaching its full height', () => {
-    const { base, back, arms, cushions } = sofaBoxes(SOFA);
+    const { base, back, arms, cushions } = sofaBoxes(SOFA, BOTH_ARMS);
     for (const part of [base, back, ...arms, ...cushions]) expect(within(part, box)).toBe(true);
     expect(back.position[1] + back.size[1] / 2).toBeCloseTo(2.5);
   });
 
   it('puts the back behind the cushions (south), between the arms, and the arms lower than the back', () => {
-    const { back, arms, cushions } = sofaBoxes(SOFA);
+    const { back, arms, cushions } = sofaBoxes(SOFA, BOTH_ARMS);
     for (const cushion of cushions) expect(back.position[2]).toBeGreaterThan(cushion.position[2]);
     for (const arm of arms)
       expect(arm.position[1] + arm.size[1] / 2).toBeLessThan(back.position[1] + back.size[1] / 2);
@@ -190,7 +226,7 @@ describe('sofaBoxes', () => {
   });
 
   it('sits two cushions side by side on the base, between the arms', () => {
-    const { base, arms, cushions } = sofaBoxes(SOFA);
+    const { base, arms, cushions } = sofaBoxes(SOFA, BOTH_ARMS);
     expect(cushions).toHaveLength(2);
     for (const cushion of cushions) {
       expect(cushion.position[1] - cushion.size[1] / 2).toBeCloseTo(base.position[1] + base.size[1] / 2);
@@ -200,6 +236,20 @@ describe('sofaBoxes', () => {
     if (!left || !right || !c1 || !c2) throw new Error('expected two arms and two cushions');
     const west = Math.min(c1.position[0], c2.position[0]) - c1.size[0] / 2;
     expect(west).toBeGreaterThanOrEqual(left.position[0] + left.size[0] / 2 - 1e-9);
+  });
+
+  it('with one arm, puts it at that end and widens the seat to the other', () => {
+    const left = sofaBoxes(SOFA, [-1]);
+    const both = sofaBoxes(SOFA, BOTH_ARMS);
+    expect(left.arms).toHaveLength(1);
+    expect(left.back.size[0]).toBeGreaterThan(both.back.size[0]);
+    for (const part of [left.base, left.back, ...left.arms, ...left.cushions])
+      expect(within(part, box)).toBe(true);
+  });
+
+  it('gives a narrow seat one cushion', () => {
+    const narrow: Item = { ...SOFA, size: [2, 2.5, 3] };
+    expect(sofaBoxes(narrow, [-1]).cushions).toHaveLength(1);
   });
 });
 

@@ -1,4 +1,4 @@
-import { type Item, type TvSize } from '../editor';
+import { type Item, type SofaChoice, type TvSize } from '../editor';
 import { type WallId } from '../room';
 import { type HiddenSurfaces } from './cutaway';
 import type { ViewId } from './views';
@@ -22,6 +22,8 @@ export interface SceneTestState {
   items: readonly Pick<Item, 'type' | 'size' | 'position' | 'facing'>[];
   /** TV size shown, in inches; null until the Items are first reported. */
   tvSize: TvSize | null;
+  /** Sofa shown; null until the Items are first reported. */
+  sofa: SofaChoice | null;
   /** Number of Fitting plates mounted in the scene; 0 until the first frame is drawn. */
   fittings: number;
   /** WebGL draw calls in the latest frame; 0 until the first frame is drawn. */
@@ -52,7 +54,7 @@ export function reportDrawCalls(count: number): void {
   if (import.meta.env.DEV && window.__ASHERA__) window.__ASHERA__.drawCalls = count;
 }
 
-export function reportItems(items: readonly Item[], tvSize: TvSize): void {
+export function reportItems(items: readonly Item[], tvSize: TvSize, sofa: SofaChoice): void {
   if (import.meta.env.DEV && window.__ASHERA__) {
     window.__ASHERA__.items = items.map(({ type, size, position, facing }) => ({
       type,
@@ -61,6 +63,7 @@ export function reportItems(items: readonly Item[], tvSize: TvSize): void {
       facing,
     }));
     window.__ASHERA__.tvSize = tvSize;
+    window.__ASHERA__.sofa = sofa;
   }
 }
 

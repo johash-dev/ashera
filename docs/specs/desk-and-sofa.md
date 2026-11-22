@@ -36,17 +36,17 @@ In the `editor` module; nothing is persisted, so no one-way door and no ADR. No 
 - **Item** gains a facing (north, east, south or west: the way its front points). Size stays width (along the Wall it backs onto) × height × depth; the rules turn it into a box along the Room's axes. TV-wall Items face south.
 - **Catalog** — new Item types, all typical sizes and flagged `placeholder` until measured or a product model is named:
 
-  | Item type     | Size (width × height × depth)                                                           | Source                          |
-  | ------------- | --------------------------------------------------------------------------------------- | ------------------------------- |
-  | Computer desk | 4 × 2.5 × 2 ft (top 30 in high)                                                         | owner: 4 × 2 ft; height typical |
-  | Monitor 27″   | 24.1 in × 20 in (panel on its stand) × 8 in                                             | typical 27″                     |
-  | PC tower      | 8.5 in × 18 in × 17 in                                                                  | typical mid-size tower          |
-  | Keyboard      | 17.5 in × 1.5 in × 5.5 in                                                               | typical full-size               |
-  | Mouse         | 2.5 in × 1.5 in × 4.7 in                                                                | typical                         |
-  | Gaming chair  | 27 in × 50 in × 27 in                                                                   | typical                         |
-  | Compact sofa  | 5.5 × 2.5 × 3 ft (low back, slim arms)                                                  | agreed in grill, typical        |
-  | L-shaped sofa | long side 5.5 × 2.5 × 3 ft; short side 3 × 2.5 × 2 ft (5 ft up the window wall overall) | agreed in grill, typical        |
-  | Rug           | 5 × ½ in × 3.5 ft                                                                       | agreed in grill, typical        |
+  | Item type     | Size (width × height × depth)                                                                                                                       | Source                          |
+  | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+  | Computer desk | 4 × 2.5 × 2 ft (top 30 in high)                                                                                                                     | owner: 4 × 2 ft; height typical |
+  | Monitor 27″   | 24.1 in × 20 in (panel on its stand) × 8 in                                                                                                         | typical 27″                     |
+  | PC tower      | 8.5 in × 18 in × 17 in                                                                                                                              | typical mid-size tower          |
+  | Keyboard      | 17.5 in × 1.5 in × 5.5 in                                                                                                                           | typical full-size               |
+  | Mouse         | 2.5 in × 1.5 in × 4.7 in                                                                                                                            | typical                         |
+  | Gaming chair  | 27 in × 50 in × 27 in                                                                                                                               | typical                         |
+  | Compact sofa  | 5.5 × 2.5 × 3 ft (low back, slim arms)                                                                                                              | agreed in grill, typical        |
+  | L-shaped sofa | long side 5.5 × 2.5 × 3 ft; short side 2 × 2.5 × 3 ft (2 ft along the window wall past the long side's 3 ft depth: 5 ft up the window wall overall) | agreed in grill, typical        |
+  | Rug           | 5 × ½ in × 3.5 ft                                                                                                                                   | agreed in grill, typical        |
 
   The L-shaped sofa is listed as two Items, its long and short side, touching at the corner, so the existing box rules check it unchanged.
 
@@ -80,9 +80,9 @@ All must pass:
 
 - [ ] `npm run verify` prints ALL GREEN
 - [ ] `window.__ASHERA__.items` lists the desk, monitor, PC tower, keyboard, mouse, gaming chair, sofa and rug with the Catalog sizes above, and unit tests prove none leaves the Room, enters the Door swing or intersects another (rug excepted), for both sofas and both TV sizes
-- [ ] The desk's back is on the east wall face and its north end level with the TV stand's front; the four desk-top Items rest on and within the desk top (unit tests)
-- [ ] The sofa's back is on the south wall face, its west end on the window wall face, its east end west of the doorway, and its top below the window sill (unit tests, both sofas)
-- [ ] The Header sofa button switches `window.__ASHERA__.sofa` between compact and L and the drawn sofa changes to match; `?sofa=l` loads the L (e2e)
+- [x] The desk's back is on the east wall face and its north end level with the TV stand's front; the four desk-top Items rest on and within the desk top (unit tests)
+- [x] The sofa's back is on the south wall face, its west end on the window wall face, its east end west of the doorway, and its top below the window sill (unit tests, both sofas)
+- [x] The Header sofa button switches `window.__ASHERA__.sofa` between compact and L and the drawn sofa changes to match; `?sofa=l` loads the L (e2e)
 - [ ] Draw calls stay < 100 in every View (e2e)
 - [ ] No new Room measurements, so no new "Measured values" rows (stated in the log entry)
 - [ ] Owner said "looks good" on before/after screenshots of every View, plus `overview` with the L-shaped sofa
