@@ -89,7 +89,7 @@ describe('deskItems: what is on the desk', () => {
     expect(edges('mouse').north).toBeGreaterThan(edges('keyboard').south);
   });
 
-  it('puts the PC tower at the desk�s south end, clear of the monitor', () => {
+  it('puts the PC tower at the desk’s south end, clear of the monitor', () => {
     expect(edges('pc-tower').north).toBeGreaterThan(edges('monitor').south);
     expect(edges('pc-tower').south).toBeLessThan(deskEdges().south);
     expect(edges('pc-tower').north).toBeGreaterThan(deskEdges().centreZ);
@@ -106,7 +106,7 @@ describe('deskItems: the gaming chair', () => {
     expect(position[1] - size[1] / 2).toBe(0);
   });
 
-  it('is centred on the desk with its front touching the desk�s front', () => {
+  it('is centred on the desk with its front touching the desk’s front', () => {
     const chairBox = itemBox(chair());
     const deskBox = itemBox(desk());
     expect(chairBox.position[2]).toBeCloseTo(deskBox.position[2]);

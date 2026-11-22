@@ -24,7 +24,7 @@ export interface ItemType {
 }
 
 /** Inches to feet, for sizes quoted in inches. */
-const inches = (n: number) => n / 12;
+export const inches = (n: number) => n / 12;
 
 /** How tall a TV's legs are, under the panel. */
 export const TV_LEG_HEIGHT = inches(3);

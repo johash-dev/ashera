@@ -1,4 +1,4 @@
-import { type Facing, type Item, itemBox } from '../editor';
+import { type Facing, inches, type Item, itemBox } from '../editor';
 import { type Box } from './roomBoxes';
 
 /** Gap around and between the stand's doors, so they read as separate doors. */
@@ -121,8 +121,6 @@ export function deskBoxes(item: Item): { top: Box; legs: Box[] } {
 }
 
 type Vec3 = Box['size'];
-
-const inches = (n: number) => n / 12;
 
 /** Unit vector (west–east, north–south) of the way an Item's front points. */
 const FRONT: Record<Facing, readonly [number, number]> = {
