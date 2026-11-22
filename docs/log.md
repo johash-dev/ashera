@@ -151,3 +151,11 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Look: dark glossy screen inside a faintly lit edge (`LOOK.tvScreen`, `LOOK.tvEdge`); the first, unlit edge vanished against the Wall. On the Approval card the owner asked why the feet were blocks and chose two thin legs slanting outward (35°, / \ from the front) over a central pedestal.
 - With 65″ the screen top is at 4.98 ft and the data plate (centred at 5 ft) shows only its top half above the TV — the spec's open question, now visible.
 - No new Room measurements, so no new "Measured values" rows.
+
+## [2026-11-22] feature | TV wall slice 3: PS5 and soundbar
+
+- Catalog gains the PS5 (slim, upright: 3.8 in wide × 14.1 in high × 8.5 in deep) and a soundbar (2.5 ft × 2.6 in × 4 in), both placeholders. On the stand: the PS5's west side 1 ft in from the stand's west end, centred front to back; the soundbar centred under the TV, front flush with the stand's front.
+- The soundbar (2.6 in tall) stays below the screen, which starts 3 in above the stand on its legs. New unit test: everything on the stand stays within its top (the reviewer's slice 2 note).
+- Look: PS5 white side panels around a black core; soundbar near-black with a slightly lighter front grille, lightened once after it vanished in the entrance View.
+- All four TV-wall Items are now listed in `__ASHERA__.items`, with the inside-Room, no-overlap and Door-swing checks run for both TV sizes.
+- No new Room measurements, so no new "Measured values" rows.

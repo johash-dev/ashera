@@ -65,7 +65,7 @@ Visual (`@visual`): existing per-View baselines updated each slice via the `upda
 All must pass:
 
 - [ ] `npm run verify` prints ALL GREEN
-- [ ] `window.__ASHERA__.items` lists the TV stand, TV, PS5 and soundbar with the Catalog sizes above, and unit tests prove none intersects another, leaves the Room or enters the Door swing (both TV sizes)
+- [x] `window.__ASHERA__.items` lists the TV stand, TV, PS5 and soundbar with the Catalog sizes above, and unit tests prove none intersects another, leaves the Room or enters the Door swing (both TV sizes)
 - [x] The stand's underside is 0.5 ft and its top 2 ft above the floor, centred on the TV wall (unit test)
 - [x] The Header TV button switches `window.__ASHERA__.tvSize` between 55 and 65 and the drawn TV's width changes to match; `?tv=65` loads 65″ (e2e)
 - [ ] The Slat panel covers the whole TV wall with a cut-out per TV-wall Fitting (unit test); draw calls in `overview` stay < 100 (e2e)
