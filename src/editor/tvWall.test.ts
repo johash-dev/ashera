@@ -5,12 +5,12 @@ import {
   clearOfDoorSwing,
   type Item,
   itemsIntersect,
+  TV_SIZES,
   tvSizeFromSearch,
   tvWallItems,
   type TvSize,
 } from './tvWall';
 
-const TV_SIZES: readonly TvSize[] = [55, 65];
 const round = (n: number) => Math.round(n * 1e4) / 1e4;
 
 function find(tvSize: TvSize, type: ItemTypeId): Item {

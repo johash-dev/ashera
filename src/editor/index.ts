@@ -4,5 +4,5 @@
  */
 export { CATALOG, TV_FEET_HEIGHT, TV_STAND_DOORS } from './catalog';
 export type { ItemType, ItemTypeId, Size } from './catalog';
-export { clearOfDoorSwing, itemsIntersect, TV_SIZES, tvSizeFromSearch, tvWallItems } from './tvWall';
+export { clearOfDoorSwing, itemsIntersect, tvSizeFromSearch, tvWallItems } from './tvWall';
 export type { Item, TvSize } from './tvWall';

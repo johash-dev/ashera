@@ -1,3 +1,5 @@
+import { type TvSize } from '../editor';
+
 export interface ViewOption {
   readonly id: string;
   readonly label: string;
@@ -14,7 +16,7 @@ export function Header({
   currentId: string;
   onSelect: (id: string) => void;
   /** TV size shown, in inches. */
-  tvSize: number;
+  tvSize: TvSize;
   onToggleTvSize: () => void;
 }) {
   const current = views.find((view) => view.id === currentId);
