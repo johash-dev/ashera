@@ -168,3 +168,9 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - The data plate shows through its cut-out, set back ¾ in behind the slat faces. Under the east and west Beams the slats stop at the Beam underside (9 ft).
 - Review found Cutaway left the panel standing when the north Wall hid (camera north of the Room); `RoomShell` now takes `wallContents`, drawn inside each Wall's group, and the panel is the north Wall's. Checked by orbiting behind the TV wall; no automated test for it.
 - No new Room measurements, so no new "Measured values" rows.
+
+## [2026-11-22] decision | TV wall spec done
+
+- Slice 4 merged (#18) after the owner's "looks good"; all four slices (#15–#18) went through Approval cards with before/after screenshots of every View plus `overview` at 65″. All Done-when items checked.
+- Changes the owner asked for on the cards: angled TV legs instead of blocks (slice 2).
+- Still open (spec "Open questions"): product models for the TV, PS5, soundbar and Slat panel (all typical sizes); the data plate half hidden behind the 65″ TV; whether the Skirting peeks through the slat gaps at floor level.
