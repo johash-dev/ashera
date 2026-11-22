@@ -188,3 +188,10 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Catalog gains Asher's computer desk (4 × 2 ft from the owner, top 30 in high: typical, placeholder). `starterArrangement` = TV wall + `deskItems`: the desk against the east wall, facing west, its north end level with the TV stand's front, about 0.9 ft clear of the Door swing.
 - Drawn as a top on four square legs (`deskBoxes`); the first, darker top vanished against the floor in the top-down View, so it is a shade lighter than the floor. `__ASHERA__.items` now reports each Item's facing.
 - No new Room measurements, so no new "Measured values" rows.
+
+## [2026-11-23] feature | Desk and sofa slice 2: desk setup and gaming chair
+
+- Catalog gains the monitor (27″), PC tower, keyboard, mouse and gaming chair (all typical sizes, placeholders). `deskItems` now places them: monitor centred at the back against the wall, keyboard 3 in from the desk's front, mouse just south of it (Asher sits facing east, so his right is south), PC tower at the south end, chair centred on the desk facing east with its front touching the desk's front.
+- Unit tests: every desk-top Item rests on and within the desk top; the chair stands on the floor at the desk. The existing inside-Room, no-overlap and Door-swing checks run over all of them for both TV sizes. `__ASHERA__.items` lists them.
+- Drawn from simple boxes (`itemBoxes.ts` places parts in each Item's own frame, so facing is handled in one helper): monitor on a foot and neck, tower with a lighter front panel, keyboard with a key block, mouse, chair with a base, column, seat, tall backrest and armrests. Look: near-black gear, a chair a shade lighter than the floor; no accent colour.
+- No new Room measurements, so no new "Measured values" rows.
