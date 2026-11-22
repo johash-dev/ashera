@@ -1,6 +1,6 @@
 ---
 status: in-progress # draft | approved | in-progress | done | superseded
-updated: 2026-11-21
+updated: 2026-11-22
 phase: 1
 ---
 
@@ -39,6 +39,7 @@ Changes to `Room` (`src/room/types.ts`); none is persisted, so no one-way door.
 - `skirtingHeight` → `skirting: { height: 0.3; depth: 0.05; placeholder: true }` (depth ⅝″) — slice 2.
 - `Door` gains `thickness: 0.125` (1½″) and `placeholder: true` — slice 2. The open leaf lies flat against the east Wall.
 - `floorTile: { length: 4; width: 2; longSide: 'north-south'; placeholder: true }` — new; grid starts at the south-west corner.
+- `windowFrame: { width: 0.1; depth: 0.2; placeholder: true }` — new in slice 4 (frame bar width and depth, centred in the Wall).
 - `fittings: Fitting[]` — new. `Fitting = { id; kind: 'double-socket' | 'switch-plate' | 'data-plate' | 'ceiling-light'; surface: WallId | 'ceiling'; centre: [u, v]; size: [w, h]; placeholder }` — on a Wall, `u` runs along it from its start corner and `v` is height above the floor; on the ceiling, distances from the west and north Walls (slice 3). Initial set from the photos: north double socket + data plate; south switch plate + double socket; ceiling light. All placeholders.
 - `validateRoom` also rejects a Fitting outside its surface.
 

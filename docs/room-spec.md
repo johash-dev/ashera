@@ -78,3 +78,4 @@ Placeholders are flagged `placeholder: true` in the config.
 - [ ] Door leaf thickness (placeholder 1½″ = 0.125 ft)
 - [ ] Skirting depth — how far its face stands off the wall tiles (placeholder ⅝ in = 0.05 ft; height 0.3 ft ≈ 3½ in)
 - [ ] Floor-tile direction and where the grid starts (placeholder: long side north–south, from the south-west corner)
+- [ ] Window frame — how far the frame reaches into the opening and how deep it is (placeholder 1¼ in = 0.1 ft wide, 2½ in = 0.2 ft deep, centred in the Wall)

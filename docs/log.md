@@ -107,3 +107,11 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - `update-snapshots` now uploads a `baselines` artifact instead of committing as the bot; the agent downloads, commits and pushes it, so CI runs on the PR normally (the bot commit on PR #6 left it with no checks).
 - New integrity check, first step of CI `verify`: fails on added `.only`/`.skip`, fewer test cases, or a touched gate file, unless the owner adds the `gate-change` label (git-guard blocks the agent from adding it). Tests: `scripts/integrity-check.test.mjs`.
 - `scripts/screenshots.mjs` saves every View for the owner's Approval card; PR evidence is GitHub's image diff of the changed baselines, no PNGs committed elsewhere.
+
+## [2026-11-22] feature | Empty-room twin slice 4: dark look
+
+- One accent colour for the whole app: the Header's violet `#7c5cff` (`--accent`), used in the scene for the faint floor-tile joints. All scene colours live in `src/scene/look.ts`.
+- Lighting: the ceiling light is a soft-white glowing panel plus a point light just below it (drawn outside the ceiling group, so Cutaway never switches it off); dim ambient and key lights only fill the shadows.
+- Window: four frame bars and one dark pane (`windowBoxes`), centred in the Wall; new `windowFrame` in config (placeholder). Floor-tile joints from `floorTileLines` (`floorTile` in config, placeholder), drawn as one line set.
+- `__ASHERA__.drawCalls` (previous frame's `renderer.info.render.calls`): 19 in `overview`; e2e asserts < 100.
+- Noticed: the frame's top and left bars hide inside the Wall reveal from `overview`; they show head-on in the slice 5 window View. "No console errors in any View" is only checked for `overview` until slice 5 adds the other Views.
