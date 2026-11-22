@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { type Item } from '../editor';
+import { ASHERS_ROOM } from '../room';
+import { type Item, starterArrangement } from '../editor';
 import {
   chairBoxes,
   deskBoxes,
   keyboardBoxes,
   monitorBoxes,
   ps5Boxes,
+  sofaArmSides,
   sofaBoxes,
   soundbarBoxes,
   standBoxes,
@@ -160,6 +162,39 @@ function within(inner: Box, outer: Box): boolean {
     return gap + inner.size[axis] / 2 <= outer.size[axis] / 2 + 1e-9;
   });
 }
+
+describe('sofaArmSides', () => {
+  const armCentres = (choice: 'compact' | 'l') =>
+    starterArrangement(ASHERS_ROOM, 55, choice)
+      .filter((item) => item.type.startsWith('sofa'))
+      .map((item) => ({
+        item,
+        arms: sofaBoxes(item, sofaArmSides(item.type)).arms,
+      }));
+
+  it('puts arms at both ends of the compact sofa', () => {
+    const compact = armCentres('compact')[0];
+    if (!compact) throw new Error('no compact sofa');
+    const { item, arms } = compact;
+    expect(arms).toHaveLength(2);
+    expect(Math.min(...arms.map((a) => a.position[0]))).toBeLessThan(item.position[0]);
+    expect(Math.max(...arms.map((a) => a.position[0]))).toBeGreaterThan(item.position[0]);
+  });
+
+  it('puts the L’s long-side arm at its east end, away from the corner', () => {
+    const long = armCentres('l').find(({ item }) => item.type === 'sofa-l-long');
+    if (!long) throw new Error('no long side');
+    expect(long.arms).toHaveLength(1);
+    expect(long.arms[0]?.position[0]).toBeGreaterThan(long.item.position[0]);
+  });
+
+  it('puts the L’s short-side arm at its north end, away from the corner', () => {
+    const short = armCentres('l').find(({ item }) => item.type === 'sofa-l-short');
+    if (!short) throw new Error('no short side');
+    expect(short.arms).toHaveLength(1);
+    expect(short.arms[0]?.position[2]).toBeLessThan(short.item.position[2]);
+  });
+});
 
 describe('sofaBoxes', () => {
   // The compact sofa on the south wall, facing north: its back is on the south side.

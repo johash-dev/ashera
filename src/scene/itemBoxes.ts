@@ -1,4 +1,4 @@
-import { type Facing, inches, type Item, itemBox } from '../editor';
+import { type Facing, inches, type ItemTypeId, type Item, itemBox } from '../editor';
 import { type Box } from './roomBoxes';
 
 /** Gap around and between the stand's doors, so they read as separate doors. */
@@ -226,6 +226,22 @@ export function chairBoxes(item: Item): { base: Box[]; column: Box; seat: Box; b
 
 /** Which end of a sofa piece an armrest stands at: -1 is the left end, 1 the right, as seen from the front. */
 export type ArmSide = -1 | 1;
+
+/**
+ * Where each sofa piece has its arms. The L-shaped sofa's two sides join at the corner, so each has an
+ * arm only at its free end: the long side (facing north) at its east end, the short side (facing east)
+ * at its north end.
+ */
+export function sofaArmSides(type: ItemTypeId): readonly ArmSide[] {
+  switch (type) {
+    case 'sofa-l-long':
+      return [1];
+    case 'sofa-l-short':
+      return [-1];
+    default:
+      return [-1, 1];
+  }
+}
 
 /** Seats wider than this get another cushion (feet). */
 const CUSHION_WIDTH = 2.2;

@@ -2,12 +2,12 @@ import { useEffect, useMemo } from 'react';
 import { MeshStandardMaterial } from 'three';
 import { itemBox, type Item, TV_LEG_HEIGHT, TV_STAND_DOORS } from '../editor';
 import {
-  type ArmSide,
   chairBoxes,
   deskBoxes,
   keyboardBoxes,
   monitorBoxes,
   ps5Boxes,
+  sofaArmSides,
   sofaBoxes,
   soundbarBoxes,
   standBoxes,
@@ -45,16 +45,8 @@ function BoxMesh({ box, material }: { box: Box; material: MeshStandardMaterial }
   );
 }
 
-function SofaMeshes({
-  item,
-  armSides,
-  materials,
-}: {
-  item: Item;
-  armSides: readonly ArmSide[];
-  materials: ItemMaterials;
-}) {
-  const { base, back, arms, cushions } = sofaBoxes(item, armSides);
+function SofaMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
+  const { base, back, arms, cushions } = sofaBoxes(item, sofaArmSides(item.type));
   return (
     <>
       <BoxMesh box={base} material={materials.sofaFrame} />
@@ -160,12 +152,9 @@ function ItemMeshes({ item, materials }: { item: Item; materials: ItemMaterials 
     case 'mouse':
       return <BoxMesh box={itemBox(item)} material={materials.deviceTrim} />;
     case 'sofa-compact':
-      return <SofaMeshes item={item} armSides={[-1, 1]} materials={materials} />;
-    // The L-shaped sofa's two sides join at the corner, so each has an arm only at its free end.
     case 'sofa-l-long':
-      return <SofaMeshes item={item} armSides={[1]} materials={materials} />;
     case 'sofa-l-short':
-      return <SofaMeshes item={item} armSides={[-1]} materials={materials} />;
+      return <SofaMeshes item={item} materials={materials} />;
     case 'gaming-chair': {
       const { base, column, seat, back, arms } = chairBoxes(item);
       return (
