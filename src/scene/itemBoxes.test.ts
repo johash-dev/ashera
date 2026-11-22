@@ -1,6 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { type Item } from '../editor';
-import { deskBoxes, ps5Boxes, soundbarBoxes, standBoxes, tvBoxes } from './itemBoxes';
+import {
+  chairBoxes,
+  deskBoxes,
+  keyboardBoxes,
+  monitorBoxes,
+  ps5Boxes,
+  soundbarBoxes,
+  standBoxes,
+  towerBoxes,
+  tvBoxes,
+} from './itemBoxes';
+import { type Box } from './roomBoxes';
 
 const STAND: Item = {
   id: 'tv-stand',
@@ -138,5 +149,108 @@ describe('deskBoxes', () => {
       expect(Math.abs(leg.position[2] + 1.5) + leg.size[2] / 2).toBeLessThanOrEqual(2);
     }
     expect(new Set(legs.map((leg) => `${leg.position[0]},${leg.position[2]}`)).size).toBe(4);
+  });
+});
+
+/** True when `inner` lies within `outer` on every axis (feet, with a hair of rounding). */
+function within(inner: Box, outer: Box): boolean {
+  return ([0, 1, 2] as const).every((axis) => {
+    const gap = Math.abs(inner.position[axis] - outer.position[axis]);
+    return gap + inner.size[axis] / 2 <= outer.size[axis] / 2 + 1e-9;
+  });
+}
+
+// A monitor on a desk top 2.5 ft up, at the east wall, its front (screen) facing west.
+const MONITOR: Item = {
+  id: 'monitor',
+  type: 'monitor',
+  position: [5, 2.5 + 10 / 12, 0],
+  size: [2, 20 / 12, 8 / 12],
+  facing: 'west',
+};
+
+describe('monitorBoxes', () => {
+  it('keeps the foot, neck and panel within the Item box', () => {
+    const { foot, neck, panel } = monitorBoxes(MONITOR);
+    const box = { position: MONITOR.position, size: [8 / 12, 20 / 12, 2] as const };
+    for (const part of [foot, neck, panel]) expect(within(part, box)).toBe(true);
+  });
+
+  it('puts the panel above the foot, the full width of the Item, along the wall', () => {
+    const { foot, panel } = monitorBoxes(MONITOR);
+    expect(panel.position[1] - panel.size[1] / 2).toBeGreaterThan(foot.position[1] + foot.size[1] / 2);
+    expect(panel.size[2]).toBeCloseTo(2); // its width runs north–south: the Item faces west
+    expect(panel.position[1] + panel.size[1] / 2).toBeCloseTo(2.5 + 20 / 12);
+  });
+
+  it('puts the screen on the panel’s front, west of it', () => {
+    const { panel, screen } = monitorBoxes(MONITOR);
+    expect(screen.position[0]).toBeLessThan(panel.position[0]);
+    expect(screen.position[0] + screen.size[0] / 2).toBeLessThan(
+      panel.position[0] - panel.size[0] / 2 + 0.01,
+    );
+  });
+});
+
+describe('towerBoxes and keyboardBoxes', () => {
+  const TOWER: Item = {
+    id: 'tower',
+    type: 'pc-tower',
+    position: [5, 3.25, 1],
+    size: [0.7, 1.5, 1.4],
+    facing: 'west',
+  };
+  const KEYBOARD: Item = {
+    id: 'kb',
+    type: 'keyboard',
+    position: [4, 2.56, 0],
+    size: [1.4, 0.12, 0.45],
+    facing: 'west',
+  };
+
+  it('draws the tower body at its box and the front panel on its west face', () => {
+    const { body, front } = towerBoxes(TOWER);
+    expect(body).toEqual({ position: TOWER.position, size: [1.4, 1.5, 0.7] });
+    expect(front.position[0]).toBeLessThan(body.position[0] - body.size[0] / 2 + 0.01);
+  });
+
+  it('puts the keys on top of the keyboard body', () => {
+    const { body, keys } = keyboardBoxes(KEYBOARD);
+    expect(keys.position[1] - keys.size[1] / 2).toBeCloseTo(body.position[1] + body.size[1] / 2);
+    expect(keys.size[0]).toBeLessThan(body.size[0]); // inset from the body's edges
+    expect(keys.size[2]).toBeLessThan(body.size[2]);
+  });
+});
+
+describe('chairBoxes', () => {
+  // A 27 in square, 50 in tall chair at the desk, facing east: its back is on the west side.
+  const CHAIR: Item = {
+    id: 'chair',
+    type: 'gaming-chair',
+    position: [0, 25 / 12, 0],
+    size: [27 / 12, 50 / 12, 27 / 12],
+    facing: 'east',
+  };
+
+  it('keeps every part within the Item box', () => {
+    const { base, column, seat, back, arms } = chairBoxes(CHAIR);
+    const box = { position: CHAIR.position, size: CHAIR.size };
+    for (const part of [...base, column, seat, back, ...arms]) expect(within(part, box)).toBe(true);
+  });
+
+  it('puts the backrest behind the seat (west, as the chair faces east), rising to the full height', () => {
+    const { seat, back } = chairBoxes(CHAIR);
+    expect(back.position[0]).toBeLessThan(seat.position[0]);
+    expect(back.position[1] + back.size[1] / 2).toBeCloseTo(50 / 12);
+  });
+
+  it('puts the seat on the column and an armrest each side of it', () => {
+    const { column, seat, arms } = chairBoxes(CHAIR);
+    expect(seat.position[1] - seat.size[1] / 2).toBeGreaterThanOrEqual(
+      column.position[1] + column.size[1] / 2 - 1e-9,
+    );
+    const sides = arms.map((arm) => Math.sign(arm.position[2] - CHAIR.position[2]));
+    expect(sides).toContain(1);
+    expect(sides).toContain(-1);
   });
 });

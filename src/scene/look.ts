@@ -24,6 +24,11 @@ export const LOOK = {
   /** Computer desk: a dark top a shade lighter than the floor, on darker legs, until the owner says what the real desk looks like. */
   deskTop: '#2e3040',
   deskLeg: '#1c1d27',
+  /** Desk setup: near-black PC gear (monitor, tower, keyboard, mouse) with lighter fronts and keys; the gaming chair a shade lighter than the floor. */
+  deviceBody: '#121218',
+  deviceTrim: '#2a2c3a',
+  chairBody: '#1a1b24',
+  chairTrim: '#2e3042',
   /** Slat panel: black slats a shade lighter than the felt behind them, so the ribs read. */
   slat: '#17181f',
   slatBacking: '#050507',

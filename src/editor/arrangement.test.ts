@@ -7,9 +7,10 @@ import { TV_SIZES } from './tvWall';
 describe.each(TV_SIZES)('starterArrangement with the %i″ TV', (tvSize) => {
   const items = starterArrangement(ASHERS_ROOM, tvSize);
 
-  it('has the TV wall and the desk', () => {
-    expect(items.map((i) => i.type)).toContain('tv-stand');
-    expect(items.map((i) => i.type)).toContain('desk');
+  it('has the TV wall, the desk and its setup', () => {
+    const types = items.map((i) => i.type);
+    for (const type of ['tv-stand', 'desk', 'monitor', 'pc-tower', 'keyboard', 'mouse', 'gaming-chair'])
+      expect(types).toContain(type);
   });
 
   it('keeps every Item within the floor and below every Beam', () => {

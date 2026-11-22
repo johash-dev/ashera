@@ -47,7 +47,18 @@ test('the TV stand is drawn at its real size, hung on the TV wall, with the 55â€
 }) => {
   await openView(page, 'overview');
   const items = await page.evaluate(() => window.__ASHERA__?.items);
-  expect(items?.map((item) => item.type)).toEqual(['tv-stand', 'tv-55', 'ps5', 'soundbar', 'desk']);
+  expect(items?.map((item) => item.type)).toEqual([
+    'tv-stand',
+    'tv-55',
+    'ps5',
+    'soundbar',
+    'desk',
+    'monitor',
+    'pc-tower',
+    'keyboard',
+    'mouse',
+    'gaming-chair',
+  ]);
   expect(items?.[0]).toEqual({
     type: 'tv-stand',
     size: [8, 1.5, 1],

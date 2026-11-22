@@ -1,4 +1,4 @@
-import { type Item, itemBox } from '../editor';
+import { type Facing, inches, type Item, itemBox } from '../editor';
 import { type Box } from './roomBoxes';
 
 /** Gap around and between the stand's doors, so they read as separate doors. */
@@ -117,5 +117,109 @@ export function deskBoxes(item: Item): { top: Box; legs: Box[] } {
         size: [DESK_LEG, legHeight, DESK_LEG],
       })),
     ),
+  };
+}
+
+type Vec3 = Box['size'];
+
+/** Unit vector (west–east, north–south) of the way an Item's front points. */
+const FRONT: Record<Facing, readonly [number, number]> = {
+  north: [0, -1],
+  south: [0, 1],
+  east: [1, 0],
+  west: [-1, 0],
+};
+
+/**
+ * A part of an Item, in the Item's own frame: `lateral` to its right, `bottom` above the Item's floor
+ * (feet) and `forward` towards its front, from the Item's centre. Sized width × height × depth in that frame.
+ */
+function part(item: Item, lateral: number, bottom: number, forward: number, size: Vec3): Box {
+  const [fx, fz] = FRONT[item.facing];
+  const [rx, rz] = [-fz, fx];
+  const [x, y, z] = item.position;
+  const [width, height, depth] = size;
+  const turned = fx !== 0;
+  return {
+    position: [
+      x + rx * lateral + fx * forward,
+      y - item.size[1] / 2 + bottom + height / 2,
+      z + rz * lateral + fz * forward,
+    ],
+    size: turned ? [depth, height, width] : size,
+  };
+}
+
+/** A monitor: a flat foot, a neck, the panel near the back, and the screen on the panel's front. */
+export function monitorBoxes(item: Item): { foot: Box; neck: Box; panel: Box; screen: Box } {
+  const [width, height, depth] = item.size;
+  const footHeight = inches(0.6);
+  const panelHeight = inches(14.2);
+  const panelDepth = inches(1);
+  const bezel = inches(0.4);
+  const panelBottom = height - panelHeight;
+  const panelForward = -depth / 2 + inches(2);
+  return {
+    foot: part(item, 0, 0, 0, [inches(10), footHeight, depth]),
+    neck: part(item, 0, footHeight, panelForward, [inches(2), panelBottom - footHeight, inches(1)]),
+    panel: part(item, 0, panelBottom, panelForward, [width, panelHeight, panelDepth]),
+    screen: part(item, 0, panelBottom + bezel, panelForward + panelDepth / 2 + inches(0.05), [
+      width - 2 * bezel,
+      panelHeight - 2 * bezel,
+      inches(0.1),
+    ]),
+  };
+}
+
+/** A PC tower: its body and a slightly lighter front panel. */
+export function towerBoxes(item: Item): { body: Box; front: Box } {
+  const [width, height, depth] = item.size;
+  const frontDepth = inches(0.4);
+  return {
+    body: part(item, 0, 0, 0, item.size),
+    front: part(item, 0, inches(1), depth / 2 + frontDepth / 2, [
+      width - inches(1),
+      height - inches(2),
+      frontDepth,
+    ]),
+  };
+}
+
+/** A keyboard: its body and a slightly lighter key block on top. */
+export function keyboardBoxes(item: Item): { body: Box; keys: Box } {
+  const [width, height, depth] = item.size;
+  const rim = inches(0.4);
+  const keysHeight = inches(0.2);
+  return {
+    body: part(item, 0, 0, 0, item.size),
+    keys: part(item, 0, height, 0, [width - 2 * rim, keysHeight, depth - 2 * rim]),
+  };
+}
+
+/** A gaming chair: a two-bar base, a column, the seat, a tall backrest and two armrests. */
+export function chairBoxes(item: Item): { base: Box[]; column: Box; seat: Box; back: Box; arms: Box[] } {
+  const [width, height, depth] = item.size;
+  const baseSpan = Math.min(width, depth) - inches(1);
+  const baseThickness = inches(1.5);
+  const seatBottom = inches(17);
+  const seatThickness = inches(4);
+  const seatWidth = inches(20);
+  const seatDepth = inches(21);
+  const seatTop = seatBottom + seatThickness;
+  const backDepth = inches(4);
+  const armHeight = inches(7);
+  const armLateral = inches(11.5);
+  return {
+    base: [
+      part(item, 0, 0, 0, [baseSpan, baseThickness, baseThickness]),
+      part(item, 0, 0, 0, [baseThickness, baseThickness, baseSpan]),
+    ],
+    column: part(item, 0, baseThickness, 0, [inches(2.5), seatBottom - baseThickness, inches(2.5)]),
+    seat: part(item, 0, seatBottom, inches(3), [seatWidth, seatThickness, seatDepth]),
+    back: part(item, 0, seatTop, -depth / 2 + backDepth / 2, [seatWidth, height - seatTop, backDepth]),
+    arms: [-1, 1].flatMap((side) => [
+      part(item, side * armLateral, seatTop, inches(2), [inches(1.5), armHeight, inches(1.5)]),
+      part(item, side * armLateral, seatTop + armHeight, inches(3), [inches(2.5), inches(1.2), inches(10)]),
+    ]),
   };
 }
