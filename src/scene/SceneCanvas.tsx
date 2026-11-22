@@ -2,8 +2,10 @@ import { OrbitControls } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect } from 'react';
 import { PerspectiveCamera, Vector3 } from 'three';
+import { type Item } from '../editor';
 import { type Room, wallPieces } from '../room';
 import { DOOR_OPEN_ANGLE_DEG } from './doorSwing';
+import { Items } from './Items';
 import { RoomShell } from './RoomShell';
 import { publishSceneState, reportView } from './testHandle';
 import { AMBIENT_INTENSITY, KEY_LIGHT_INTENSITY, LOOK } from './look';
@@ -41,8 +43,8 @@ function CameraRig({ view }: { view: CameraView }) {
   return null;
 }
 
-export function SceneCanvas({ room, view }: { room: Room; view: CameraView }) {
-  // Room facts are published once per Room; a View change only updates the View, and Cutaway
+export function SceneCanvas({ room, items, view }: { room: Room; items: readonly Item[]; view: CameraView }) {
+  // Room facts and Items are published once per Room; a View change only updates the View, and Cutaway
   // reports itself from the camera, so values reported once (fittings) are never reset.
   useEffect(() => {
     publishSceneState({
@@ -57,11 +59,12 @@ export function SceneCanvas({ room, view }: { room: Room; view: CameraView }) {
       },
       beams: room.beams.walls,
       door: { openAngleDeg: DOOR_OPEN_ANGLE_DEG },
+      items: items.map(({ type, size, position }) => ({ type, size, position })),
       fittings: 0,
       drawCalls: 0,
       hidden: null,
     });
-  }, [room]);
+  }, [room, items]);
   useEffect(() => reportView(view.id), [view]);
 
   return (
@@ -77,6 +80,7 @@ export function SceneCanvas({ room, view }: { room: Room; view: CameraView }) {
       <ambientLight intensity={AMBIENT_INTENSITY} />
       <directionalLight position={[5, 12, 8]} intensity={KEY_LIGHT_INTENSITY} />
       <RoomShell room={room} />
+      <Items items={items} />
       <OrbitControls makeDefault />
       <CameraRig view={view} />
     </Canvas>

@@ -1,3 +1,4 @@
+import { type Item } from '../editor';
 import { type WallId } from '../room';
 import { type HiddenSurfaces } from './cutaway';
 import type { ViewId } from './views';
@@ -17,6 +18,8 @@ export interface SceneTestState {
   beams: readonly WallId[];
   /** The Door is fixed open; angle in degrees from closed. */
   door: { openAngleDeg: number };
+  /** Items drawn in the scene: type, size and centre (feet). */
+  items: readonly Pick<Item, 'type' | 'size' | 'position'>[];
   /** Number of Fitting plates mounted in the scene; 0 until the first frame is drawn. */
   fittings: number;
   /** WebGL draw calls in the latest frame; 0 until the first frame is drawn. */

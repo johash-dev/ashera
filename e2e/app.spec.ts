@@ -42,6 +42,13 @@ test('all five fittings are drawn', async ({ page }) => {
   await expect.poll(() => page.evaluate(() => window.__ASHERA__?.fittings)).toBe(5);
 });
 
+test('the TV stand is drawn at its real size, hung on the TV wall', async ({ page }) => {
+  await openView(page, 'overview');
+  expect(await page.evaluate(() => window.__ASHERA__?.items)).toEqual([
+    { type: 'tv-stand', size: [8, 1.5, 1], position: [0, 1.25, -4] },
+  ]);
+});
+
 const VIEWS = [
   { id: 'overview', label: 'Overview' },
   { id: 'top', label: 'Top-down plan' },
