@@ -42,12 +42,12 @@ describe('tvWallItems: the stand', () => {
 });
 
 describe('tvWallItems: the TV', () => {
-  it('uses the 55″ TV from the Catalog: 48.4 × 27.9 in panel on 3 in feet, 2 in deep', () => {
+  it('uses the 55″ TV from the Catalog: 48.4 × 27.9 in panel on 3 in legs, 2 in deep', () => {
     expect(find(55, 'tv-55').size.map(round)).toEqual([4.0333, 2.575, 0.1667]);
     expect(find(55, 'tv-55').size).toEqual(CATALOG['tv-55'].size);
   });
 
-  it('uses the 65″ TV from the Catalog: 57.0 × 32.7 in panel on 3 in feet, 2 in deep', () => {
+  it('uses the 65″ TV from the Catalog: 57.0 × 32.7 in panel on 3 in legs, 2 in deep', () => {
     expect(find(65, 'tv-65').size.map(round)).toEqual([4.75, 2.975, 0.1667]);
     expect(tvWallItems(ASHERS_ROOM, 65).some((i) => i.type === 'tv-55')).toBe(false);
   });

@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { MeshStandardMaterial } from 'three';
-import { type Item, TV_FEET_HEIGHT, TV_STAND_DOORS } from '../editor';
+import { type Item, TV_LEG_HEIGHT, TV_STAND_DOORS } from '../editor';
 import { standBoxes, tvBoxes } from './itemBoxes';
 import { LOOK, TV_EDGE_GLOW } from './look';
 import { type Box } from './roomBoxes';
@@ -30,13 +30,15 @@ function ItemMeshes({ item, materials }: { item: Item; materials: ItemMaterials 
     }
     case 'tv-55':
     case 'tv-65': {
-      const { panel, screen, feet } = tvBoxes(item, TV_FEET_HEIGHT);
+      const { panel, screen, legs } = tvBoxes(item, TV_LEG_HEIGHT);
       return (
         <>
           <BoxMesh box={panel} material={materials.tvPanel} />
           <BoxMesh box={screen} material={materials.tvScreen} />
-          {feet.map((foot, i) => (
-            <BoxMesh key={i} box={foot} material={materials.tvPanel} />
+          {legs.map((leg, i) => (
+            <mesh key={i} position={[...leg.position]} rotation-z={leg.angleRad} material={materials.tvPanel}>
+              <boxGeometry args={[...leg.size]} />
+            </mesh>
           ))}
         </>
       );

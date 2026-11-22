@@ -34,13 +34,28 @@ describe('tvBoxes', () => {
     expect(panel.position[1] + panel.size[1] / 2).toBeCloseTo(4.5);
   });
 
-  it('stands on two feet reaching the floor, mirrored either side of centre', () => {
-    const { feet } = tvBoxes(TV, 0.25);
-    const [left, right] = feet;
-    if (!left || !right) throw new Error('expected two feet');
+  it('stands on two thin legs that slant outward from under the panel down to the floor, mirrored', () => {
+    const { legs } = tvBoxes(TV, 0.25);
+    const [left, right] = legs;
+    if (!left || !right) throw new Error('expected two legs');
     expect(left.position[0]).toBeCloseTo(-right.position[0]);
-    expect(left.position[1] - left.size[1] / 2).toBeCloseTo(2);
-    expect(left.size[1]).toBe(0.25);
+    expect(left.angleRad).toBeCloseTo(-right.angleRad);
+    expect(left.position[1]).toBeCloseTo(2.125); // halfway between the floor (2) and the panel (2.25)
+    for (const leg of legs) {
+      // The leg spans the full drop from the panel to the floor along its slant.
+      expect(leg.size[1] * Math.cos(leg.angleRad)).toBeCloseTo(0.25);
+      expect(leg.size[0]).toBeLessThan(0.1); // thin
+    }
+    // The bottom end sits further out than the top: rotating a vertical bar by +angle tilts its top to -x.
+    const bottomX = (leg: (typeof legs)[number]) =>
+      leg.position[0] + (leg.size[1] / 2) * Math.sin(leg.angleRad);
+    expect(bottomX(left)).toBeLessThan(left.position[0]);
+    expect(bottomX(right)).toBeGreaterThan(right.position[0]);
+  });
+
+  it('keeps the legs within the TV width', () => {
+    const { legs } = tvBoxes(TV, 0.25);
+    for (const leg of legs) expect(Math.abs(leg.position[0]) + leg.size[1]).toBeLessThan(2);
   });
 
   it('puts the screen on the panel front, inside its edge', () => {

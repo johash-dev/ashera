@@ -15,8 +15,8 @@ export interface ItemType {
 /** Inches to feet, for sizes quoted in inches. */
 const inches = (n: number) => n / 12;
 
-/** A TV's feet: how tall they are, under the panel. */
-export const TV_FEET_HEIGHT = inches(3);
+/** How tall a TV's legs are, under the panel. */
+export const TV_LEG_HEIGHT = inches(3);
 
 /** Every Item type, by id. Item sizes live only here (docs/specs/tv-wall.md). */
 export const CATALOG: Readonly<Record<ItemTypeId, ItemType>> = {
@@ -29,13 +29,13 @@ export const CATALOG: Readonly<Record<ItemTypeId, ItemType>> = {
   'tv-55': {
     id: 'tv-55',
     name: '55″ TV',
-    size: [inches(48.4), inches(27.9) + TV_FEET_HEIGHT, inches(2)], // typical 55″ panel
+    size: [inches(48.4), inches(27.9) + TV_LEG_HEIGHT, inches(2)], // typical 55″ panel
     placeholder: true,
   },
   'tv-65': {
     id: 'tv-65',
     name: '65″ TV',
-    size: [inches(57), inches(32.7) + TV_FEET_HEIGHT, inches(2)], // typical 65″ panel
+    size: [inches(57), inches(32.7) + TV_LEG_HEIGHT, inches(2)], // typical 65″ panel
     placeholder: true,
   },
 };

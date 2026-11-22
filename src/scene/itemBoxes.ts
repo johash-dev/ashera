@@ -23,27 +23,37 @@ export function standBoxes(item: Item, doorCount: number): { body: Box; doors: B
 const TV_EDGE = 0.04;
 /** How far the screen stands proud of the panel front. */
 const SCREEN_THICKNESS = 0.01;
-/** Each foot's width, and how far in from the panel's ends its centre sits (share of the width). */
-const TV_FOOT_WIDTH = 0.25;
-const TV_FOOT_INSET = 1 / 6;
+/** Each leg's thickness, its slant from upright, and where its top sits in from the panel's ends (share of the width). */
+const TV_LEG_THICKNESS = 0.04;
+const TV_LEG_SLANT_RAD = (35 * Math.PI) / 180;
+const TV_LEG_INSET = 1 / 6;
 
-/** A TV standing on its feet: the panel, the screen on its front (south) face, and two feet below. */
-export function tvBoxes(item: Item, feetHeight: number): { panel: Box; screen: Box; feet: Box[] } {
+/** A box tilted about the z axis (from the front): a positive angle tilts its top towards -x. */
+export interface TiltedBox extends Box {
+  readonly angleRad: number;
+}
+
+/** A TV on its legs: the panel, the screen on its front (south) face, and two legs slanting outward below. */
+export function tvBoxes(item: Item, legHeight: number): { panel: Box; screen: Box; legs: TiltedBox[] } {
   const [x, y, z] = item.position;
   const [width, height, depth] = item.size;
   const floor = y - height / 2;
-  const panelHeight = height - feetHeight;
-  const panelY = floor + feetHeight + panelHeight / 2;
-  const footOffset = width / 2 - width * TV_FOOT_INSET;
+  const panelHeight = height - legHeight;
+  const panelY = floor + legHeight + panelHeight / 2;
+  const legLength = legHeight / Math.cos(TV_LEG_SLANT_RAD);
+  // Each leg's top is set in from the panel end; its centre is half the slant further out.
+  const legOffset = width / 2 - width * TV_LEG_INSET + (legHeight / 2) * Math.tan(TV_LEG_SLANT_RAD);
   return {
     panel: { position: [x, panelY, z], size: [width, panelHeight, depth] },
     screen: {
       position: [x, panelY, z + depth / 2 + SCREEN_THICKNESS / 2],
       size: [width - 2 * TV_EDGE, panelHeight - 2 * TV_EDGE, SCREEN_THICKNESS],
     },
-    feet: [-footOffset, footOffset].map((dx): Box => ({
-      position: [x + dx, floor + feetHeight / 2, z],
-      size: [TV_FOOT_WIDTH, feetHeight, depth],
+    legs: [-1, 1].map((side): TiltedBox => ({
+      position: [x + side * legOffset, floor + legHeight / 2, z],
+      size: [TV_LEG_THICKNESS, legLength, depth],
+      // The left leg's top leans right (towards the centre), the right leg's leans left.
+      angleRad: side * TV_LEG_SLANT_RAD,
     })),
   };
 }
