@@ -48,3 +48,32 @@ body,
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
+
+.hud-views {
+  display: flex;
+  gap: 4px;
+  margin-left: 12px;
+  pointer-events: auto;
+}
+
+.hud-view-button {
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.hud-view-button:hover {
+  color: var(--fg);
+}
+
+.hud-view-button[aria-pressed='true'] {
+  border-color: var(--accent);
+  color: var(--fg);
+}

@@ -1,6 +1,7 @@
 import { OrbitControls } from '@react-three/drei';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect } from 'react';
+import { PerspectiveCamera, Vector3 } from 'three';
 import { type Room, wallPieces } from '../room';
 import { hiddenSurfaces } from './cutaway';
 import { DOOR_OPEN_ANGLE_DEG } from './doorSwing';
@@ -9,10 +10,42 @@ import { publishSceneState } from './testHandle';
 import { AMBIENT_INTENSITY, KEY_LIGHT_INTENSITY, LOOK } from './look';
 import { type CameraView } from './views';
 
+/** True for orbit-style controls: a target to look at and an update() to apply it. */
+function isOrbit(controls: object | null): controls is { target: Vector3; update: () => void } {
+  return (
+    controls !== null &&
+    'target' in controls &&
+    controls.target instanceof Vector3 &&
+    'update' in controls &&
+    typeof controls.update === 'function'
+  );
+}
+
+/** Moves the camera and the orbit target to a View whenever the selected View changes. */
+function CameraRig({ view }: { view: CameraView }) {
+  const get = useThree((state) => state.get);
+  // Subscribed only so the effect re-runs once OrbitControls has registered itself.
+  const hasControls = useThree((state) => state.controls !== null);
+  useEffect(() => {
+    const { camera, controls, invalidate } = get();
+    camera.position.set(...view.position);
+    if (camera instanceof PerspectiveCamera) {
+      camera.fov = view.fov;
+      camera.updateProjectionMatrix();
+    }
+    if (isOrbit(controls)) {
+      controls.target.set(...view.target);
+      controls.update();
+    }
+    invalidate(); // frames are drawn on demand
+  }, [get, hasControls, view]);
+  return null;
+}
+
 export function SceneCanvas({ room, view }: { room: Room; view: CameraView }) {
   useEffect(() => {
     publishSceneState({
-      ready: false,
+      ready: window.__ASHERA__?.ready ?? false, // a View change keeps the scene ready
       view: view.id,
       room: { width: room.width, depth: room.depth, ceilingHeight: room.ceilingHeight },
       pieces: {
@@ -31,6 +64,7 @@ export function SceneCanvas({ room, view }: { room: Room; view: CameraView }) {
 
   return (
     <Canvas
+      frameloop="demand"
       data-testid="scene-canvas"
       camera={{ position: [...view.position], fov: view.fov, near: 0.1, far: 200 }}
       onCreated={() => {
@@ -41,7 +75,8 @@ export function SceneCanvas({ room, view }: { room: Room; view: CameraView }) {
       <ambientLight intensity={AMBIENT_INTENSITY} />
       <directionalLight position={[5, 12, 8]} intensity={KEY_LIGHT_INTENSITY} />
       <RoomShell room={room} />
-      <OrbitControls target={[...view.target]} makeDefault />
+      <OrbitControls makeDefault />
+      <CameraRig view={view} />
     </Canvas>
   );
 }

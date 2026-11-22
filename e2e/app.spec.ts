@@ -42,6 +42,47 @@ test('all five fittings are drawn', async ({ page }) => {
   await expect.poll(() => page.evaluate(() => window.__ASHERA__?.fittings)).toBe(5);
 });
 
+const VIEWS = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'top', label: 'Top-down plan' },
+  { id: 'entrance', label: 'Entrance' },
+  { id: 'window', label: 'Window' },
+  { id: 'left', label: 'Left' },
+  { id: 'right', label: 'Right' },
+];
+
+for (const { id, label } of VIEWS) {
+  test(`?view=${id} loads the ${label} View with no console errors`, async ({ page }) => {
+    const errors = await openView(page, id);
+    await expect(page.getByTestId('view-label')).toHaveText(label);
+    expect(await page.evaluate(() => window.__ASHERA__?.view)).toBe(id);
+    await expect.poll(() => page.evaluate(() => window.__ASHERA__?.drawCalls)).toBeGreaterThan(0);
+    expect(errors).toEqual([]);
+  });
+}
+
+test('each View button switches the View and the Header label', async ({ page }) => {
+  const errors = await openView(page, 'overview');
+  for (const { id, label } of [...VIEWS].reverse()) {
+    await page.getByRole('button', { name: label, exact: true }).click();
+    await expect(page.getByTestId('view-label')).toHaveText(label);
+    expect(await page.evaluate(() => window.__ASHERA__?.view)).toBe(id);
+    await expect(page.getByRole('button', { name: label, exact: true })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+  }
+  expect(errors).toEqual([]);
+});
+
+test('the photo Views stand inside the Room, so Cutaway hides nothing', async ({ page }) => {
+  await openView(page, 'overview');
+  await page.getByRole('button', { name: 'Window', exact: true }).click();
+  await expect
+    .poll(() => page.evaluate(() => window.__ASHERA__?.hidden))
+    .toEqual({ walls: [], ceiling: false });
+});
+
 test('the scene stays within the draw-call budget', async ({ page }) => {
   const errors = await openView(page, 'overview');
   await expect.poll(() => page.evaluate(() => window.__ASHERA__?.drawCalls)).toBeGreaterThan(0);
@@ -77,7 +118,7 @@ test('cutaway follows the camera while orbiting', async ({ page }) => {
     .not.toEqual(['east', 'south']);
 });
 
-for (const view of ['overview', 'top']) {
+for (const view of ['overview', 'top', 'entrance', 'window', 'left', 'right']) {
   test(`${view} view matches baseline @visual`, async ({ page }) => {
     await openView(page, view);
     await page.waitForTimeout(500); // let the first frames settle
