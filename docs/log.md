@@ -123,3 +123,9 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Look tweaks seen in the photo Views: the ceiling light's cast light moved below the Beams; window glass rougher (the light's reflection read as a moon).
 - Photos are portrait, the app landscape: each View matches the photo's height and aim, but shows more to the sides.
 - Owner asked on the Approval card for the Door leaf in brown wood like the photo: `LOOK.doorWood` `#7a4a28` (plain colour, no grain), moved from a local constant in `Doors.tsx` into `look.ts` with the other scene colours.
+
+## [2026-11-22] decision | Empty-room twin spec done
+
+- Slice 5 merged (#12) after the owner's "looks good" on the Approval card, which compared the four photo Views side by side with `docs/reference/photos`; the Door leaf became brown wood on the owner's request.
+- All Done-when items checked. Per ADR 0004 the owner's approval and the before/after screenshots live on the chat Approval cards, not in the PRs.
+- Still open (spec "Open questions"): placeholder measurements (window sill and position, skirting depth, Door thickness, Fitting positions) and the photo standpoints, which are estimates.

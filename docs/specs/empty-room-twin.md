@@ -1,5 +1,5 @@
 ---
-status: in-progress # draft | approved | in-progress | done | superseded
+status: done # draft | approved | in-progress | done | superseded
 updated: 2026-11-22
 phase: 1
 ---
@@ -63,7 +63,7 @@ Visual (`@visual`, CI-only baselines): one snapshot per View; baselines regenera
 
 All must pass:
 
-- [ ] `npm run verify` prints ALL GREEN
+- [x] `npm run verify` prints ALL GREEN
 - [x] Unit: `wallLength(north) = 10`, `wallLength(west) = 9`; `clearHeightAtWall(north) = 9.5`, `clearHeightAtWall(west) = 9`
 - [x] Unit: `wallPieces` gives 1 piece for north and east, 4 for west (around the window), 2 for south (around the doorway)
 - [x] Unit: `hiddenSurfaces` from the `overview` camera hides `south`, `east` and the ceiling; from a camera inside the Room hides nothing
@@ -73,9 +73,9 @@ All must pass:
 - [x] E2E: `__ASHERA__.room` = `{ width: 10, depth: 9, ceilingHeight: 9.5 }`; `beams` = `['west', 'south', 'east']`; `door.openAngleDeg` = 90; `fittings` = 5
 - [x] E2E: each View button (Overview, Top, Entrance, Window, Left, Right) sets `__ASHERA__.view` and the Header label; `?view=<id>` selects the same View on load
 - [x] E2E: `drawCalls` < 100 in `overview`; no console errors in any View
-- [ ] Owner judges `entrance`, `window`, `left` and `right` screenshots side by side with the matching `docs/reference/photos/` image and approves them in the PR
-- [ ] Screenshots of affected Views attached to each PR
-- [ ] room-spec.md, architecture.md (if module APIs change) and `docs/log.md` updated per slice
+- [x] Owner judges `entrance`, `window`, `left` and `right` screenshots side by side with the matching `docs/reference/photos/` image and approves them in the PR
+- [x] Screenshots of affected Views attached to each PR
+- [x] room-spec.md, architecture.md (if module APIs change) and `docs/log.md` updated per slice
 
 ## Slices
 
