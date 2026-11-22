@@ -174,3 +174,10 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Slice 4 merged (#18) after the owner's "looks good"; all four slices (#15–#18) went through Approval cards with before/after screenshots of every View plus `overview` at 65″. All Done-when items checked.
 - Changes the owner asked for on the cards: angled TV legs instead of blocks (slice 2).
 - Still open (spec "Open questions"): product models for the TV, PS5, soundbar and Slat panel (all typical sizes); the data plate half hidden behind the 65″ TV; whether the Skirting peeks through the slat gaps at floor level.
+
+## [2026-11-22] decision | Roadmap for the rest of the Room
+
+- Grill with the owner: seven features after the TV wall, in order — desk and sofa, wall décor, surround sound, moving furniture and Layouts, lighting preview, smart devices and control, shopping and labour list (docs/concept.md "Roadmap").
+- Desk on the east wall between the TV stand and the Door swing; sofa on the south wall from the window corner, switchable between a compact 2–3 seater and an L-shape; low, slim-armed, charcoal fabric; gaming chair and dark rug; fixed in place for now (docs/room-spec.md "Planned items").
+- The sound system must be controllable from ASHERA, including the surround mode; hardware is chosen in the surround sound feature with that in mind.
+- No new Room measurements. Desk height, monitor and tower sizes are typical until measured.

@@ -42,6 +42,18 @@ Refine the aesthetic; preview LED strips, lamps and accent lighting before buyin
 
 Choose hardware first. Likely Home Assistant as the hub, ASHERA talking only to it. Link Items to Devices (click a light to control it; state reflected in the Twin); room scenes (Gaming, Movie, Relax, All off).
 
+## Roadmap (agreed 2026-11-22)
+
+The order of features after the TV wall. Each gets its own `/grill` → `/spec`; planned positions are in [room-spec.md](room-spec.md) "Planned items".
+
+1. **Desk and sofa** (Phase 2) — Asher's 4 × 2 ft desk with PC, monitor, keyboard and mouse on the east wall; gaming chair; sofa on the south wall, switchable between a compact 2–3 seater and an L-shaped corner sofa; dark rug. Fixed in place.
+2. **Wall décor** (Phase 2) — pegboard above the desk, two or three picture frames above the sofa.
+3. **Surround sound** (Phase 2) — speakers placed in the Twin. Requirement: the sound system must be controllable from ASHERA, down to switching the surround mode, so hardware is chosen with that in mind. Budget: LKR 50,000 for sound (owner, 2026-11-23).
+4. **Moving furniture and Layouts** (Phase 2) — select, move, rotate, snap, warnings, distances, saved Layouts.
+5. **Lighting preview** (Phase 3) — lamps, LED strips, the green glow under the TV stand.
+6. **Smart devices and control** (Phase 4) — choose the hardware (lights, sound, plugs, maybe the AC) and control the Room from ASHERA's 3D world. Needs its own full discussion first; a do-it-yourself build (ESP32 boards, a Raspberry Pi hub) is on the table against buying ready-made devices.
+7. **Shopping and labour list** (Phase 4) — built in the app from everything placed: what to buy and what work needs doing.
+
 ## Principles
 
 - Accurate before decorative.
