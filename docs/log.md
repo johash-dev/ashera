@@ -210,3 +210,12 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Drawn with one `sofaBoxes` for all three pieces: arms only at the free ends (the L's two sides join at the corner), one cushion on the narrow short side. Draw calls with the L: 47–74 across the Views (budget < 100).
 - New `overview-sofa-l` visual baseline (spec: one extra baseline at `?sofa=l`).
 - No new Room measurements, so no new "Measured values" rows.
+
+## [2026-11-23] feature | Desk and sofa slice 5: rug
+
+- Catalog gains the rug (5 ft west–east × ½ in × 3½ ft, dark, typical, placeholder). `rugItems` puts its east edge level with the desk's front (so the gaming chair stands on it), centred north–south between the TV stand's front and the compact sofa's front; the same spot for both sofas, so the L's short side stands on its edge.
+- Rule: a rug is a floor covering, so `itemsIntersect` never counts it as overlapping anything (new glossary term); the inside-Room and Door-swing checks still apply to it. Unit tests for its size, spot, and those checks.
+- Drawn as one flat box, a shade lighter than the floor with a faint violet cast so its edge reads. Draw calls 48–75 across the Views with either sofa (budget < 100).
+- Spec reading: "east edge at the chair" taken as the chair standing on the rug (east edge level with the desk front); if Asher wants the rug clear of the chair, it is one line in `rug.ts`.
+- All five slices of the spec are in; the spec is marked done once the owner approves this slice.
+- No new Room measurements, so no new "Measured values" rows.

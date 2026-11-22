@@ -78,15 +78,15 @@ Visual (`@visual`): per-View baselines updated each slice via the `update-snapsh
 
 All must pass:
 
-- [ ] `npm run verify` prints ALL GREEN
-- [ ] `window.__ASHERA__.items` lists the desk, monitor, PC tower, keyboard, mouse, gaming chair, sofa and rug with the Catalog sizes above, and unit tests prove none leaves the Room, enters the Door swing or intersects another (rug excepted), for both sofas and both TV sizes
+- [x] `npm run verify` prints ALL GREEN
+- [x] `window.__ASHERA__.items` lists the desk, monitor, PC tower, keyboard, mouse, gaming chair, sofa and rug with the Catalog sizes above, and unit tests prove none leaves the Room, enters the Door swing or intersects another (rug excepted), for both sofas and both TV sizes
 - [x] The desk's back is on the east wall face and its north end level with the TV stand's front; the four desk-top Items rest on and within the desk top (unit tests)
 - [x] The sofa's back is on the south wall face, its west end on the window wall face, its east end west of the doorway, and its top below the window sill (unit tests, both sofas)
 - [x] The Header sofa button switches `window.__ASHERA__.sofa` between compact and L and the drawn sofa changes to match; `?sofa=l` loads the L (e2e)
-- [ ] Draw calls stay < 100 in every View (e2e)
-- [ ] No new Room measurements, so no new "Measured values" rows (stated in the log entry)
+- [x] Draw calls stay < 100 in every View (e2e; the L-shaped sofa's counts, 48–75, read by hand)
+- [x] No new Room measurements, so no new "Measured values" rows (stated in the log entry)
 - [ ] Owner said "looks good" on before/after screenshots of every View, plus `overview` with the L-shaped sofa
-- [ ] docs updated (architecture if the editor's role changes, GLOSSARY for new terms, room-spec "Planned items"), `docs/log.md` entry added
+- [x] docs updated (architecture if the editor's role changes, GLOSSARY for new terms, room-spec "Planned items"), `docs/log.md` entry added
 
 ## Slices
 

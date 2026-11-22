@@ -30,8 +30,15 @@ export function itemBox({ position, size, facing }: Item): ItemBox {
 const TOUCH_TOLERANCE = 1e-9;
 const AXES = [0, 1, 2] as const;
 
-/** True when two Items' boxes overlap; boxes that only touch (one resting on another) do not. */
+/** A floor covering other Items stand on, so it never counts as intersecting them. */
+const isFloorCovering = (item: Item) => item.type === 'rug';
+
+/**
+ * True when two Items' boxes overlap; boxes that only touch (one resting on another) do not, and a
+ * rug (a floor covering) overlaps nothing.
+ */
 export function itemsIntersect(a: Item, b: Item): boolean {
+  if (isFloorCovering(a) || isFloorCovering(b)) return false;
   const boxA = itemBox(a);
   const boxB = itemBox(b);
   return AXES.every((axis) => {

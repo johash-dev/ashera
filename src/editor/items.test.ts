@@ -37,6 +37,12 @@ describe('itemsIntersect', () => {
     expect(itemsIntersect(box(0, 1), box(2, 1))).toBe(false);
   });
 
+  it('lets other Items stand on a rug: a floor covering is never counted as intersecting', () => {
+    const rug: Item = { ...item([0, 0.02, 0], [5, 0.04, 3.5]), type: 'rug' };
+    expect(itemsIntersect(rug, item([0, 0.5, 0], [1, 1, 1]))).toBe(false);
+    expect(itemsIntersect(item([0, 0.5, 0], [1, 1, 1]), rug)).toBe(false);
+  });
+
   it('compares the boxes along the Room axes, whichever way each Item faces', () => {
     // 4 ft wide, 1 ft deep: facing west it reaches 2 ft north and south of its centre.
     const turned = item([0, 1, 0], [4, 2, 1], 'west');
