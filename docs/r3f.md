@@ -7,6 +7,8 @@ updated: 2026-11-21
 
 Target: smooth on Asher's PC; the Twin must not stutter while orbiting or dragging Items.
 
+For modelling and look work, the `threejs-r3f-3d-interfaces` skill (`.claude/skills/`) is the reference; its "ASHERA overrides" block says which parts apply here. These rules win where they differ.
+
 ## Render loop
 
 - Never call React `setState` (or store setters that re-render) inside `useFrame`. Mutate refs (`ref.current.position.x = …`) instead.
