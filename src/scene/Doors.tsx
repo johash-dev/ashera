@@ -3,9 +3,9 @@ import { useEffect, useMemo } from 'react';
 import { MeshStandardMaterial } from 'three';
 import { type Room } from '../room';
 import { doorSwing } from './doorSwing';
+import { LOOK } from './look';
 import { doorLeafBox } from './roomBoxes';
 
-const LEAF_COLOR = '#3a3d4e';
 const SWING_COLOR = '#8a8fb0';
 /** Lifts the swing arc just off the floor so it does not z-fight with it. */
 const ARC_LIFT = 0.01;
@@ -17,7 +17,7 @@ const ARC_LIFT = 0.01;
  * the Skirting (see docs/log.md).
  */
 export function Doors({ room }: { room: Room }) {
-  const leafMaterial = useMemo(() => new MeshStandardMaterial({ color: LEAF_COLOR }), []);
+  const leafMaterial = useMemo(() => new MeshStandardMaterial({ color: LOOK.doorWood, roughness: 0.6 }), []);
   useEffect(() => () => leafMaterial.dispose(), [leafMaterial]);
 
   return (

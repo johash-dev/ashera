@@ -122,3 +122,4 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Canvas now `frameloop="demand"` (docs/r3f.md): with full-screen photo Views and six parallel e2e workers on software WebGL, continuous rendering starved the CPU and e2e timed out (even the non-WebGL swatch test took 41 s). Draw calls are now read after each rendered frame (`addAfterEffect`).
 - Look tweaks seen in the photo Views: the ceiling light's cast light moved below the Beams; window glass rougher (the light's reflection read as a moon).
 - Photos are portrait, the app landscape: each View matches the photo's height and aim, but shows more to the sides.
+- Owner asked on the Approval card for the Door leaf in brown wood like the photo: `LOOK.doorWood` `#7a4a28` (plain colour, no grain), moved from a local constant in `Doors.tsx` into `look.ts` with the other scene colours.
