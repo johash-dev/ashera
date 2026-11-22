@@ -252,3 +252,8 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Slice 3 merged (#28) after the owner's "looks good"; all three slices (#26–#28) went through Approval cards with before/after screenshots. All Done-when items checked.
 - Changes the owner asked for on the cards: none.
 - Still open: real sizes for the pegboard, headphones, shelf and frames (typical until measured); the pegboard's holes are not drawn; real pictures for the frames (later feature).
+
+## [2026-11-23] decision | 3D skill added to the project
+
+- Owner supplied a general three.js / React Three Fiber skill; added as `.claude/skills/threejs-r3f-3d-interfaces/` with an "ASHERA overrides" block on top: our rules win, no new dependencies without an ADR, draw-call budget < 100, 1 unit = 1 ft, mobile/robot/isometric/WebGPU parts skipped. `docs/r3f.md` points to it.
+- No code changes.
