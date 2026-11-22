@@ -4,6 +4,7 @@ import { itemBox, type Item, TV_LEG_HEIGHT, TV_STAND_DOORS } from '../editor';
 import {
   chairBoxes,
   deskBoxes,
+  frameBoxes,
   headphonesBoxes,
   keyboardBoxes,
   monitorBoxes,
@@ -36,7 +37,10 @@ type ItemMaterials = Record<
   | 'sofaFrame'
   | 'sofaCushion'
   | 'rug'
-  | 'pegboard',
+  | 'pegboard'
+  | 'frame'
+  | 'frameArt'
+  | 'frameLine',
   MeshStandardMaterial
 >;
 
@@ -162,6 +166,16 @@ function ItemMeshes({ item, materials }: { item: Item; materials: ItemMaterials 
       return <BoxMesh box={itemBox(item)} material={materials.rug} />;
     case 'pegboard':
       return <BoxMesh box={itemBox(item)} material={materials.pegboard} />;
+    case 'frame': {
+      const { body, art, line } = frameBoxes(item);
+      return (
+        <>
+          <BoxMesh box={body} material={materials.frame} />
+          <BoxMesh box={art} material={materials.frameArt} />
+          <BoxMesh box={line} material={materials.frameLine} />
+        </>
+      );
+    }
     case 'shelf':
       return <BoxMesh box={itemBox(item)} material={materials.deviceTrim} />;
     case 'headphones': {
@@ -218,6 +232,9 @@ export function Items({ items }: { items: readonly Item[] }) {
       sofaFrame: new MeshStandardMaterial({ color: LOOK.sofaFrame, roughness: 0.9 }),
       sofaCushion: new MeshStandardMaterial({ color: LOOK.sofaCushion, roughness: 0.9 }),
       rug: new MeshStandardMaterial({ color: LOOK.rug, roughness: 1 }),
+      frame: new MeshStandardMaterial({ color: LOOK.frame, roughness: 0.6 }),
+      frameArt: new MeshStandardMaterial({ color: LOOK.frameArt, roughness: 0.8 }),
+      frameLine: new MeshStandardMaterial({ color: LOOK.frameLine, roughness: 0.8 }),
       pegboard: new MeshStandardMaterial({ color: LOOK.pegboard, roughness: 0.8 }),
       chairTrim: new MeshStandardMaterial({ color: LOOK.chairTrim, roughness: 0.8 }),
     }),

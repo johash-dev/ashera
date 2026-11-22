@@ -36,6 +36,10 @@ export const LOOK = {
   rug: '#2a2840',
   /** Pegboard: a black board that stands out against the lighter wall tiles. */
   pegboard: '#15161d',
+  /** Picture frames: black frames around dark art, with a faint accent line so they read. */
+  frame: '#0c0c11',
+  frameArt: '#1c1d2a',
+  frameLine: '#5a4aa8',
   /** Slat panel: black slats a shade lighter than the felt behind them, so the ribs read. */
   slat: '#17181f',
   slatBacking: '#050507',

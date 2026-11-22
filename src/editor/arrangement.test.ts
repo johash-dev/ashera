@@ -25,6 +25,7 @@ describe.each(COMBINATIONS)('starterArrangement with the %i″ TV and the %s sof
       'pegboard',
       'headphones',
       'shelf',
+      'frame',
       ...sofaTypes,
     ])
       expect(types).toContain(type);

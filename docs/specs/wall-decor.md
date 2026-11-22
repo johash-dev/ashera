@@ -66,14 +66,14 @@ Visual (`@visual`): per-View baselines updated each slice via the `update-snapsh
 
 All must pass:
 
-- [ ] `npm run verify` prints ALL GREEN
-- [ ] `window.__ASHERA__.items` lists the pegboard, headphones, shelf and three frames with the Catalog sizes above, and unit tests prove none leaves the Room, enters the Door swing or intersects another Item, for both sofas and both TV sizes
-- [ ] The pegboard's back is on the east wall face, centred on the desk, its bottom at 4½ ft and above the monitor's top, its top below the Beam underside (unit tests)
-- [ ] The three frames' backs are on the south wall face, centred on the sofa, bottom at 4 ft, above the sofa's top, clear of the Fittings, same spot with either sofa (unit + e2e)
-- [ ] Draw calls stay < 100 in every View (e2e)
-- [ ] No new Room measurements, so no new "Measured values" rows (stated in the log entry)
+- [x] `npm run verify` prints ALL GREEN
+- [x] `window.__ASHERA__.items` lists the pegboard, headphones, shelf and three frames with the Catalog sizes above, and unit tests prove none leaves the Room, enters the Door swing or intersects another Item, for both sofas and both TV sizes
+- [x] The pegboard's back is on the east wall face, centred on the desk, its bottom at 4½ ft and above the monitor's top, its top below the Beam underside (unit tests)
+- [x] The three frames' backs are on the south wall face, centred on the sofa, bottom at 4 ft, above the sofa's top, clear of the Fittings, same spot with either sofa (unit + e2e)
+- [x] Draw calls stay < 100 in every View (e2e)
+- [x] No new Room measurements, so no new "Measured values" rows (stated in the log entry)
 - [ ] Owner said "looks good" on before/after screenshots of every View (plus `overview` with the L-shaped sofa)
-- [ ] docs updated (architecture if the editor's role changes, GLOSSARY, room-spec "Planned items"), `docs/log.md` entry added
+- [x] docs updated (architecture if the editor's role changes, GLOSSARY, room-spec "Planned items"), `docs/log.md` entry added
 
 ## Slices
 

@@ -190,6 +190,32 @@ export function headphonesBoxes(item: Item): { band: Box; cups: Box[]; hook: Box
   };
 }
 
+/**
+ * A picture frame: the black body at the back, the dark art inset in front of it leaving a border,
+ * and a thin accent line across the art.
+ */
+export function frameBoxes(item: Item): { body: Box; art: Box; line: Box } {
+  const [width, height, depth] = item.size;
+  const border = inches(1.2);
+  const artDepth = inches(0.2);
+  const lineDepth = inches(0.1);
+  const lineHeight = inches(0.4);
+  const bodyDepth = depth - artDepth - lineDepth;
+  return {
+    body: part(item, 0, 0, -depth / 2 + bodyDepth / 2, [width, height, bodyDepth]),
+    art: part(item, 0, border, -depth / 2 + bodyDepth + artDepth / 2, [
+      width - 2 * border,
+      height - 2 * border,
+      artDepth,
+    ]),
+    line: part(item, 0, (height - lineHeight) / 2, depth / 2 - lineDepth / 2, [
+      width - 4 * border,
+      lineHeight,
+      lineDepth,
+    ]),
+  };
+}
+
 /** A PC tower: its body and a slightly lighter front panel. */
 export function towerBoxes(item: Item): { body: Box; front: Box } {
   const [width, height, depth] = item.size;
