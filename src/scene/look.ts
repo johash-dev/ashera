@@ -29,6 +29,9 @@ export const LOOK = {
   deviceTrim: '#2a2c3a',
   chairBody: '#1a1b24',
   chairTrim: '#2e3042',
+  /** PC tower's dark glass side panel, and the chair's accent stripes (a dim violet, no glow). */
+  deviceGlass: '#07080d',
+  chairStripe: '#4b3a9a',
   /** Sofa: dark charcoal fabric, the seat cushions a shade lighter so they read against the frame. */
   sofaFrame: '#20222e',
   sofaCushion: '#2b2d3c',
@@ -53,6 +56,8 @@ export const LOOK = {
 export const TILE_LINE_OPACITY = 0.18;
 /** How strongly the TV's edge glows, so it reads against the dark Wall. */
 export const TV_EDGE_GLOW = 0.6;
+/** How strongly small accent lights (tower strip, monitor light, mouse wheel) glow. */
+export const ACCENT_GLOW = 1.5;
 /** How strongly the ceiling panel glows. */
 export const CEILING_LIGHT_GLOW = 1.5;
 /** Brightness of the light cast from each ceiling light, and the distance (ft) at which it fades out. */

@@ -96,9 +96,18 @@ export function soundbarBoxes(item: Item): { body: Box; grille: Box } {
 /** Thickness of the desk top, and of each square leg. */
 const DESK_TOP_THICKNESS = 0.1;
 const DESK_LEG = 0.15;
+/** Under-top rails (aprons) along the front and back; low stretchers between the legs at each end. */
+const DESK_APRON_HEIGHT = 0.3;
+const DESK_APRON_THICKNESS = 0.06;
+const DESK_STRETCHER_HEIGHT = 0.1;
+const DESK_STRETCHER_THICKNESS = 0.06;
+const DESK_STRETCHER_BOTTOM = 0.6;
 
-/** A desk: its top over the whole footprint and four square legs under its corners. */
-export function deskBoxes(item: Item): { top: Box; legs: Box[] } {
+/**
+ * A desk: its top over the whole footprint, four square legs under its corners, an apron under the
+ * top along the front and the back, and a low stretcher between the legs at each end.
+ */
+export function deskBoxes(item: Item): { top: Box; legs: Box[]; rails: Box[] } {
   const { position, size } = itemBox(item);
   const [x, y, z] = position;
   const [width, height, depth] = size;
@@ -106,6 +115,8 @@ export function deskBoxes(item: Item): { top: Box; legs: Box[] } {
   const legHeight = height - DESK_TOP_THICKNESS;
   const legX = width / 2 - DESK_LEG / 2;
   const legZ = depth / 2 - DESK_LEG / 2;
+  const betweenX = width - 2 * DESK_LEG;
+  const betweenZ = depth - 2 * DESK_LEG;
   return {
     top: {
       position: [x, floor + legHeight + DESK_TOP_THICKNESS / 2, z],
@@ -117,6 +128,20 @@ export function deskBoxes(item: Item): { top: Box; legs: Box[] } {
         size: [DESK_LEG, legHeight, DESK_LEG],
       })),
     ),
+    rails: [
+      ...[-1, 1].map((sx): Box => ({
+        position: [
+          x + sx * (width / 2 - DESK_APRON_THICKNESS / 2),
+          floor + legHeight - DESK_APRON_HEIGHT / 2,
+          z,
+        ],
+        size: [DESK_APRON_THICKNESS, DESK_APRON_HEIGHT, betweenZ],
+      })),
+      ...[-1, 1].map((sz): Box => ({
+        position: [x, floor + DESK_STRETCHER_BOTTOM + DESK_STRETCHER_HEIGHT / 2, z + sz * legZ],
+        size: [betweenX, DESK_STRETCHER_HEIGHT, DESK_STRETCHER_THICKNESS],
+      })),
+    ],
   };
 }
 
@@ -150,8 +175,18 @@ function part(item: Item, lateral: number, bottom: number, forward: number, size
   };
 }
 
-/** A monitor: a flat foot, a neck, the panel near the back, and the screen on the panel's front. */
-export function monitorBoxes(item: Item): { foot: Box; neck: Box; panel: Box; screen: Box } {
+/**
+ * A monitor: a flat foot, a neck, the panel near the back with a housing behind it, the screen on the
+ * panel's front and a small status light in the bottom bezel.
+ */
+export function monitorBoxes(item: Item): {
+  foot: Box;
+  neck: Box;
+  panel: Box;
+  back: Box;
+  screen: Box;
+  led: Box;
+} {
   const [width, height, depth] = item.size;
   const footHeight = inches(0.6);
   const panelHeight = inches(14.2);
@@ -159,13 +194,26 @@ export function monitorBoxes(item: Item): { foot: Box; neck: Box; panel: Box; sc
   const bezel = inches(0.4);
   const panelBottom = height - panelHeight;
   const panelForward = -depth / 2 + inches(2);
+  const backDepth = inches(1.2);
+  const backForward = panelForward - panelDepth / 2 - backDepth / 2;
+  const ledSize = inches(0.1);
   return {
-    foot: part(item, 0, 0, 0, [inches(10), footHeight, depth]),
-    neck: part(item, 0, footHeight, panelForward, [inches(2), panelBottom - footHeight, inches(1)]),
+    foot: part(item, 0, 0, 0, [inches(12), footHeight, depth - inches(1)]),
+    neck: part(item, 0, footHeight, backForward, [
+      inches(2.5),
+      panelBottom - footHeight + inches(4),
+      backDepth,
+    ]),
     panel: part(item, 0, panelBottom, panelForward, [width, panelHeight, panelDepth]),
+    back: part(item, 0, panelBottom + inches(3), backForward, [inches(13), inches(8), backDepth]),
     screen: part(item, 0, panelBottom + bezel, panelForward + panelDepth / 2 + inches(0.05), [
       width - 2 * bezel,
       panelHeight - 2 * bezel,
+      inches(0.1),
+    ]),
+    led: part(item, inches(10), panelBottom + ledSize, panelForward + panelDepth / 2 + inches(0.05), [
+      inches(0.4),
+      ledSize,
       inches(0.1),
     ]),
   };
@@ -216,55 +264,206 @@ export function frameBoxes(item: Item): { body: Box; art: Box; line: Box } {
   };
 }
 
-/** A PC tower: its body and a slightly lighter front panel. */
-export function towerBoxes(item: Item): { body: Box; front: Box } {
+/** Thickness of a PC tower's front panel and the height of its rubber feet. */
+const TOWER_FRONT = inches(0.5);
+const TOWER_FEET = inches(0.5);
+/** Thickness of the glass side panel (north side). */
+const TOWER_GLASS = inches(0.2);
+
+/**
+ * A PC tower on two feet: the body, a lighter front panel with air-vent slots and a glowing accent strip,
+ * and a dark glass side panel on its north face. Facing west, its front is its west face.
+ */
+export function towerBoxes(item: Item): {
+  body: Box;
+  front: Box;
+  vents: Box[];
+  strip: Box;
+  glass: Box;
+  feet: Box[];
+} {
   const [width, height, depth] = item.size;
-  const frontDepth = inches(0.4);
+  const bodyHeight = height - TOWER_FEET;
+  const ventDepth = inches(0.1);
   return {
-    body: part(item, 0, 0, 0, item.size),
-    front: part(item, 0, inches(1), depth / 2 + frontDepth / 2, [
-      width - inches(1),
-      height - inches(2),
-      frontDepth,
+    body: part(item, -TOWER_GLASS / 2, TOWER_FEET, -TOWER_FRONT / 2, [
+      width - TOWER_GLASS,
+      bodyHeight,
+      depth - TOWER_FRONT,
+    ]),
+    front: part(item, 0, TOWER_FEET, depth / 2 - TOWER_FRONT / 2 - ventDepth / 2, [
+      width,
+      bodyHeight,
+      TOWER_FRONT - ventDepth,
+    ]),
+    vents: Array.from({ length: 5 }, (_, i) =>
+      part(item, -inches(0.5), TOWER_FEET + inches(2 + i * 0.8), depth / 2 - ventDepth / 2, [
+        width - inches(3),
+        inches(0.3),
+        ventDepth,
+      ]),
+    ),
+    strip: part(
+      item,
+      width / 2 - inches(0.9),
+      TOWER_FEET + inches(3),
+      depth / 2 - inches(0.075) - ventDepth / 2,
+      [inches(0.3), bodyHeight - inches(6), inches(0.15)],
+    ),
+    glass: part(item, width / 2 - TOWER_GLASS / 2, TOWER_FEET + inches(0.5), -TOWER_FRONT / 2, [
+      TOWER_GLASS,
+      bodyHeight - inches(1),
+      depth - TOWER_FRONT - inches(1),
+    ]),
+    feet: [-1, 1].map((side) =>
+      part(item, side * (width / 2 - inches(1)), 0, 0, [inches(1), TOWER_FEET, depth - inches(2)]),
+    ),
+  };
+}
+
+/** Rows of keys on a keyboard, and the gap between rows (feet). */
+const KEY_ROWS = 5;
+const KEY_ROW_GAP = inches(0.15);
+
+/** A keyboard: a low body and five rows of keys on top, the gaps between rows showing the body. */
+export function keyboardBoxes(item: Item): { body: Box; rows: Box[] } {
+  const [width, height, depth] = item.size;
+  const rim = inches(0.4);
+  const bodyHeight = inches(1);
+  const rowDepth = (depth - 2 * rim - (KEY_ROWS - 1) * KEY_ROW_GAP) / KEY_ROWS;
+  return {
+    body: part(item, 0, 0, 0, [width, bodyHeight, depth]),
+    rows: Array.from({ length: KEY_ROWS }, (_, i) =>
+      part(item, 0, bodyHeight, -depth / 2 + rim + rowDepth / 2 + i * (rowDepth + KEY_ROW_GAP), [
+        width - 2 * rim,
+        height - bodyHeight,
+        rowDepth,
+      ]),
+    ),
+  };
+}
+
+/** A mouse: a low shell, a raised hump at the back, two buttons at the front and a scroll wheel between them. */
+export function mouseBoxes(item: Item): { shell: Box; hump: Box; buttons: Box[]; wheel: Box } {
+  const [width, height, depth] = item.size;
+  const shellHeight = inches(0.7);
+  const humpDepth = inches(2.8);
+  const buttonGap = inches(0.1);
+  const buttonDepth = depth - humpDepth;
+  const buttonWidth = (width - buttonGap) / 2;
+  const wheelDepth = inches(0.8);
+  return {
+    shell: part(item, 0, 0, 0, [width, shellHeight, depth]),
+    hump: part(item, 0, shellHeight, -depth / 2 + humpDepth / 2, [
+      width,
+      height - inches(0.2) - shellHeight,
+      humpDepth,
+    ]),
+    buttons: [-1, 1].map((side) =>
+      part(item, (side * (buttonWidth + buttonGap)) / 2, shellHeight, depth / 2 - buttonDepth / 2, [
+        buttonWidth,
+        inches(0.5),
+        buttonDepth,
+      ]),
+    ),
+    wheel: part(item, 0, shellHeight, depth / 2 - buttonDepth - wheelDepth / 2, [
+      inches(0.3),
+      height - shellHeight,
+      wheelDepth,
     ]),
   };
 }
 
-/** A keyboard: its body and a slightly lighter key block on top. */
-export function keyboardBoxes(item: Item): { body: Box; keys: Box } {
-  const [width, height, depth] = item.size;
-  const rim = inches(0.4);
-  const keysHeight = inches(0.2);
-  return {
-    body: part(item, 0, 0, 0, item.size),
-    keys: part(item, 0, height, 0, [width - 2 * rim, keysHeight, depth - 2 * rim]),
-  };
+/** A box turned about the vertical axis; a positive angle turns its x axis towards -z. */
+export interface YawedBox extends Box {
+  readonly yawRad: number;
 }
 
-/** A gaming chair: a two-bar base, a column, the seat, a tall backrest and two armrests. */
-export function chairBoxes(item: Item): { base: Box[]; column: Box; seat: Box; back: Box; arms: Box[] } {
-  const [width, height, depth] = item.size;
-  const baseSpan = Math.min(width, depth) - inches(1);
-  const baseThickness = inches(1.5);
+/** Legs in a chair's star base, and how far each reaches from the centre (feet). */
+const CHAIR_LEGS = 5;
+const CHAIR_LEG_REACH = inches(12.5);
+
+/**
+ * A gaming chair: a five-star base on casters, a column, a seat with side bolsters, a tall backrest with
+ * a headrest and side wings, two accent stripes on the backrest's front, and two armrests.
+ */
+export function chairBoxes(item: Item): {
+  base: YawedBox[];
+  casters: Box[];
+  column: Box;
+  seat: Box;
+  bolsters: Box[];
+  back: Box;
+  headrest: Box;
+  wings: Box[];
+  stripes: Box[];
+  arms: Box[];
+} {
+  const [, height, depth] = item.size;
+  const [x, y, z] = item.position;
+  const floor = y - height / 2;
+  const [fx, fz] = FRONT[item.facing];
+  const frontAngle = Math.atan2(fz, fx);
+  const legAngle = (i: number) => frontAngle + (i * 2 * Math.PI) / CHAIR_LEGS;
+  const casterSize = inches(1.6);
+  const legHeight = inches(1.2);
+  const legBottom = casterSize - inches(0.6);
+  const baseTop = legBottom + legHeight;
   const seatBottom = inches(17);
-  const seatThickness = inches(4);
+  const seatThickness = inches(3.5);
   const seatWidth = inches(20);
-  const seatDepth = inches(21);
+  const seatDepth = inches(20);
   const seatTop = seatBottom + seatThickness;
+  const backBottom = inches(21);
+  const backHeight = inches(25);
   const backDepth = inches(4);
-  const armHeight = inches(7);
-  const armLateral = inches(11.5);
+  const backForward = -depth / 2 + backDepth / 2;
+  const headrestHeight = height - (backBottom + backHeight - inches(2.5));
   return {
-    base: [
-      part(item, 0, 0, 0, [baseSpan, baseThickness, baseThickness]),
-      part(item, 0, 0, 0, [baseThickness, baseThickness, baseSpan]),
-    ],
-    column: part(item, 0, baseThickness, 0, [inches(2.5), seatBottom - baseThickness, inches(2.5)]),
+    base: Array.from({ length: CHAIR_LEGS }, (_, i): YawedBox => ({
+      position: [
+        x + (Math.cos(legAngle(i)) * CHAIR_LEG_REACH) / 2,
+        floor + legBottom + legHeight / 2,
+        z + (Math.sin(legAngle(i)) * CHAIR_LEG_REACH) / 2,
+      ],
+      size: [CHAIR_LEG_REACH, legHeight, inches(1.8)],
+      yawRad: -legAngle(i),
+    })),
+    casters: Array.from({ length: CHAIR_LEGS }, (_, i): Box => {
+      const reach = CHAIR_LEG_REACH - casterSize / 2;
+      return {
+        position: [
+          x + Math.cos(legAngle(i)) * reach,
+          floor + casterSize / 2,
+          z + Math.sin(legAngle(i)) * reach,
+        ],
+        size: [casterSize, casterSize, casterSize],
+      };
+    }),
+    column: part(item, 0, baseTop, 0, [inches(2.5), seatBottom - baseTop, inches(2.5)]),
     seat: part(item, 0, seatBottom, inches(3), [seatWidth, seatThickness, seatDepth]),
-    back: part(item, 0, seatTop, -depth / 2 + backDepth / 2, [seatWidth, height - seatTop, backDepth]),
+    bolsters: [-1, 1].map((side) =>
+      part(item, side * inches(8.75), seatTop, inches(3.5), [inches(2.5), inches(1.5), inches(17)]),
+    ),
+    back: part(item, 0, backBottom, backForward, [seatWidth - inches(1), backHeight, backDepth]),
+    headrest: part(item, 0, height - headrestHeight, backForward, [inches(10), headrestHeight, inches(3.5)]),
+    wings: [-1, 1].map((side) =>
+      part(item, side * inches(8.5), backBottom + inches(8), -depth / 2 + inches(3.5), [
+        inches(3),
+        inches(12),
+        inches(7),
+      ]),
+    ),
+    stripes: [-1, 1].map((side) =>
+      part(item, side * inches(3.5), backBottom + inches(1), -depth / 2 + backDepth + inches(0.075), [
+        inches(0.8),
+        backHeight - inches(2),
+        inches(0.15),
+      ]),
+    ),
     arms: [-1, 1].flatMap((side) => [
-      part(item, side * armLateral, seatTop, inches(2), [inches(1.5), armHeight, inches(1.5)]),
-      part(item, side * armLateral, seatTop + armHeight, inches(3), [inches(2.5), inches(1.2), inches(10)]),
+      part(item, side * inches(11.5), seatTop, inches(2), [inches(1.5), inches(7), inches(1.5)]),
+      part(item, side * inches(11.5), seatTop + inches(7), inches(3), [inches(2.5), inches(1.2), inches(10)]),
     ]),
   };
 }

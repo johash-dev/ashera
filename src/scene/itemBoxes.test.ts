@@ -8,6 +8,7 @@ import {
   headphonesBoxes,
   keyboardBoxes,
   monitorBoxes,
+  mouseBoxes,
   ps5Boxes,
   sofaArmSides,
   sofaBoxes,
@@ -155,6 +156,39 @@ describe('deskBoxes', () => {
     }
     expect(new Set(legs.map((leg) => `${leg.position[0]},${leg.position[2]}`)).size).toBe(4);
   });
+
+  it('keeps every part within the Item box', () => {
+    const { top, legs, rails } = deskBoxes(DESK);
+    const box = { position: DESK.position, size: [2, 2.5, 4] as const };
+    for (const part of [top, ...legs, ...rails]) expect(within(part, box)).toBe(true);
+  });
+
+  it('hangs an apron under the top along the front and the back, flush with the top’s underside', () => {
+    const { top, rails } = deskBoxes(DESK);
+    const aprons = rails.filter((rail) => rail.size[2] > rail.size[0]);
+    expect(aprons).toHaveLength(2);
+    for (const apron of aprons) {
+      expect(apron.position[1] + apron.size[1] / 2).toBeCloseTo(top.position[1] - top.size[1] / 2);
+    }
+    const sides = aprons.map((apron) => Math.sign(apron.position[0] - 4)).sort();
+    expect(sides).toEqual([-1, 1]); // one at the front, one at the back
+  });
+
+  it('runs a low stretcher between the legs at each end, clear of the floor', () => {
+    const { legs, rails } = deskBoxes(DESK);
+    const stretchers = rails.filter((rail) => rail.size[0] > rail.size[2]);
+    expect(stretchers).toHaveLength(2);
+    const [north, south] = [...stretchers].sort((a, b) => a.position[2] - b.position[2]);
+    if (!north || !south) throw new Error('expected two stretchers');
+    expect(north.position[2]).toBeLessThan(DESK.position[2]);
+    expect(south.position[2]).toBeGreaterThan(DESK.position[2]);
+    for (const stretcher of stretchers) {
+      expect(stretcher.position[1] - stretcher.size[1] / 2).toBeGreaterThan(0.2);
+      const [leg] = legs;
+      if (!leg) throw new Error('expected legs');
+      expect(stretcher.size[0]).toBeLessThan(2 - leg.size[0]); // between the legs, not through them
+    }
+  });
 });
 
 /** True when `inner` lies within `outer` on every axis (feet, with a hair of rounding). */
@@ -265,10 +299,11 @@ const MONITOR: Item = {
 };
 
 describe('monitorBoxes', () => {
-  it('keeps the foot, neck and panel within the Item box', () => {
-    const { foot, neck, panel } = monitorBoxes(MONITOR);
-    const box = { position: MONITOR.position, size: [8 / 12, 20 / 12, 2] as const };
-    for (const part of [foot, neck, panel]) expect(within(part, box)).toBe(true);
+  const BOX = { position: MONITOR.position, size: [8 / 12, 20 / 12, 2] as const };
+
+  it('keeps every part within the Item box', () => {
+    const { foot, neck, panel, back, screen, led } = monitorBoxes(MONITOR);
+    for (const part of [foot, neck, panel, back, screen, led]) expect(within(part, BOX)).toBe(true);
   });
 
   it('puts the panel above the foot, the full width of the Item, along the wall', () => {
@@ -285,37 +320,144 @@ describe('monitorBoxes', () => {
       panel.position[0] - panel.size[0] / 2 + 0.01,
     );
   });
+
+  it('puts a housing and the neck behind the panel (east), the neck reaching up into the housing', () => {
+    const { foot, neck, panel, back } = monitorBoxes(MONITOR);
+    expect(back.position[0]).toBeGreaterThan(panel.position[0]);
+    expect(neck.position[0]).toBeGreaterThan(panel.position[0]);
+    expect(back.size[2]).toBeLessThan(panel.size[2]); // narrower than the panel
+    expect(neck.position[1] - neck.size[1] / 2).toBeCloseTo(foot.position[1] + foot.size[1] / 2);
+    expect(neck.position[1] + neck.size[1] / 2).toBeGreaterThan(back.position[1] - back.size[1] / 2);
+  });
+
+  it('puts a small status light in the panel’s bottom bezel, on its front, below the screen', () => {
+    const { panel, screen, led } = monitorBoxes(MONITOR);
+    expect(led.position[0]).toBeLessThan(panel.position[0]);
+    expect(led.position[1] + led.size[1] / 2).toBeLessThan(screen.position[1] - screen.size[1] / 2 + 1e-9);
+    expect(led.size[2]).toBeLessThan(0.05); // a few hundredths of a foot along the wall
+  });
 });
 
-describe('towerBoxes and keyboardBoxes', () => {
+describe('towerBoxes', () => {
+  // 8.5 in wide (north–south), 18 in tall, 17 in deep (east–west), facing west, on a desk top 2.5 ft up.
   const TOWER: Item = {
     id: 'tower',
     type: 'pc-tower',
-    position: [5, 3.25, 1],
-    size: [0.7, 1.5, 1.4],
+    position: [5 - 17 / 24, 2.5 + 0.75, 1],
+    size: [8.5 / 12, 1.5, 17 / 12],
     facing: 'west',
   };
-  const KEYBOARD: Item = {
-    id: 'kb',
-    type: 'keyboard',
-    position: [4, 2.56, 0],
-    size: [1.4, 0.12, 0.45],
-    facing: 'west',
-  };
+  const BOX = { position: TOWER.position, size: [17 / 12, 1.5, 8.5 / 12] as const };
 
-  it('draws the tower body at its box and the front panel on its west face', () => {
-    const { body, front } = towerBoxes(TOWER);
-    expect(body).toEqual({ position: TOWER.position, size: [1.4, 1.5, 0.7] });
+  it('keeps every part within the Item box', () => {
+    const { body, front, vents, strip, glass, feet } = towerBoxes(TOWER);
+    for (const part of [body, front, ...vents, strip, glass, ...feet]) expect(within(part, BOX)).toBe(true);
+  });
+
+  it('stands on two feet, the body clear of the desk, the front panel flush with the west face', () => {
+    const { body, front, feet } = towerBoxes(TOWER);
+    expect(feet).toHaveLength(2);
+    for (const foot of feet) expect(foot.position[1] - foot.size[1] / 2).toBeCloseTo(2.5);
+    expect(body.position[1] - body.size[1] / 2).toBeGreaterThan(2.5);
     expect(front.position[0]).toBeLessThan(body.position[0] - body.size[0] / 2 + 0.01);
   });
 
-  it('puts the keys on top of the keyboard body', () => {
-    const { body, keys } = keyboardBoxes(KEYBOARD);
-    expect(keys.position[1] - keys.size[1] / 2).toBeCloseTo(body.position[1] + body.size[1] / 2);
-    expect(keys.size[0]).toBeLessThan(body.size[0]); // inset from the body's edges
-    expect(keys.size[2]).toBeLessThan(body.size[2]);
+  it('cuts air-vent slots across the front, standing a hair proud of the front panel', () => {
+    const { front, vents } = towerBoxes(TOWER);
+    expect(vents.length).toBeGreaterThanOrEqual(3);
+    for (const vent of vents) {
+      expect(vent.position[0] - vent.size[0] / 2).toBeLessThan(front.position[0] - front.size[0] / 2);
+    }
+    const heights = vents.map((vent) => vent.position[1]);
+    expect(new Set(heights).size).toBe(vents.length); // one above the other
+  });
+
+  it('puts the accent strip on the front near the north edge, and dark glass on the north face', () => {
+    const { body, strip, glass } = towerBoxes(TOWER);
+    expect(strip.position[2]).toBeLessThan(TOWER.position[2]); // north is -z
+    expect(glass.position[2]).toBeLessThan(body.position[2]);
+    expect(glass.position[2] - glass.size[2] / 2).toBeCloseTo(TOWER.position[2] - 8.5 / 24);
   });
 });
+
+describe('keyboardBoxes', () => {
+  const KEYBOARD: Item = {
+    id: 'kb',
+    type: 'keyboard',
+    position: [4, 2.5 + 0.0625, 0],
+    size: [17.5 / 12, 1.5 / 12, 5.5 / 12],
+    facing: 'west',
+  };
+  const BOX = { position: KEYBOARD.position, size: [5.5 / 12, 1.5 / 12, 17.5 / 12] as const };
+
+  it('keeps the body and every row of keys within the Item box', () => {
+    const { body, rows } = keyboardBoxes(KEYBOARD);
+    for (const part of [body, ...rows]) expect(within(part, BOX)).toBe(true);
+  });
+
+  it('lays five rows of keys on the body, inset from its edges', () => {
+    const { body, rows } = keyboardBoxes(KEYBOARD);
+    expect(rows).toHaveLength(5);
+    for (const row of rows) {
+      expect(row.position[1] - row.size[1] / 2).toBeCloseTo(body.position[1] + body.size[1] / 2);
+      expect(row.size[2]).toBeLessThan(body.size[2]);
+    }
+  });
+
+  it('leaves a gap between rows so the body shows through, back to front (east to west)', () => {
+    const { rows } = keyboardBoxes(KEYBOARD);
+    const ordered = [...rows].sort((a, b) => b.position[0] - a.position[0]);
+    for (let i = 1; i < ordered.length; i++) {
+      const behind = ordered[i - 1];
+      const ahead = ordered[i];
+      if (!behind || !ahead) throw new Error('expected rows');
+      const gap = behind.position[0] - behind.size[0] / 2 - (ahead.position[0] + ahead.size[0] / 2);
+      expect(gap).toBeGreaterThan(0.005);
+    }
+  });
+});
+
+describe('mouseBoxes', () => {
+  const MOUSE: Item = {
+    id: 'mouse',
+    type: 'mouse',
+    position: [4, 2.5 + 0.0625, 1],
+    size: [2.5 / 12, 1.5 / 12, 4.7 / 12],
+    facing: 'west',
+  };
+  const BOX = { position: MOUSE.position, size: [4.7 / 12, 1.5 / 12, 2.5 / 12] as const };
+
+  it('keeps every part within the Item box, the tallest reaching its top', () => {
+    const { shell, hump, buttons, wheel } = mouseBoxes(MOUSE);
+    const parts = [shell, hump, ...buttons, wheel];
+    for (const part of parts) expect(within(part, BOX)).toBe(true);
+    const top = Math.max(...parts.map((part) => part.position[1] + part.size[1] / 2));
+    expect(top).toBeCloseTo(2.5 + 1.5 / 12);
+  });
+
+  it('puts the hump at the back (east) and two buttons at the front (west) with a gap between them', () => {
+    const { hump, buttons } = mouseBoxes(MOUSE);
+    expect(buttons).toHaveLength(2);
+    for (const button of buttons) expect(button.position[0]).toBeLessThan(hump.position[0]);
+    const [a, b] = [...buttons].sort((p, q) => p.position[2] - q.position[2]);
+    if (!a || !b) throw new Error('expected two buttons');
+    expect(b.position[2] - b.size[2] / 2 - (a.position[2] + a.size[2] / 2)).toBeGreaterThan(0);
+  });
+
+  it('puts the scroll wheel on the centre line between the buttons, on top of the shell', () => {
+    const { shell, wheel } = mouseBoxes(MOUSE);
+    expect(wheel.position[2]).toBeCloseTo(MOUSE.position[2]);
+    expect(wheel.position[1] - wheel.size[1] / 2).toBeCloseTo(shell.position[1] + shell.size[1] / 2);
+  });
+});
+
+/** Extent (feet) of a box turned about the vertical axis, as a box that holds it. */
+function yawedExtent(box: { position: Box['position']; size: Box['size']; yawRad: number }): Box {
+  const [sx, sy, sz] = box.size;
+  const cos = Math.abs(Math.cos(box.yawRad));
+  const sin = Math.abs(Math.sin(box.yawRad));
+  return { position: box.position, size: [sx * cos + sz * sin, sy, sx * sin + sz * cos] };
+}
 
 describe('chairBoxes', () => {
   // A 27 in square, 50 in tall chair at the desk, facing east: its back is on the west side.
@@ -326,27 +468,69 @@ describe('chairBoxes', () => {
     size: [27 / 12, 50 / 12, 27 / 12],
     facing: 'east',
   };
+  const BOX = { position: CHAIR.position, size: CHAIR.size };
+  const parts = () => {
+    const c = chairBoxes(CHAIR);
+    return {
+      c,
+      all: [
+        ...c.base.map(yawedExtent),
+        ...c.casters,
+        c.column,
+        c.seat,
+        ...c.bolsters,
+        c.back,
+        c.headrest,
+        ...c.wings,
+        ...c.stripes,
+        ...c.arms,
+      ],
+    };
+  };
 
   it('keeps every part within the Item box', () => {
-    const { base, column, seat, back, arms } = chairBoxes(CHAIR);
-    const box = { position: CHAIR.position, size: CHAIR.size };
-    for (const part of [...base, column, seat, back, ...arms]) expect(within(part, box)).toBe(true);
+    for (const part of parts().all) expect(within(part, BOX)).toBe(true);
   });
 
-  it('puts the backrest behind the seat (west, as the chair faces east), rising to the full height', () => {
-    const { seat, back } = chairBoxes(CHAIR);
-    expect(back.position[0]).toBeLessThan(seat.position[0]);
-    expect(back.position[1] + back.size[1] / 2).toBeCloseTo(50 / 12);
+  it('stands on a five-star base: legs 72° apart, one pointing to the front, each ending in a caster on the floor', () => {
+    const { base, casters } = chairBoxes(CHAIR);
+    expect(base).toHaveLength(5);
+    expect(casters).toHaveLength(5);
+    const angles = base
+      .map((leg) => ((((-leg.yawRad * 180) / Math.PI) % 360) + 360) % 360)
+      .sort((a, b) => a - b);
+    angles.forEach((angle, i) => expect(angle).toBeCloseTo(i * 72, 5)); // 0° is east: the front
+    for (const caster of casters) expect(caster.position[1] - caster.size[1] / 2).toBeCloseTo(0);
   });
 
-  it('puts the seat on the column and an armrest each side of it', () => {
-    const { column, seat, arms } = chairBoxes(CHAIR);
-    expect(seat.position[1] - seat.size[1] / 2).toBeGreaterThanOrEqual(
-      column.position[1] + column.size[1] / 2 - 1e-9,
+  it('puts the backrest behind the seat (west, as the chair faces east), the headrest reaching the full height', () => {
+    const { c } = parts();
+    expect(c.back.position[0]).toBeLessThan(c.seat.position[0]);
+    expect(c.headrest.position[1] + c.headrest.size[1] / 2).toBeCloseTo(50 / 12);
+    expect(c.headrest.position[1] - c.headrest.size[1] / 2).toBeLessThan(
+      c.back.position[1] + c.back.size[1] / 2,
     );
-    const sides = arms.map((arm) => Math.sign(arm.position[2] - CHAIR.position[2]));
-    expect(sides).toContain(1);
-    expect(sides).toContain(-1);
+  });
+
+  it('puts the seat on the column, a bolster and an armrest at each side of it', () => {
+    const { c } = parts();
+    expect(c.seat.position[1] - c.seat.size[1] / 2).toBeGreaterThanOrEqual(
+      c.column.position[1] + c.column.size[1] / 2 - 1e-9,
+    );
+    const side = (box: Box) => Math.sign(box.position[2] - CHAIR.position[2]);
+    for (const group of [c.bolsters, c.wings, c.arms]) {
+      expect(group.map(side)).toContain(1);
+      expect(group.map(side)).toContain(-1);
+    }
+  });
+
+  it('puts two accent stripes on the backrest’s front (east) face, one each side of the middle', () => {
+    const { stripes, back } = chairBoxes(CHAIR);
+    expect(stripes).toHaveLength(2);
+    for (const stripe of stripes) {
+      expect(stripe.position[0]).toBeGreaterThan(back.position[0] + back.size[0] / 2 - 1e-9);
+    }
+    expect(stripes.map((stripe) => Math.sign(stripe.position[2]))).toEqual([-1, 1]);
   });
 });
 

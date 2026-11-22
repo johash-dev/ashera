@@ -8,6 +8,7 @@ import {
   headphonesBoxes,
   keyboardBoxes,
   monitorBoxes,
+  mouseBoxes,
   ps5Boxes,
   sofaArmSides,
   sofaBoxes,
@@ -16,7 +17,8 @@ import {
   towerBoxes,
   tvBoxes,
 } from './itemBoxes';
-import { LOOK, TV_EDGE_GLOW } from './look';
+import { ACCENT_GLOW, LOOK, TV_EDGE_GLOW } from './look';
+import { type DrawnBox, mergeBoxes } from './mergedBoxes';
 import { type Box } from './roomBoxes';
 
 type ItemMaterials = Record<
@@ -32,8 +34,11 @@ type ItemMaterials = Record<
   | 'deskLeg'
   | 'deviceBody'
   | 'deviceTrim'
+  | 'deviceGlass'
+  | 'accentGlow'
   | 'chairBody'
   | 'chairTrim'
+  | 'chairStripe'
   | 'sofaFrame'
   | 'sofaCushion'
   | 'rug'
@@ -49,6 +54,103 @@ function BoxMesh({ box, material }: { box: Box; material: MeshStandardMaterial }
     <mesh position={[...box.position]} material={material}>
       <boxGeometry args={[...box.size]} />
     </mesh>
+  );
+}
+
+/** Boxes drawn as one mesh: parts of an Item sharing a material cost one draw call however many there are. */
+function MergedBoxes({ boxes, material }: { boxes: readonly DrawnBox[]; material: MeshStandardMaterial }) {
+  const geometry = useMemo(() => mergeBoxes(boxes), [boxes]);
+  useEffect(() => () => geometry.dispose(), [geometry]);
+  return <mesh geometry={geometry} material={material} />;
+}
+
+function DeskMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
+  const { top, legs, rails } = useMemo(() => deskBoxes(item), [item]);
+  const frame = useMemo(() => [...legs, ...rails], [legs, rails]);
+  return (
+    <>
+      <MergedBoxes boxes={[top]} material={materials.deskTop} />
+      <MergedBoxes boxes={frame} material={materials.deskLeg} />
+    </>
+  );
+}
+
+function MonitorMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
+  const { foot, neck, panel, back, screen, led } = useMemo(() => monitorBoxes(item), [item]);
+  const body = useMemo(() => [foot, neck, panel, back], [foot, neck, panel, back]);
+  const screenBoxes = useMemo(() => [screen], [screen]);
+  const ledBoxes = useMemo(() => [led], [led]);
+  return (
+    <>
+      <MergedBoxes boxes={body} material={materials.deviceBody} />
+      <MergedBoxes boxes={screenBoxes} material={materials.tvScreen} />
+      <MergedBoxes boxes={ledBoxes} material={materials.accentGlow} />
+    </>
+  );
+}
+
+function TowerMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
+  const { body, front, vents, strip, glass, feet } = useMemo(() => towerBoxes(item), [item]);
+  const dark = useMemo(() => [body, ...vents, ...feet], [body, vents, feet]);
+  const frontBoxes = useMemo(() => [front], [front]);
+  const glassBoxes = useMemo(() => [glass], [glass]);
+  const stripBoxes = useMemo(() => [strip], [strip]);
+  return (
+    <>
+      <MergedBoxes boxes={dark} material={materials.deviceBody} />
+      <MergedBoxes boxes={frontBoxes} material={materials.deviceTrim} />
+      <MergedBoxes boxes={glassBoxes} material={materials.deviceGlass} />
+      <MergedBoxes boxes={stripBoxes} material={materials.accentGlow} />
+    </>
+  );
+}
+
+function KeyboardMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
+  const { body, rows } = useMemo(() => keyboardBoxes(item), [item]);
+  const bodyBoxes = useMemo(() => [body], [body]);
+  return (
+    <>
+      <MergedBoxes boxes={bodyBoxes} material={materials.deviceBody} />
+      <MergedBoxes boxes={rows} material={materials.deviceTrim} />
+    </>
+  );
+}
+
+function MouseMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
+  const { shell, hump, buttons, wheel } = useMemo(() => mouseBoxes(item), [item]);
+  const shape = useMemo(() => [shell, hump, ...buttons], [shell, hump, buttons]);
+  const wheelBoxes = useMemo(() => [wheel], [wheel]);
+  return (
+    <>
+      <MergedBoxes boxes={shape} material={materials.deviceTrim} />
+      <MergedBoxes boxes={wheelBoxes} material={materials.accentGlow} />
+    </>
+  );
+}
+
+function ChairMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
+  const parts = useMemo(() => chairBoxes(item), [item]);
+  const body = useMemo(
+    () => [...parts.base, ...parts.casters, parts.column, ...parts.arms.filter((_, i) => i % 2 === 0)],
+    [parts],
+  );
+  const trim = useMemo(
+    () => [
+      parts.seat,
+      ...parts.bolsters,
+      parts.back,
+      parts.headrest,
+      ...parts.wings,
+      ...parts.arms.filter((_, i) => i % 2 === 1),
+    ],
+    [parts],
+  );
+  return (
+    <>
+      <MergedBoxes boxes={body} material={materials.chairBody} />
+      <MergedBoxes boxes={trim} material={materials.chairTrim} />
+      <MergedBoxes boxes={parts.stripes} material={materials.chairStripe} />
+    </>
   );
 }
 
@@ -116,48 +218,16 @@ function ItemMeshes({ item, materials }: { item: Item; materials: ItemMaterials 
         </>
       );
     }
-    case 'desk': {
-      const { top, legs } = deskBoxes(item);
-      return (
-        <>
-          <BoxMesh box={top} material={materials.deskTop} />
-          {legs.map((leg, i) => (
-            <BoxMesh key={i} box={leg} material={materials.deskLeg} />
-          ))}
-        </>
-      );
-    }
-    case 'monitor': {
-      const { foot, neck, panel, screen } = monitorBoxes(item);
-      return (
-        <>
-          <BoxMesh box={foot} material={materials.deviceBody} />
-          <BoxMesh box={neck} material={materials.deviceBody} />
-          <BoxMesh box={panel} material={materials.deviceBody} />
-          <BoxMesh box={screen} material={materials.tvScreen} />
-        </>
-      );
-    }
-    case 'pc-tower': {
-      const { body, front } = towerBoxes(item);
-      return (
-        <>
-          <BoxMesh box={body} material={materials.deviceBody} />
-          <BoxMesh box={front} material={materials.deviceTrim} />
-        </>
-      );
-    }
-    case 'keyboard': {
-      const { body, keys } = keyboardBoxes(item);
-      return (
-        <>
-          <BoxMesh box={body} material={materials.deviceBody} />
-          <BoxMesh box={keys} material={materials.deviceTrim} />
-        </>
-      );
-    }
+    case 'desk':
+      return <DeskMeshes item={item} materials={materials} />;
+    case 'monitor':
+      return <MonitorMeshes item={item} materials={materials} />;
+    case 'pc-tower':
+      return <TowerMeshes item={item} materials={materials} />;
+    case 'keyboard':
+      return <KeyboardMeshes item={item} materials={materials} />;
     case 'mouse':
-      return <BoxMesh box={itemBox(item)} material={materials.deviceTrim} />;
+      return <MouseMeshes item={item} materials={materials} />;
     case 'sofa-compact':
     case 'sofa-l-long':
     case 'sofa-l-short':
@@ -189,21 +259,8 @@ function ItemMeshes({ item, materials }: { item: Item; materials: ItemMaterials 
         </>
       );
     }
-    case 'gaming-chair': {
-      const { base, column, seat, back, arms } = chairBoxes(item);
-      return (
-        <>
-          {[...base, column].map((box, i) => (
-            <BoxMesh key={i} box={box} material={materials.chairBody} />
-          ))}
-          <BoxMesh box={seat} material={materials.chairTrim} />
-          <BoxMesh box={back} material={materials.chairTrim} />
-          {arms.map((box, i) => (
-            <BoxMesh key={i} box={box} material={materials.chairBody} />
-          ))}
-        </>
-      );
-    }
+    case 'gaming-chair':
+      return <ChairMeshes item={item} materials={materials} />;
   }
 }
 
@@ -228,7 +285,15 @@ export function Items({ items }: { items: readonly Item[] }) {
       deskLeg: new MeshStandardMaterial({ color: LOOK.deskLeg, roughness: 0.5 }),
       deviceBody: new MeshStandardMaterial({ color: LOOK.deviceBody, roughness: 0.5 }),
       deviceTrim: new MeshStandardMaterial({ color: LOOK.deviceTrim, roughness: 0.6 }),
+      deviceGlass: new MeshStandardMaterial({ color: LOOK.deviceGlass, roughness: 0.1 }),
+      accentGlow: new MeshStandardMaterial({
+        color: LOOK.accent,
+        emissive: LOOK.accent,
+        emissiveIntensity: ACCENT_GLOW,
+        roughness: 0.5,
+      }),
       chairBody: new MeshStandardMaterial({ color: LOOK.chairBody, roughness: 0.6 }),
+      chairStripe: new MeshStandardMaterial({ color: LOOK.chairStripe, roughness: 0.7 }),
       sofaFrame: new MeshStandardMaterial({ color: LOOK.sofaFrame, roughness: 0.9 }),
       sofaCushion: new MeshStandardMaterial({ color: LOOK.sofaCushion, roughness: 0.9 }),
       rug: new MeshStandardMaterial({ color: LOOK.rug, roughness: 1 }),

@@ -252,3 +252,11 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Slice 3 merged (#28) after the owner's "looks good"; all three slices (#26–#28) went through Approval cards with before/after screenshots. All Done-when items checked.
 - Changes the owner asked for on the cards: none.
 - Still open: real sizes for the pegboard, headphones, shelf and frames (typical until measured); the pegboard's holes are not drawn; real pictures for the frames (later feature).
+
+## [2026-11-23] feature | Object detail slice 1: desk setup
+
+- Spec `object-detail` written and approved after a grill: a look-only pass over every existing Item, one group per slice; no sizes, spots or Catalog entries change.
+- Desk gains an apron under the top front and back and a low stretcher at each end. Monitor gains a housing and neck behind the panel, a wider foot and a small accent status light. PC tower stands on two feet with a lighter front panel, five air-vent slots, a glowing accent strip and a dark glass side on its north face. Keyboard is a low body with five rows of keys and gaps between rows. Mouse has a shell, hump, two buttons and a glowing scroll wheel. Gaming chair has a five-star base on casters, seat bolsters, a backrest with headrest, side wings and two dim accent stripes, and two armrests.
+- Parts of an Item that share a material are merged into one mesh (`mergedBoxes.ts`), so the desk setup now costs 16 draw calls instead of 23 despite far more parts. Every part lies within its Item's size box (unit tests); the old keyboard keys and tower front panel stood slightly outside it and now sit inside.
+- Looked at against the reference photos: none show the desk setup, so no comparison was possible; the owner corrects the look on the Approval card.
+- No new Room measurements, so no new "Measured values" rows.
