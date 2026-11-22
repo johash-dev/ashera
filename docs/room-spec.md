@@ -61,9 +61,15 @@ Wall names are **real compass directions** (north is geographic north).
 - Beams drop 0.5 ft (underside at 9 ft).
 - Finishes in reality: brick-pattern white wall tiles, dark wood skirting, grey marble-look floor tiles 4 × 2 ft, square flush ceiling panel light. The Twin re-skins these in the dark style.
 
-## Planned items (owner's sketch)
+## Planned items (owner's sketch and mood picture, agreed 2026-11-22)
 
-TV 55" or 65" (undecided — compare in the app) on the north wall; TV stand 8 ft × 1.5 ft high × 1 ft deep below it; PS5.
+The TV wall, following the owner's sketch and a mood picture shared in chat:
+
+- **TV stand:** black cabinet hung on the north wall, 8 ft long × 1.5 ft high × 1 ft deep, 6 in above the floor (top at 2 ft), centred on the wall; two wide doors.
+- **TV:** 55" or 65" (undecided — compare in the app), standing on its own feet on the stand, centred.
+- **PS5:** upright on the stand, left of the TV. **Soundbar:** on the stand, centred in front of the TV.
+- **Slat panel:** black vertical slats covering the whole north wall, corner to corner and floor to ceiling, with cut-outs for its socket and data plate.
+- Later: controller and plant décor; green glow under the stand (Phase 3 lighting).
 
 ## Still to measure
 

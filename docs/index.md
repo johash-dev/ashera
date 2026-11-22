@@ -33,6 +33,7 @@ Only for hard-to-reverse, surprising decisions with a real trade-off.
 One per feature, from [the template](specs/_template.md).
 
 - [empty-room-twin](specs/empty-room-twin.md) — Phase 1: the empty Room built from config, Cutaway, Door, Fittings, dark look, photo Views
+- [tv-wall](specs/tv-wall.md) — Phase 2 first feature: TV stand, TV 55″/65″ switch, PS5, soundbar and Slat panel at real size, fixed in place
 
 ## History
 

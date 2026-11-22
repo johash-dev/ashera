@@ -129,3 +129,9 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Slice 5 merged (#12) after the owner's "looks good" on the Approval card, which compared the four photo Views side by side with `docs/reference/photos`; the Door leaf became brown wood on the owner's request.
 - All Done-when items checked. Per ADR 0004 the owner's approval and the before/after screenshots live on the chat Approval cards, not in the PRs.
 - Still open (spec "Open questions"): placeholder measurements (window sill and position, skirting depth, Door thickness, Fitting positions) and the photo standpoints, which are estimates.
+
+## [2026-11-22] decision | TV wall spec approved
+
+- Phase 2 starts with the props, not the controls: the owner wants the furniture pieces built first and moving them left to a later phase. The first feature is the TV wall (`docs/specs/tv-wall.md`, 4 slices), based on the owner's sketch and a mood picture shared in chat.
+- Agreed: a floating black stand (8 × 1.5 × 1 ft, hung 6 in off the floor), the TV on its own feet on the stand (the owner chose this over wall-mounting twice, although the picture shows the TV on the wall), a top-bar 55″/65″ switch, the PS5 upright on the left, a soundbar, and a Slat panel over the whole TV wall with cut-outs for its Fittings. The controller, the plant and the green under-glow come later.
+- No new Room measurements. TV, PS5, soundbar and slat sizes are typical sizes until the owner names product models.
