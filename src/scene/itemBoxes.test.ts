@@ -4,6 +4,7 @@ import { type Item, starterArrangement } from '../editor';
 import {
   chairBoxes,
   deskBoxes,
+  headphonesBoxes,
   keyboardBoxes,
   monitorBoxes,
   ps5Boxes,
@@ -345,5 +346,31 @@ describe('chairBoxes', () => {
     const sides = arms.map((arm) => Math.sign(arm.position[2] - CHAIR.position[2]));
     expect(sides).toContain(1);
     expect(sides).toContain(-1);
+  });
+});
+
+// Headphones hung on the pegboard on the east wall, facing west.
+const HEADPHONES: Item = {
+  id: 'headphones',
+  type: 'headphones',
+  position: [5 - 1 / 12 - 3.5 / 24, 5.5, -2.8],
+  size: [7 / 12, 8 / 12, 3.5 / 12],
+  facing: 'west',
+};
+
+describe('headphonesBoxes', () => {
+  it('keeps the band, both cups and the hook within the Item box', () => {
+    const { band, cups, hook } = headphonesBoxes(HEADPHONES);
+    const box = { position: HEADPHONES.position, size: [3.5 / 12, 8 / 12, 7 / 12] as const };
+    for (const part of [band, hook, ...cups]) expect(within(part, box)).toBe(true);
+  });
+
+  it('puts a cup at each side, hanging below the band, with the hook behind at the top', () => {
+    const { band, cups, hook } = headphonesBoxes(HEADPHONES);
+    expect(cups).toHaveLength(2);
+    const [north, south] = cups.map((cup) => cup.position[2]).sort((a, b) => (a ?? 0) - (b ?? 0));
+    expect((north ?? 0) + (south ?? 0)).toBeCloseTo(2 * HEADPHONES.position[2]);
+    for (const cup of cups) expect(cup.position[1] + cup.size[1] / 2).toBeLessThanOrEqual(band.position[1]);
+    expect(hook.position[0]).toBeGreaterThan(band.position[0]); // towards the wall (east)
   });
 });
