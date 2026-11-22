@@ -82,7 +82,7 @@ describe.each(['headphones', 'shelf'] as const)('wallDecorItems: the %s', (type)
     expect(decor(type).item.facing).toBe('west');
   });
 
-  it('stands on the pegboard�s front face, within its outline', () => {
+  it('stands on the front face of the pegboard, within its outline', () => {
     const board = edges();
     const piece = decor(type);
     expect(piece.east).toBeCloseTo(board.west);
@@ -101,7 +101,7 @@ describe('wallDecorItems: where the pegboard things hang', () => {
     expect(decor('shelf').north).toBeGreaterThanOrEqual(board.south - third);
   });
 
-  it('puts the shelf at the board�s mid-height', () => {
+  it('puts the shelf at the mid-height of the pegboard', () => {
     const shelf = decor('shelf');
     expect((shelf.bottom + shelf.top) / 2).toBeCloseTo((edges().bottom + edges().top) / 2);
   });

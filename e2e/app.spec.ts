@@ -96,6 +96,24 @@ test('the pegboard hangs on the east wall above the desk, facing west', async ({
   expect(board?.facing).toBe('west');
 });
 
+test('the headphones and shelf hang on the pegboard’s front face, headphones north, shelf south', async ({
+  page,
+}) => {
+  await openView(page, 'right');
+  const items = await page.evaluate(() => window.__ASHERA__?.items);
+  const headphones = items?.find((item) => item.type === 'headphones');
+  const shelf = items?.find((item) => item.type === 'shelf');
+  expect(headphones?.size).toEqual([7 / 12, 8 / 12, 3.5 / 12]);
+  expect(shelf?.size).toEqual([1, 1 / 12, 4 / 12]);
+  // Their backs touch the board's front face (x = 5 - 1/12).
+  expect((headphones?.position[0] ?? 0) + 3.5 / 24).toBeCloseTo(5 - 1 / 12);
+  expect((shelf?.position[0] ?? 0) + 4 / 24).toBeCloseTo(5 - 1 / 12);
+  expect(headphones?.position[2]).toBeCloseTo(-1.4375 - 4 / 3); // north third
+  expect(shelf?.position[2]).toBeCloseTo(-1.4375 + 4 / 3); // south third
+  expect(shelf?.position[1]).toBeCloseTo(5.5);
+  expect([headphones?.facing, shelf?.facing]).toEqual(['west', 'west']);
+});
+
 const tvWidth = (page: Page) =>
   page.evaluate(
     () => window.__ASHERA__?.items.find((item) => item.type === 'tv-55' || item.type === 'tv-65')?.size[0],
