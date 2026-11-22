@@ -58,7 +58,7 @@ describe('clearOfDoorSwing', () => {
   });
 
   it('uses the Item’s box along the Room axes, so a turned Item can reach into the swing', () => {
-    // Centred 3 ft north of the hinge's reach, 4 ft wide: facing south it stays clear, facing west it reaches in.
+    // Centred about 1.9 ft north of the swing's edge, 4 ft wide: facing south it stays clear, facing west it reaches in.
     expect(clearOfDoorSwing(ASHERS_ROOM, at(4.5, -0.5, [4, 1, 1], 'south'))).toBe(true);
     expect(clearOfDoorSwing(ASHERS_ROOM, at(4.5, -0.5, [4, 1, 1], 'west'))).toBe(false);
   });
