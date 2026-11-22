@@ -7,6 +7,7 @@ import {
   keyboardBoxes,
   monitorBoxes,
   ps5Boxes,
+  sofaBoxes,
   soundbarBoxes,
   standBoxes,
   towerBoxes,
@@ -29,7 +30,9 @@ type ItemMaterials = Record<
   | 'deviceBody'
   | 'deviceTrim'
   | 'chairBody'
-  | 'chairTrim',
+  | 'chairTrim'
+  | 'sofaFrame'
+  | 'sofaCushion',
   MeshStandardMaterial
 >;
 
@@ -131,6 +134,21 @@ function ItemMeshes({ item, materials }: { item: Item; materials: ItemMaterials 
     }
     case 'mouse':
       return <BoxMesh box={itemBox(item)} material={materials.deviceTrim} />;
+    case 'sofa-compact': {
+      const { base, back, arms, cushions } = sofaBoxes(item);
+      return (
+        <>
+          <BoxMesh box={base} material={materials.sofaFrame} />
+          <BoxMesh box={back} material={materials.sofaFrame} />
+          {arms.map((box, i) => (
+            <BoxMesh key={i} box={box} material={materials.sofaFrame} />
+          ))}
+          {cushions.map((box, i) => (
+            <BoxMesh key={i} box={box} material={materials.sofaCushion} />
+          ))}
+        </>
+      );
+    }
     case 'gaming-chair': {
       const { base, column, seat, back, arms } = chairBoxes(item);
       return (
@@ -171,6 +189,8 @@ export function Items({ items }: { items: readonly Item[] }) {
       deviceBody: new MeshStandardMaterial({ color: LOOK.deviceBody, roughness: 0.5 }),
       deviceTrim: new MeshStandardMaterial({ color: LOOK.deviceTrim, roughness: 0.6 }),
       chairBody: new MeshStandardMaterial({ color: LOOK.chairBody, roughness: 0.6 }),
+      sofaFrame: new MeshStandardMaterial({ color: LOOK.sofaFrame, roughness: 0.9 }),
+      sofaCushion: new MeshStandardMaterial({ color: LOOK.sofaCushion, roughness: 0.9 }),
       chairTrim: new MeshStandardMaterial({ color: LOOK.chairTrim, roughness: 0.8 }),
     }),
     [],

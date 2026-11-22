@@ -12,7 +12,8 @@ export type ItemTypeId =
   | 'pc-tower'
   | 'keyboard'
   | 'mouse'
-  | 'gaming-chair';
+  | 'gaming-chair'
+  | 'sofa-compact';
 
 /** An Item type Asher can place: its name and real size. */
 export interface ItemType {
@@ -95,6 +96,12 @@ export const CATALOG: Readonly<Record<ItemTypeId, ItemType>> = {
     id: 'gaming-chair',
     name: 'Gaming chair',
     size: [inches(27), inches(50), inches(27)], // typical
+    placeholder: true,
+  },
+  'sofa-compact': {
+    id: 'sofa-compact',
+    name: 'Compact sofa',
+    size: [5.5, 2.5, 3], // agreed in the grill: low back, slim arms, typical 2–3 seater
     placeholder: true,
   },
 };

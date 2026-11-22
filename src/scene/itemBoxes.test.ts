@@ -6,6 +6,7 @@ import {
   keyboardBoxes,
   monitorBoxes,
   ps5Boxes,
+  sofaBoxes,
   soundbarBoxes,
   standBoxes,
   towerBoxes,
@@ -159,6 +160,48 @@ function within(inner: Box, outer: Box): boolean {
     return gap + inner.size[axis] / 2 <= outer.size[axis] / 2 + 1e-9;
   });
 }
+
+describe('sofaBoxes', () => {
+  // The compact sofa on the south wall, facing north: its back is on the south side.
+  const SOFA: Item = {
+    id: 'sofa',
+    type: 'sofa-compact',
+    position: [-2.25, 1.25, 3],
+    size: [5.5, 2.5, 3],
+    facing: 'north',
+  };
+  const box = { position: SOFA.position, size: SOFA.size };
+
+  it('keeps every part within the Item box, the back reaching its full height', () => {
+    const { base, back, arms, cushions } = sofaBoxes(SOFA);
+    for (const part of [base, back, ...arms, ...cushions]) expect(within(part, box)).toBe(true);
+    expect(back.position[1] + back.size[1] / 2).toBeCloseTo(2.5);
+  });
+
+  it('puts the back behind the cushions (south), between the arms, and the arms lower than the back', () => {
+    const { back, arms, cushions } = sofaBoxes(SOFA);
+    for (const cushion of cushions) expect(back.position[2]).toBeGreaterThan(cushion.position[2]);
+    for (const arm of arms)
+      expect(arm.position[1] + arm.size[1] / 2).toBeLessThan(back.position[1] + back.size[1] / 2);
+    const [left, right] = arms;
+    if (!left || !right) throw new Error('expected two arms');
+    expect(left.position[0]).toBeLessThan(back.position[0]);
+    expect(right.position[0]).toBeGreaterThan(back.position[0]);
+  });
+
+  it('sits two cushions side by side on the base, between the arms', () => {
+    const { base, arms, cushions } = sofaBoxes(SOFA);
+    expect(cushions).toHaveLength(2);
+    for (const cushion of cushions) {
+      expect(cushion.position[1] - cushion.size[1] / 2).toBeCloseTo(base.position[1] + base.size[1] / 2);
+    }
+    const [left, right] = arms;
+    const [c1, c2] = cushions;
+    if (!left || !right || !c1 || !c2) throw new Error('expected two arms and two cushions');
+    const west = Math.min(c1.position[0], c2.position[0]) - c1.size[0] / 2;
+    expect(west).toBeGreaterThanOrEqual(left.position[0] + left.size[0] / 2 - 1e-9);
+  });
+});
 
 // A monitor on a desk top 2.5 ft up, at the east wall, its front (screen) facing west.
 const MONITOR: Item = {

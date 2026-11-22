@@ -223,3 +223,31 @@ export function chairBoxes(item: Item): { base: Box[]; column: Box; seat: Box; b
     ]),
   };
 }
+
+/** A compact sofa: a low base, a low back, two slim arms and two seat cushions. */
+export function sofaBoxes(item: Item): { base: Box; back: Box; arms: Box[]; cushions: Box[] } {
+  const [width, height, depth] = item.size;
+  const baseHeight = inches(14);
+  const armWidth = inches(5);
+  const armHeight = inches(10);
+  const backDepth = inches(10);
+  const cushionHeight = inches(5);
+  const seatWidth = width - 2 * armWidth;
+  const cushionGap = inches(0.5);
+  const cushionWidth = (seatWidth - cushionGap) / 2;
+  const cushionDepth = depth - backDepth;
+  return {
+    base: part(item, 0, 0, 0, [width, baseHeight, depth]),
+    back: part(item, 0, baseHeight, -depth / 2 + backDepth / 2, [seatWidth, height - baseHeight, backDepth]),
+    arms: [-1, 1].map((side) =>
+      part(item, side * (width / 2 - armWidth / 2), baseHeight, 0, [armWidth, armHeight, depth]),
+    ),
+    cushions: [-1, 1].map((side) =>
+      part(item, (side * (cushionWidth + cushionGap)) / 2, baseHeight, backDepth / 2, [
+        cushionWidth,
+        cushionHeight,
+        cushionDepth,
+      ]),
+    ),
+  };
+}

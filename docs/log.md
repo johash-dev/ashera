@@ -195,3 +195,10 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Unit tests: every desk-top Item rests on and within the desk top; the chair stands on the floor at the desk. The existing inside-Room, no-overlap and Door-swing checks run over all of them for both TV sizes. `__ASHERA__.items` lists them.
 - Drawn from simple boxes (`itemBoxes.ts` places parts in each Item's own frame, so facing is handled in one helper): monitor on a foot and neck, tower with a lighter front panel, keyboard with a key block, mouse, chair with a base, column, seat, tall backrest and armrests. Look: near-black gear, a chair a shade lighter than the floor; no accent colour.
 - No new Room measurements, so no new "Measured values" rows.
+
+## [2026-11-23] feature | Desk and sofa slice 3: compact sofa
+
+- Catalog gains the compact sofa (5½ × 2½ × 3 ft, typical, placeholder). `sofaItems` places it against the south wall, west end on the window wall face, facing north; it ends about 1½ ft short of the Door swing's reach and its top (2½ ft) is below the 3½ ft window sill. Unit tests check each of these; the inside-Room, no-overlap and Door-swing checks run over it for both TV sizes. `__ASHERA__.items` lists it.
+- Drawn from a base, a low back, two slim arms and two seat cushions (`sofaBoxes`); charcoal frame with slightly lighter cushions.
+- Owner on the slice 2 card: the chair looks fine for now; its position and look will be revisited when Layouts arrive (feature 4).
+- No new Room measurements, so no new "Measured values" rows.
