@@ -8,7 +8,8 @@ import type { ViewId } from './views';
  */
 export interface SceneTestState {
   ready: boolean;
-  view: ViewId;
+  /** Selected View; null until the first View is reported. */
+  view: ViewId | null;
   room: { width: number; depth: number; ceilingHeight: number };
   /** Number of solid pieces each Wall is built from (around its Openings). */
   pieces: Record<WallId, number>;
@@ -20,8 +21,8 @@ export interface SceneTestState {
   fittings: number;
   /** WebGL draw calls in the latest frame; 0 until the first frame is drawn. */
   drawCalls: number;
-  /** Current Cutaway; updated whenever the camera moves. */
-  hidden: HiddenSurfaces;
+  /** Current Cutaway; updated whenever the camera moves, null before the first frame. */
+  hidden: HiddenSurfaces | null;
 }
 
 declare global {
@@ -44,4 +45,8 @@ export function reportHiddenSurfaces(hidden: HiddenSurfaces): void {
 
 export function reportDrawCalls(count: number): void {
   if (import.meta.env.DEV && window.__ASHERA__) window.__ASHERA__.drawCalls = count;
+}
+
+export function reportView(view: ViewId): void {
+  if (import.meta.env.DEV && window.__ASHERA__) window.__ASHERA__.view = view;
 }

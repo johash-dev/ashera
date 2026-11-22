@@ -3,10 +3,9 @@ import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect } from 'react';
 import { PerspectiveCamera, Vector3 } from 'three';
 import { type Room, wallPieces } from '../room';
-import { hiddenSurfaces } from './cutaway';
 import { DOOR_OPEN_ANGLE_DEG } from './doorSwing';
 import { RoomShell } from './RoomShell';
-import { publishSceneState } from './testHandle';
+import { publishSceneState, reportView } from './testHandle';
 import { AMBIENT_INTENSITY, KEY_LIGHT_INTENSITY, LOOK } from './look';
 import { type CameraView } from './views';
 
@@ -43,10 +42,12 @@ function CameraRig({ view }: { view: CameraView }) {
 }
 
 export function SceneCanvas({ room, view }: { room: Room; view: CameraView }) {
+  // Room facts are published once per Room; a View change only updates the View, and Cutaway
+  // reports itself from the camera, so values reported once (fittings) are never reset.
   useEffect(() => {
     publishSceneState({
-      ready: window.__ASHERA__?.ready ?? false, // a View change keeps the scene ready
-      view: view.id,
+      ready: false,
+      view: null,
       room: { width: room.width, depth: room.depth, ceilingHeight: room.ceilingHeight },
       pieces: {
         north: wallPieces(room, 'north').length,
@@ -58,9 +59,10 @@ export function SceneCanvas({ room, view }: { room: Room; view: CameraView }) {
       door: { openAngleDeg: DOOR_OPEN_ANGLE_DEG },
       fittings: 0,
       drawCalls: 0,
-      hidden: hiddenSurfaces(room, view.position),
+      hidden: null,
     });
-  }, [room, view]);
+  }, [room]);
+  useEffect(() => reportView(view.id), [view]);
 
   return (
     <Canvas

@@ -75,6 +75,14 @@ test('each View button switches the View and the Header label', async ({ page })
   expect(errors).toEqual([]);
 });
 
+test('switching View keeps the room facts, such as the drawn fittings', async ({ page }) => {
+  await openView(page, 'overview');
+  await expect.poll(() => page.evaluate(() => window.__ASHERA__?.fittings)).toBe(5);
+  await page.getByRole('button', { name: 'Window', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => window.__ASHERA__?.view)).toBe('window');
+  expect(await page.evaluate(() => window.__ASHERA__?.fittings)).toBe(5);
+});
+
 test('the photo Views stand inside the Room, so Cutaway hides nothing', async ({ page }) => {
   await openView(page, 'overview');
   await page.getByRole('button', { name: 'Window', exact: true }).click();
@@ -92,20 +100,20 @@ test('the scene stays within the draw-call budget', async ({ page }) => {
 
 test('cutaway hides the surfaces facing an outside camera', async ({ page }) => {
   await openView(page, 'overview');
-  await page.waitForFunction(() => window.__ASHERA__?.hidden.ceiling === true);
+  await page.waitForFunction(() => window.__ASHERA__?.hidden?.ceiling === true);
   expect(await page.evaluate(() => window.__ASHERA__?.hidden)).toEqual({
     walls: ['east', 'south'],
     ceiling: true,
   });
 
   await openView(page, 'top');
-  await page.waitForFunction(() => window.__ASHERA__?.hidden.ceiling === true);
-  expect(await page.evaluate(() => window.__ASHERA__?.hidden.walls)).toEqual([]);
+  await page.waitForFunction(() => window.__ASHERA__?.hidden?.ceiling === true);
+  expect(await page.evaluate(() => window.__ASHERA__?.hidden?.walls)).toEqual([]);
 });
 
 test('cutaway follows the camera while orbiting', async ({ page }) => {
   await openView(page, 'overview');
-  await page.waitForFunction(() => window.__ASHERA__?.hidden.ceiling === true);
+  await page.waitForFunction(() => window.__ASHERA__?.hidden?.ceiling === true);
   const canvas = page.getByTestId('scene-canvas').locator('canvas');
   const box = await canvas.boundingBox();
   if (!box) throw new Error('canvas has no bounding box');
@@ -114,7 +122,7 @@ test('cutaway follows the camera while orbiting', async ({ page }) => {
   await page.mouse.move(box.x + box.width / 2 + 400, box.y + box.height / 2, { steps: 10 });
   await page.mouse.up();
   await expect
-    .poll(() => page.evaluate(() => window.__ASHERA__?.hidden.walls))
+    .poll(() => page.evaluate(() => window.__ASHERA__?.hidden?.walls))
     .not.toEqual(['east', 'south']);
 });
 
