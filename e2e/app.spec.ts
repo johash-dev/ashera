@@ -47,12 +47,26 @@ test('the TV stand is drawn at its real size, hung on the TV wall, with the 55�
 }) => {
   await openView(page, 'overview');
   const items = await page.evaluate(() => window.__ASHERA__?.items);
-  expect(items?.map((item) => item.type)).toEqual(['tv-stand', 'tv-55', 'ps5', 'soundbar']);
-  expect(items?.[0]).toEqual({ type: 'tv-stand', size: [8, 1.5, 1], position: [0, 1.25, -3.9375] }); // back on the ¾ in Slat panel face
+  expect(items?.map((item) => item.type)).toEqual(['tv-stand', 'tv-55', 'ps5', 'soundbar', 'desk']);
+  expect(items?.[0]).toEqual({
+    type: 'tv-stand',
+    size: [8, 1.5, 1],
+    position: [0, 1.25, -3.9375], // back on the ¾ in Slat panel face
+    facing: 'south',
+  });
   expect(items?.[1]?.size[0]).toBeCloseTo(48.4 / 12);
   expect(items?.[2]?.size[1]).toBeCloseTo(14.1 / 12); // PS5 upright
   expect(items?.[3]?.size[0]).toBe(2.5); // soundbar
   expect(await page.evaluate(() => window.__ASHERA__?.tvSize)).toBe(55);
+});
+
+test('the desk stands against the east wall, facing west, between the TV stand and the Door', async ({
+  page,
+}) => {
+  await openView(page, 'right');
+  const desk = await page.evaluate(() => window.__ASHERA__?.items.find((item) => item.type === 'desk'));
+  // 2 ft deep off the east wall (x = 5), its 4 ft run starting at the TV stand's front (z = -3.4375).
+  expect(desk).toEqual({ type: 'desk', size: [4, 2.5, 2], position: [4, 1.25, -1.4375], facing: 'west' });
 });
 
 const tvWidth = (page: Page) =>

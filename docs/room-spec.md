@@ -71,6 +71,15 @@ The TV wall, following the owner's sketch and a mood picture shared in chat:
 - **Slat panel:** black vertical slats covering the whole north wall, corner to corner and floor to ceiling, with cut-outs for its socket and data plate.
 - Later: controller and plant décor; green glow under the stand (Phase 3 lighting).
 
+The rest of the Room (grill, 2026-11-22):
+
+- **Computer desk:** Asher's own desk, 4 × 2 ft, with his PC, monitor, keyboard and mouse on it. Against the east wall, long side along the Wall, between the TV stand and the Door swing; Asher sits facing east with the TV on his left.
+- **Desk sizes** are typical until measured: desk top 30 in high, 27″ monitor, mid-size PC tower (placeholders).
+- **Sofa:** low back (about 2½ ft, below the window sill), slim arms, dark charcoal fabric. Two options to compare with a switch, like the TV size: a compact 2–3 seater (about 5½ × 3 ft) on the south wall from the window corner, facing the TV; or an L-shaped corner sofa, about 5½ ft along the south wall and 5 ft up the window wall, 3 ft deep, its short leg below the window sill and about 2½ ft short of the TV stand.
+- **Gaming chair** at the desk (typical, about 2½ × 2½ ft) and a **dark rug** (about 5 × 3½ ft) between the sofa and the TV.
+- Fixed in place for now, like the TV wall; moving furniture comes later as its own feature.
+- Also wanted, planned later: lamps (lighting), a pegboard, wall picture frames.
+
 ## Still to measure
 
 Placeholders are flagged `placeholder: true` in the config.

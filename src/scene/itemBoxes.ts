@@ -1,4 +1,4 @@
-import { type Item } from '../editor';
+import { type Item, itemBox } from '../editor';
 import { type Box } from './roomBoxes';
 
 /** Gap around and between the stand's doors, so they read as separate doors. */
@@ -90,5 +90,32 @@ export function soundbarBoxes(item: Item): { body: Box; grille: Box } {
       position: [x, y, z + depth / 2 + GRILLE_THICKNESS / 2],
       size: [width - 2 * SOUNDBAR_EDGE, height - 2 * SOUNDBAR_EDGE, GRILLE_THICKNESS],
     },
+  };
+}
+
+/** Thickness of the desk top, and of each square leg. */
+const DESK_TOP_THICKNESS = 0.1;
+const DESK_LEG = 0.15;
+
+/** A desk: its top over the whole footprint and four square legs under its corners. */
+export function deskBoxes(item: Item): { top: Box; legs: Box[] } {
+  const { position, size } = itemBox(item);
+  const [x, y, z] = position;
+  const [width, height, depth] = size;
+  const floor = y - height / 2;
+  const legHeight = height - DESK_TOP_THICKNESS;
+  const legX = width / 2 - DESK_LEG / 2;
+  const legZ = depth / 2 - DESK_LEG / 2;
+  return {
+    top: {
+      position: [x, floor + legHeight + DESK_TOP_THICKNESS / 2, z],
+      size: [width, DESK_TOP_THICKNESS, depth],
+    },
+    legs: [-1, 1].flatMap((sx) =>
+      [-1, 1].map((sz): Box => ({
+        position: [x + sx * legX, floor + legHeight / 2, z + sz * legZ],
+        size: [DESK_LEG, legHeight, DESK_LEG],
+      })),
+    ),
   };
 }

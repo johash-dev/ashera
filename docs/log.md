@@ -174,3 +174,17 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Slice 4 merged (#18) after the owner's "looks good"; all four slices (#15–#18) went through Approval cards with before/after screenshots of every View plus `overview` at 65″. All Done-when items checked.
 - Changes the owner asked for on the cards: angled TV legs instead of blocks (slice 2).
 - Still open (spec "Open questions"): product models for the TV, PS5, soundbar and Slat panel (all typical sizes); the data plate half hidden behind the 65″ TV; whether the Skirting peeks through the slat gaps at floor level.
+
+## [2026-11-22] decision | Roadmap for the rest of the Room
+
+- Grill with the owner: seven features after the TV wall, in order — desk and sofa, wall décor, surround sound, moving furniture and Layouts, lighting preview, smart devices and control, shopping and labour list (docs/concept.md "Roadmap").
+- Desk on the east wall between the TV stand and the Door swing; sofa on the south wall from the window corner, switchable between a compact 2–3 seater and an L-shape; low, slim-armed, charcoal fabric; gaming chair and dark rug; fixed in place for now (docs/room-spec.md "Planned items").
+- The sound system must be controllable from ASHERA, including the surround mode; hardware is chosen in the surround sound feature with that in mind.
+- No new Room measurements. Desk height, monitor and tower sizes are typical until measured.
+
+## [2026-11-23] feature | Desk and sofa slice 1: the desk
+
+- Items gain a Facing; `itemBox` turns an Item into its box along the Room axes, and the no-overlap and Door-swing rules now use it (moved from `tvWall.ts` to `items.ts`). TV-wall Items face south.
+- Catalog gains Asher's computer desk (4 × 2 ft from the owner, top 30 in high: typical, placeholder). `starterArrangement` = TV wall + `deskItems`: the desk against the east wall, facing west, its north end level with the TV stand's front, about 0.9 ft clear of the Door swing.
+- Drawn as a top on four square legs (`deskBoxes`); the first, darker top vanished against the floor in the top-down View, so it is a shade lighter than the floor. `__ASHERA__.items` now reports each Item's facing.
+- No new Room measurements, so no new "Measured values" rows.
