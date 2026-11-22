@@ -15,6 +15,17 @@ export const ASHERS_ROOM: Room = {
     depth: 0.05, // ⅝ in
     placeholder: true, // depth not measured yet
   },
+  floorTile: {
+    length: 4,
+    width: 2,
+    longSide: 'north-south',
+    placeholder: true, // direction and grid start not confirmed yet
+  },
+  windowFrame: {
+    width: 0.1, // about 1¼ in
+    depth: 0.2, // about 2½ in
+    placeholder: true, // not measured yet
+  },
   walls: {
     thickness: 0.5, // 6 in, measured at the doorway jamb; grows outward from the interior faces
     placeholder: false,

@@ -42,6 +42,13 @@ test('all five fittings are drawn', async ({ page }) => {
   await expect.poll(() => page.evaluate(() => window.__ASHERA__?.fittings)).toBe(5);
 });
 
+test('the scene stays within the draw-call budget', async ({ page }) => {
+  const errors = await openView(page, 'overview');
+  await expect.poll(() => page.evaluate(() => window.__ASHERA__?.drawCalls)).toBeGreaterThan(0);
+  expect(await page.evaluate(() => window.__ASHERA__?.drawCalls)).toBeLessThan(100);
+  expect(errors).toEqual([]);
+});
+
 test('cutaway hides the surfaces facing an outside camera', async ({ page }) => {
   await openView(page, 'overview');
   await page.waitForFunction(() => window.__ASHERA__?.hidden.ceiling === true);
