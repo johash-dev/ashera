@@ -21,6 +21,9 @@ export const LOOK = {
   /** Soundbar: near-black body, its front grille a shade lighter. */
   soundbarBody: '#0e0e13',
   soundbarGrille: '#30323f',
+  /** Computer desk: dark top on slightly lighter legs, until the owner says what the real desk looks like. */
+  deskTop: '#1a1b24',
+  deskLeg: '#2a2c3a',
   /** Slat panel: black slats a shade lighter than the felt behind them, so the ribs read. */
   slat: '#17181f',
   slatBacking: '#050507',

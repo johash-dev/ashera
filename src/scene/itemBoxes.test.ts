@@ -1,8 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { type Item } from '../editor';
-import { ps5Boxes, soundbarBoxes, standBoxes, tvBoxes } from './itemBoxes';
+import { deskBoxes, ps5Boxes, soundbarBoxes, standBoxes, tvBoxes } from './itemBoxes';
 
-const STAND: Item = { id: 'tv-stand', type: 'tv-stand', position: [0, 1.25, -4], size: [8, 1.5, 1] };
+const STAND: Item = {
+  id: 'tv-stand',
+  type: 'tv-stand',
+  position: [0, 1.25, -4],
+  size: [8, 1.5, 1],
+  facing: 'south',
+};
 
 describe('standBoxes', () => {
   it('draws the body at the Item box', () => {
@@ -25,7 +31,7 @@ describe('standBoxes', () => {
 
 describe('tvBoxes', () => {
   // A 4 ft wide TV, 2.5 ft tall overall on 0.25 ft feet, standing on a floor at y = 2.
-  const TV: Item = { id: 'tv', type: 'tv-55', position: [0, 3.25, -4], size: [4, 2.5, 0.2] };
+  const TV: Item = { id: 'tv', type: 'tv-55', position: [0, 3.25, -4], size: [4, 2.5, 0.2], facing: 'south' };
 
   it('puts the panel above the feet, the full width and depth of the Item', () => {
     const { panel } = tvBoxes(TV, 0.25);
@@ -68,7 +74,13 @@ describe('tvBoxes', () => {
 });
 
 describe('ps5Boxes', () => {
-  const PS5: Item = { id: 'ps5', type: 'ps5', position: [-3, 2.6, -4], size: [0.3, 1.2, 0.7] };
+  const PS5: Item = {
+    id: 'ps5',
+    type: 'ps5',
+    position: [-3, 2.6, -4],
+    size: [0.3, 1.2, 0.7],
+    facing: 'south',
+  };
 
   it('puts the white side panels on its east and west faces around a black core, filling the Item box', () => {
     const { core, sides } = ps5Boxes(PS5);
@@ -82,7 +94,13 @@ describe('ps5Boxes', () => {
 });
 
 describe('soundbarBoxes', () => {
-  const BAR: Item = { id: 'soundbar', type: 'soundbar', position: [0, 2.1, -3.67], size: [2.5, 0.2, 0.33] };
+  const BAR: Item = {
+    id: 'soundbar',
+    type: 'soundbar',
+    position: [0, 2.1, -3.67],
+    size: [2.5, 0.2, 0.33],
+    facing: 'south',
+  };
 
   it('draws the body at the Item box and the grille on its front face, inside its edge', () => {
     const { body, grille } = soundbarBoxes(BAR);
@@ -90,5 +108,35 @@ describe('soundbarBoxes', () => {
     expect(grille.size[0]).toBeLessThan(2.5);
     expect(grille.size[1]).toBeLessThan(0.2);
     expect(grille.position[2] - grille.size[2] / 2).toBeCloseTo(-3.67 + 0.165);
+  });
+});
+
+describe('deskBoxes', () => {
+  // A 4 × 2 ft desk facing west, top 2.5 ft high, against a wall at x = 5.
+  const DESK: Item = {
+    id: 'desk',
+    type: 'desk',
+    position: [4, 1.25, -1.5],
+    size: [4, 2.5, 2],
+    facing: 'west',
+  };
+
+  it('lays the top over the whole footprint along the Room axes, flush with the desk height', () => {
+    const { top } = deskBoxes(DESK);
+    expect(top.size[0]).toBe(2);
+    expect(top.size[2]).toBe(4);
+    expect(top.position[1] + top.size[1] / 2).toBeCloseTo(2.5);
+  });
+
+  it('stands four legs from the floor to the top, one in each corner inside the footprint', () => {
+    const { top, legs } = deskBoxes(DESK);
+    expect(legs).toHaveLength(4);
+    for (const leg of legs) {
+      expect(leg.position[1] - leg.size[1] / 2).toBeCloseTo(0);
+      expect(leg.position[1] + leg.size[1] / 2).toBeCloseTo(top.position[1] - top.size[1] / 2);
+      expect(Math.abs(leg.position[0] - 4) + leg.size[0] / 2).toBeLessThanOrEqual(1);
+      expect(Math.abs(leg.position[2] + 1.5) + leg.size[2] / 2).toBeLessThanOrEqual(2);
+    }
+    expect(new Set(legs.map((leg) => `${leg.position[0]},${leg.position[2]}`)).size).toBe(4);
   });
 });

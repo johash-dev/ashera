@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { MeshStandardMaterial } from 'three';
 import { type Item, TV_LEG_HEIGHT, TV_STAND_DOORS } from '../editor';
-import { ps5Boxes, soundbarBoxes, standBoxes, tvBoxes } from './itemBoxes';
+import { deskBoxes, ps5Boxes, soundbarBoxes, standBoxes, tvBoxes } from './itemBoxes';
 import { LOOK, TV_EDGE_GLOW } from './look';
 import { type Box } from './roomBoxes';
 
@@ -13,7 +13,9 @@ type ItemMaterials = Record<
   | 'ps5Side'
   | 'ps5Core'
   | 'soundbarBody'
-  | 'soundbarGrille',
+  | 'soundbarGrille'
+  | 'deskTop'
+  | 'deskLeg',
   MeshStandardMaterial
 >;
 
@@ -73,10 +75,21 @@ function ItemMeshes({ item, materials }: { item: Item; materials: ItemMaterials 
         </>
       );
     }
+    case 'desk': {
+      const { top, legs } = deskBoxes(item);
+      return (
+        <>
+          <BoxMesh box={top} material={materials.deskTop} />
+          {legs.map((leg, i) => (
+            <BoxMesh key={i} box={leg} material={materials.deskLeg} />
+          ))}
+        </>
+      );
+    }
   }
 }
 
-/** The Items of the TV wall, drawn where the editor placed them. */
+/** The Items of the starter arrangement, drawn where the editor placed them. */
 export function Items({ items }: { items: readonly Item[] }) {
   const materials = useMemo<ItemMaterials>(
     () => ({
@@ -93,6 +106,8 @@ export function Items({ items }: { items: readonly Item[] }) {
       ps5Core: new MeshStandardMaterial({ color: LOOK.ps5Core, roughness: 0.4 }),
       soundbarBody: new MeshStandardMaterial({ color: LOOK.soundbarBody, roughness: 0.5 }),
       soundbarGrille: new MeshStandardMaterial({ color: LOOK.soundbarGrille, roughness: 0.8 }),
+      deskTop: new MeshStandardMaterial({ color: LOOK.deskTop, roughness: 0.6 }),
+      deskLeg: new MeshStandardMaterial({ color: LOOK.deskLeg, roughness: 0.5 }),
     }),
     [],
   );

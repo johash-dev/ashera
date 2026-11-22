@@ -1,13 +1,6 @@
-import { doorSwing, floorBounds, type Room } from '../room';
-import { CATALOG, type ItemTypeId, type Size, SLAT_PANEL } from './catalog';
-
-/** An Item standing in the Room, facing south from the TV wall: centre of its box and size, in feet. */
-export interface Item {
-  readonly id: string;
-  readonly type: ItemTypeId;
-  readonly position: readonly [number, number, number];
-  readonly size: Size;
-}
+import { floorBounds, type Room } from '../room';
+import { CATALOG, SLAT_PANEL } from './catalog';
+import { type Item } from './items';
 
 /** The TV sizes Asher compares. */
 export type TvSize = 55 | 65;
@@ -21,11 +14,20 @@ const TV_SET_BACK = 0.25;
 /** The PS5's west side sits this far in from the stand's west end. */
 const PS5_IN_FROM_WEST = 1;
 
-/** The starter arrangement: the fixed Items of the TV wall, placed from the Room and the Catalog. */
+/** Items on the TV wall stand off the Slat panel face, not the bare Wall. */
+function slatPanelFace(room: Room): number {
+  return floorBounds(room).minZ + SLAT_PANEL.depth;
+}
+
+/** How far south the TV stand's front reaches. */
+export function tvStandFront(room: Room): number {
+  return slatPanelFace(room) + CATALOG['tv-stand'].size[2];
+}
+
+/** The fixed Items of the TV wall, all facing south, placed from the Room and the Catalog. */
 export function tvWallItems(room: Room, tvSize: TvSize): Item[] {
-  const { minX, maxX, minZ } = floorBounds(room);
-  // Items stand off the Slat panel face, not the bare Wall.
-  const panelFace = minZ + SLAT_PANEL.depth;
+  const { minX, maxX } = floorBounds(room);
+  const panelFace = slatPanelFace(room);
   const centreX = (minX + maxX) / 2;
 
   const standSize = CATALOG['tv-stand'].size;
@@ -34,7 +36,7 @@ export function tvWallItems(room: Room, tvSize: TvSize): Item[] {
   const tv = CATALOG[tvType].size;
   const ps5 = CATALOG.ps5.size;
   const bar = CATALOG.soundbar.size;
-  const standFront = panelFace + standSize[2];
+  const standFront = tvStandFront(room);
 
   return [
     {
@@ -42,12 +44,14 @@ export function tvWallItems(room: Room, tvSize: TvSize): Item[] {
       type: 'tv-stand',
       position: [centreX, STAND_UNDERSIDE + standSize[1] / 2, panelFace + standSize[2] / 2],
       size: standSize,
+      facing: 'south',
     },
     {
       id: 'tv',
       type: tvType,
       position: [centreX, standTop + tv[1] / 2, panelFace + TV_SET_BACK + tv[2] / 2],
       size: tv,
+      facing: 'south',
     },
     {
       id: 'ps5',
@@ -58,41 +62,16 @@ export function tvWallItems(room: Room, tvSize: TvSize): Item[] {
         panelFace + standSize[2] / 2,
       ],
       size: ps5,
+      facing: 'south',
     },
     {
       id: 'soundbar',
       type: 'soundbar',
       position: [centreX, standTop + bar[1] / 2, standFront - bar[2] / 2],
       size: bar,
+      facing: 'south',
     },
   ];
-}
-
-/** Overlaps smaller than this are rounding, not intersection (feet). */
-const TOUCH_TOLERANCE = 1e-9;
-const AXES = [0, 1, 2] as const;
-
-/** True when two Items' boxes overlap; boxes that only touch (one resting on another) do not. */
-export function itemsIntersect(a: Item, b: Item): boolean {
-  return AXES.every((axis) => {
-    const gap = Math.abs(a.position[axis] - b.position[axis]);
-    return gap < (a.size[axis] + b.size[axis]) / 2 - TOUCH_TOLERANCE;
-  });
-}
-
-/**
- * True when an Item's footprint stays out of every Door swing. Conservative: it checks the whole
- * circle the Door leaf's end could reach, not only the quarter it sweeps.
- */
-export function clearOfDoorSwing(room: Room, item: Item): boolean {
-  const [x, , z] = item.position;
-  const [width, , depth] = item.size;
-  return room.doors.every((door) => {
-    const { hinge, radius } = doorSwing(room, door);
-    const nearestX = Math.min(Math.max(hinge[0], x - width / 2), x + width / 2);
-    const nearestZ = Math.min(Math.max(hinge[1], z - depth / 2), z + depth / 2);
-    return Math.hypot(nearestX - hinge[0], nearestZ - hinge[1]) >= radius;
-  });
 }
 
 /** The TV size asked for by `?tv=55|65`; 55 when missing or unknown. */

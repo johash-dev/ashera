@@ -18,8 +18,8 @@ export interface SceneTestState {
   beams: readonly WallId[];
   /** The Door is fixed open; angle in degrees from closed. */
   door: { openAngleDeg: number };
-  /** Items drawn in the scene: type, size and centre (feet). */
-  items: readonly Pick<Item, 'type' | 'size' | 'position'>[];
+  /** Items drawn in the scene: type, Catalog size, centre (feet) and facing. */
+  items: readonly Pick<Item, 'type' | 'size' | 'position' | 'facing'>[];
   /** TV size shown, in inches; null until the Items are first reported. */
   tvSize: TvSize | null;
   /** Number of Fitting plates mounted in the scene; 0 until the first frame is drawn. */
@@ -54,7 +54,12 @@ export function reportDrawCalls(count: number): void {
 
 export function reportItems(items: readonly Item[], tvSize: TvSize): void {
   if (import.meta.env.DEV && window.__ASHERA__) {
-    window.__ASHERA__.items = items.map(({ type, size, position }) => ({ type, size, position }));
+    window.__ASHERA__.items = items.map(({ type, size, position, facing }) => ({
+      type,
+      size,
+      position,
+      facing,
+    }));
     window.__ASHERA__.tvSize = tvSize;
   }
 }

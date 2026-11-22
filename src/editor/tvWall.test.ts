@@ -1,15 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { ASHERS_ROOM, clearHeightAtWall, floorBounds } from '../room';
 import { CATALOG, type ItemTypeId, SLAT_PANEL } from './catalog';
-import {
-  clearOfDoorSwing,
-  type Item,
-  itemsIntersect,
-  TV_SIZES,
-  tvSizeFromSearch,
-  tvWallItems,
-  type TvSize,
-} from './tvWall';
+import { clearOfDoorSwing, type Item, itemsIntersect } from './items';
+import { TV_SIZES, tvSizeFromSearch, tvWallItems, type TvSize } from './tvWall';
 
 const round = (n: number) => Math.round(n * 1e4) / 1e4;
 
@@ -125,41 +118,6 @@ describe.each(TV_SIZES)('tvWallItems with the %i″ TV', (tvSize) => {
 
   it('keeps every Item out of the Door swing', () => {
     for (const item of items) expect(clearOfDoorSwing(ASHERS_ROOM, item)).toBe(true);
-  });
-});
-
-describe('itemsIntersect', () => {
-  const box = (x: number, y: number): Item => ({
-    id: 'a',
-    type: 'tv-stand',
-    position: [x, y, 0],
-    size: [2, 2, 2],
-  });
-
-  it('counts overlapping boxes as intersecting', () => {
-    expect(itemsIntersect(box(0, 1), box(1, 1))).toBe(true);
-  });
-
-  it('counts boxes that only touch, one resting on the other, as not intersecting', () => {
-    expect(itemsIntersect(box(0, 1), box(0, 3))).toBe(false);
-    expect(itemsIntersect(box(0, 1), box(2, 1))).toBe(false);
-  });
-});
-
-describe('clearOfDoorSwing', () => {
-  const at = (x: number, z: number): Item => ({
-    id: 'a',
-    type: 'tv-stand',
-    position: [x, 0.5, z],
-    size: [1, 1, 1],
-  });
-
-  it('rejects an Item standing where the Door opens (next to the south-east corner)', () => {
-    expect(clearOfDoorSwing(ASHERS_ROOM, at(4, 3.5))).toBe(false);
-  });
-
-  it('accepts an Item beyond the Door leaf’s reach', () => {
-    expect(clearOfDoorSwing(ASHERS_ROOM, at(-4, 3.5))).toBe(true);
   });
 });
 
