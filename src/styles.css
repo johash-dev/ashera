@@ -77,3 +77,9 @@ body,
   border-color: var(--accent);
   color: var(--fg);
 }
+
+.hud-tv-button {
+  margin-left: 12px;
+  border-color: var(--muted);
+  pointer-events: auto;
+}

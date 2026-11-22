@@ -2,12 +2,11 @@ import { OrbitControls } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect } from 'react';
 import { PerspectiveCamera, Vector3 } from 'three';
-import { type Item } from '../editor';
-import { type Room, wallPieces } from '../room';
-import { DOOR_OPEN_ANGLE_DEG } from './doorSwing';
+import { type Item, type TvSize } from '../editor';
+import { DOOR_OPEN_ANGLE_DEG, type Room, wallPieces } from '../room';
 import { Items } from './Items';
 import { RoomShell } from './RoomShell';
-import { publishSceneState, reportView } from './testHandle';
+import { publishSceneState, reportItems, reportView } from './testHandle';
 import { AMBIENT_INTENSITY, KEY_LIGHT_INTENSITY, LOOK } from './look';
 import { type CameraView } from './views';
 
@@ -43,9 +42,19 @@ function CameraRig({ view }: { view: CameraView }) {
   return null;
 }
 
-export function SceneCanvas({ room, items, view }: { room: Room; items: readonly Item[]; view: CameraView }) {
-  // Room facts and Items are published once per Room; a View change only updates the View, and Cutaway
-  // reports itself from the camera, so values reported once (fittings) are never reset.
+export function SceneCanvas({
+  room,
+  items,
+  tvSize,
+  view,
+}: {
+  room: Room;
+  items: readonly Item[];
+  tvSize: TvSize;
+  view: CameraView;
+}) {
+  // Room facts are published once per Room; Items and the View report themselves when they change, and
+  // Cutaway from the camera, so values reported once (fittings) are never reset.
   useEffect(() => {
     publishSceneState({
       ready: false,
@@ -59,12 +68,14 @@ export function SceneCanvas({ room, items, view }: { room: Room; items: readonly
       },
       beams: room.beams.walls,
       door: { openAngleDeg: DOOR_OPEN_ANGLE_DEG },
-      items: items.map(({ type, size, position }) => ({ type, size, position })),
+      items: [],
+      tvSize: null,
       fittings: 0,
       drawCalls: 0,
       hidden: null,
     });
-  }, [room, items]);
+  }, [room]);
+  useEffect(() => reportItems(items, tvSize), [room, items, tvSize]);
   useEffect(() => reportView(view.id), [view]);
 
   return (

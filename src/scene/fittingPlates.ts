@@ -1,5 +1,4 @@
-import { type Fitting, floorBounds, type Room } from '../room';
-import { wallFrame } from './wallFrame';
+import { type Fitting, floorBounds, type Room, wallFrame } from '../room';
 
 type Vec3 = readonly [number, number, number];
 

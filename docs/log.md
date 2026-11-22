@@ -142,3 +142,12 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Drawn as a near-black body with two door fronts a shade lighter (`standBoxes`, colours in `look.ts`); the first, all-black version hid the doors in every View. `__ASHERA__.items` lists type, size and centre of each Item drawn.
 - No new Room measurements, so no new "Measured values" rows. The low TV socket is hidden behind the stand, as the spec expected.
 - Door-swing and Item-to-Item checks come in slice 2, with the second Item (the TV); the stand stands about 4.9 ft clear of the Door swing.
+
+## [2026-11-22] feature | TV wall slice 2: TV and the size switch
+
+- Catalog gains the 55″ and 65″ TVs (typical panels 48.4 × 27.9 in and 57.0 × 32.7 in, 2 in deep, on 3 in legs; placeholders). `tvWallItems(room, tvSize)` stands the TV on the stand top, centred, its back 3 in in front of the stand's back so the front stays free for the soundbar.
+- Header button "TV 55″/65″" and `?tv=55|65` pick the size (default 55, not remembered after a reload); `__ASHERA__.tvSize` reports it. New @visual baseline `overview-tv65.png`.
+- Rules now checked for both sizes: every Item inside the Room, no two intersecting (`itemsIntersect`, touching allowed), none in the Door swing (`clearOfDoorSwing`, conservative: the whole circle the leaf's end can reach). `wallFrame` and `doorSwing` moved from `scene` to `room` so the editor can use them; behaviour unchanged.
+- Look: dark glossy screen inside a faintly lit edge (`LOOK.tvScreen`, `LOOK.tvEdge`); the first, unlit edge vanished against the Wall. On the Approval card the owner asked why the feet were blocks and chose two thin legs slanting outward (35°, / \ from the front) over a central pedestal.
+- With 65″ the screen top is at 4.98 ft and the data plate (centred at 5 ft) shows only its top half above the TV — the spec's open question, now visible.
+- No new Room measurements, so no new "Measured values" rows.

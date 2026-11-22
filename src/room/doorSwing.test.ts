@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ASHERS_ROOM } from '../room';
+import { ASHERS_ROOM } from './room.config';
 import { doorSwing } from './doorSwing';
 
 const [DOOR] = ASHERS_ROOM.doors;

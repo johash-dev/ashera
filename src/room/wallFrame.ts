@@ -1,4 +1,5 @@
-import { floorBounds, type Room, type WallId } from '../room';
+import { floorBounds } from './geometry';
+import type { Room, WallId } from './types';
 
 /** A Wall's start corner, the direction it runs (clockwise from above) and its outward normal. */
 export interface WallFrame {

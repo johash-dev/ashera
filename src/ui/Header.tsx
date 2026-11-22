@@ -1,3 +1,5 @@
+import { type TvSize } from '../editor';
+
 export interface ViewOption {
   readonly id: string;
   readonly label: string;
@@ -7,10 +9,15 @@ export function Header({
   views,
   currentId,
   onSelect,
+  tvSize,
+  onToggleTvSize,
 }: {
   views: readonly ViewOption[];
   currentId: string;
   onSelect: (id: string) => void;
+  /** TV size shown, in inches. */
+  tvSize: TvSize;
+  onToggleTvSize: () => void;
 }) {
   const current = views.find((view) => view.id === currentId);
   return (
@@ -33,6 +40,15 @@ export function Header({
           </button>
         ))}
       </nav>
+      <button
+        type="button"
+        className="hud-view-button hud-tv-button"
+        data-testid="tv-size"
+        title="Switch the TV between 55″ and 65″"
+        onClick={onToggleTvSize}
+      >
+        TV {tvSize}″
+      </button>
     </header>
   );
 }

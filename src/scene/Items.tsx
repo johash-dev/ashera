@@ -1,9 +1,11 @@
 import { useEffect, useMemo } from 'react';
 import { MeshStandardMaterial } from 'three';
-import { CATALOG, type Item } from '../editor';
-import { standBoxes } from './itemBoxes';
-import { LOOK } from './look';
+import { type Item, TV_LEG_HEIGHT, TV_STAND_DOORS } from '../editor';
+import { standBoxes, tvBoxes } from './itemBoxes';
+import { LOOK, TV_EDGE_GLOW } from './look';
 import { type Box } from './roomBoxes';
+
+type ItemMaterials = Record<'standBody' | 'standDoor' | 'tvPanel' | 'tvScreen', MeshStandardMaterial>;
 
 function BoxMesh({ box, material }: { box: Box; material: MeshStandardMaterial }) {
   return (
@@ -13,32 +15,58 @@ function BoxMesh({ box, material }: { box: Box; material: MeshStandardMaterial }
   );
 }
 
+function ItemMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
+  switch (item.type) {
+    case 'tv-stand': {
+      const { body, doors } = standBoxes(item, TV_STAND_DOORS);
+      return (
+        <>
+          <BoxMesh box={body} material={materials.standBody} />
+          {doors.map((door, i) => (
+            <BoxMesh key={i} box={door} material={materials.standDoor} />
+          ))}
+        </>
+      );
+    }
+    case 'tv-55':
+    case 'tv-65': {
+      const { panel, screen, legs } = tvBoxes(item, TV_LEG_HEIGHT);
+      return (
+        <>
+          <BoxMesh box={panel} material={materials.tvPanel} />
+          <BoxMesh box={screen} material={materials.tvScreen} />
+          {legs.map((leg, i) => (
+            <mesh key={i} position={[...leg.position]} rotation-z={leg.angleRad} material={materials.tvPanel}>
+              <boxGeometry args={[...leg.size]} />
+            </mesh>
+          ))}
+        </>
+      );
+    }
+  }
+}
+
 /** The Items of the TV wall, drawn where the editor placed them. */
 export function Items({ items }: { items: readonly Item[] }) {
-  const materials = useMemo(
+  const materials = useMemo<ItemMaterials>(
     () => ({
-      body: new MeshStandardMaterial({ color: LOOK.standBody, roughness: 0.5 }),
-      door: new MeshStandardMaterial({ color: LOOK.standDoor, roughness: 0.4 }),
+      standBody: new MeshStandardMaterial({ color: LOOK.standBody, roughness: 0.5 }),
+      standDoor: new MeshStandardMaterial({ color: LOOK.standDoor, roughness: 0.4 }),
+      tvPanel: new MeshStandardMaterial({
+        color: LOOK.tvEdge,
+        emissive: LOOK.tvEdge,
+        emissiveIntensity: TV_EDGE_GLOW,
+        roughness: 0.4,
+      }),
+      tvScreen: new MeshStandardMaterial({ color: LOOK.tvScreen, roughness: 0.15 }),
     }),
     [],
   );
-  useEffect(
-    () => () => {
-      materials.body.dispose();
-      materials.door.dispose();
-    },
-    [materials],
-  );
+  useEffect(() => () => Object.values(materials).forEach((material) => material.dispose()), [materials]);
 
-  return items.map((item) => {
-    const { body, doors } = standBoxes(item, CATALOG[item.type].doors);
-    return (
-      <group key={item.id}>
-        <BoxMesh box={body} material={materials.body} />
-        {doors.map((door, i) => (
-          <BoxMesh key={i} box={door} material={materials.door} />
-        ))}
-      </group>
-    );
-  });
+  return items.map((item) => (
+    <group key={item.id}>
+      <ItemMeshes item={item} materials={materials} />
+    </group>
+  ));
 }
