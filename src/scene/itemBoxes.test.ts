@@ -161,7 +161,6 @@ function within(inner: Box, outer: Box): boolean {
   });
 }
 
-// A monitor on a desk top 2.5 ft up, at the east wall, its front (screen) facing west.
 describe('sofaBoxes', () => {
   // The compact sofa on the south wall, facing north: its back is on the south side.
   const SOFA: Item = {
@@ -204,6 +203,7 @@ describe('sofaBoxes', () => {
   });
 });
 
+// A monitor on a desk top 2.5 ft up, at the east wall, its front (screen) facing west.
 const MONITOR: Item = {
   id: 'monitor',
   type: 'monitor',
