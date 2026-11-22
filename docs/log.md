@@ -219,3 +219,10 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Spec reading: "east edge at the chair" taken as the chair standing on the rug (east edge level with the desk front); if Asher wants the rug clear of the chair, it is one line in `rug.ts`.
 - All five slices of the spec are in; the spec is marked done once the owner approves this slice.
 - No new Room measurements, so no new "Measured values" rows.
+
+## [2026-11-23] decision | Desk and sofa spec done
+
+- Slice 5 merged (#24) after the owner's "looks good"; all five slices (#20–#24) went through Approval cards with before/after screenshots of every View, plus `overview` with the L-shaped sofa. All Done-when items checked.
+- Changes the owner asked for on the cards: none. On slice 2 the owner noted the gaming chair's position and look will be revisited when Layouts arrive (roadmap feature 4).
+- Spec correction made in slice 4: the L-shaped sofa's short side is 2 × 2½ × 3 ft (2 ft along the window wall, 3 ft deep).
+- Still open: product sizes for the desk, monitor, tower, chair, sofas and rug (all typical); the L's corner has no back along the window wall; whether the chair should stand on the rug.

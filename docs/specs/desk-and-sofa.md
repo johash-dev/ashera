@@ -1,5 +1,5 @@
 ---
-status: in-progress # draft | approved | in-progress | done | superseded
+status: done # draft | approved | in-progress | done | superseded
 updated: 2026-11-23
 phase: 2
 ---
@@ -85,7 +85,7 @@ All must pass:
 - [x] The Header sofa button switches `window.__ASHERA__.sofa` between compact and L and the drawn sofa changes to match; `?sofa=l` loads the L (e2e)
 - [x] Draw calls stay < 100 in every View (e2e; the L-shaped sofa's counts, 48–75, read by hand)
 - [x] No new Room measurements, so no new "Measured values" rows (stated in the log entry)
-- [ ] Owner said "looks good" on before/after screenshots of every View, plus `overview` with the L-shaped sofa
+- [x] Owner said "looks good" on before/after screenshots of every View, plus `overview` with the L-shaped sofa
 - [x] docs updated (architecture if the editor's role changes, GLOSSARY for new terms, room-spec "Planned items"), `docs/log.md` entry added
 
 ## Slices
