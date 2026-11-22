@@ -18,6 +18,8 @@ const DEFAULT_TV_SIZE: TvSize = 55;
 const STAND_UNDERSIDE = 0.5;
 /** The TV's back sits this far in front of the stand's back, leaving the front free for the soundbar. */
 const TV_SET_BACK = 0.25;
+/** The PS5's west side sits this far in from the stand's west end. */
+const PS5_IN_FROM_WEST = 1;
 
 /** The starter arrangement: the fixed Items of the TV wall, placed from the Room and the Catalog. */
 export function tvWallItems(room: Room, tvSize: TvSize): Item[] {
@@ -28,6 +30,9 @@ export function tvWallItems(room: Room, tvSize: TvSize): Item[] {
   const standTop = STAND_UNDERSIDE + standSize[1];
   const tvType = tvSize === 55 ? 'tv-55' : 'tv-65';
   const tv = CATALOG[tvType].size;
+  const ps5 = CATALOG.ps5.size;
+  const bar = CATALOG.soundbar.size;
+  const standFront = minZ + standSize[2];
 
   return [
     {
@@ -41,6 +46,22 @@ export function tvWallItems(room: Room, tvSize: TvSize): Item[] {
       type: tvType,
       position: [centreX, standTop + tv[1] / 2, minZ + TV_SET_BACK + tv[2] / 2],
       size: tv,
+    },
+    {
+      id: 'ps5',
+      type: 'ps5',
+      position: [
+        centreX - standSize[0] / 2 + PS5_IN_FROM_WEST + ps5[0] / 2,
+        standTop + ps5[1] / 2,
+        minZ + standSize[2] / 2,
+      ],
+      size: ps5,
+    },
+    {
+      id: 'soundbar',
+      type: 'soundbar',
+      position: [centreX, standTop + bar[1] / 2, standFront - bar[2] / 2],
+      size: bar,
     },
   ];
 }

@@ -15,6 +15,12 @@ export const LOOK = {
   /** The TV: a dark glossy screen inside a faint, slightly lit edge. */
   tvScreen: '#050508',
   tvEdge: '#4a4d66',
+  /** PS5: white side panels around a black core. */
+  ps5Side: '#c9cbd6',
+  ps5Core: '#08080c',
+  /** Soundbar: near-black body, its front grille a shade lighter. */
+  soundbarBody: '#0e0e13',
+  soundbarGrille: '#30323f',
   /** Soft white of the ceiling panel light and the light it casts. */
   ceilingLight: '#e8e6ff',
   /** The one accent colour, shared with the Header (--accent in styles.css): the floor-tile joints. */
