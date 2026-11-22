@@ -6,6 +6,7 @@ import { type Item, type TvSize } from '../editor';
 import { DOOR_OPEN_ANGLE_DEG, type Room, wallPieces } from '../room';
 import { Items } from './Items';
 import { RoomShell } from './RoomShell';
+import { SlatPanel } from './SlatPanel';
 import { publishSceneState, reportItems, reportView } from './testHandle';
 import { AMBIENT_INTENSITY, KEY_LIGHT_INTENSITY, LOOK } from './look';
 import { type CameraView } from './views';
@@ -91,6 +92,7 @@ export function SceneCanvas({
       <ambientLight intensity={AMBIENT_INTENSITY} />
       <directionalLight position={[5, 12, 8]} intensity={KEY_LIGHT_INTENSITY} />
       <RoomShell room={room} />
+      <SlatPanel room={room} />
       <Items items={items} />
       <OrbitControls makeDefault />
       <CameraRig view={view} />

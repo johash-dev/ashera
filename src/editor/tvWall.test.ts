@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ASHERS_ROOM, clearHeightAtWall, floorBounds } from '../room';
-import { CATALOG, type ItemTypeId } from './catalog';
+import { CATALOG, type ItemTypeId, SLAT_PANEL } from './catalog';
 import {
   clearOfDoorSwing,
   type Item,
@@ -33,11 +33,11 @@ describe('tvWallItems: the stand', () => {
     expect(top(stand())).toBe(2);
   });
 
-  it('centres the stand on the TV wall with its back against the wall', () => {
+  it('centres the stand on the TV wall with its back against the Slat panel face', () => {
     const { minZ } = floorBounds(ASHERS_ROOM);
     const { position, size } = stand();
     expect(position[0]).toBe(0);
-    expect(position[2] - size[2] / 2).toBe(minZ);
+    expect(position[2] - size[2] / 2).toBeCloseTo(minZ + SLAT_PANEL.depth);
   });
 });
 
@@ -109,6 +109,13 @@ describe.each(TV_SIZES)('tvWallItems with the %i″ TV', (tvSize) => {
       expect(position[2] + size[2] / 2).toBeLessThanOrEqual(maxZ);
       expect(position[1] - size[1] / 2).toBeGreaterThanOrEqual(0);
       expect(position[1] + size[1] / 2).toBeLessThanOrEqual(clearHeightAtWall(ASHERS_ROOM, 'north'));
+    }
+  });
+
+  it('stands every Item off the Slat panel face', () => {
+    const { minZ } = floorBounds(ASHERS_ROOM);
+    for (const { position, size } of items) {
+      expect(position[2] - size[2] / 2).toBeGreaterThanOrEqual(minZ + SLAT_PANEL.depth - 1e-9);
     }
   });
 

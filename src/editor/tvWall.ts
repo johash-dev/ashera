@@ -1,5 +1,5 @@
 import { doorSwing, floorBounds, type Room } from '../room';
-import { CATALOG, type ItemTypeId, type Size } from './catalog';
+import { CATALOG, type ItemTypeId, type Size, SLAT_PANEL } from './catalog';
 
 /** An Item standing in the Room, facing south from the TV wall: centre of its box and size, in feet. */
 export interface Item {
@@ -23,7 +23,9 @@ const PS5_IN_FROM_WEST = 1;
 
 /** The starter arrangement: the fixed Items of the TV wall, placed from the Room and the Catalog. */
 export function tvWallItems(room: Room, tvSize: TvSize): Item[] {
-  const { minX, maxX, minZ } = floorBounds(room);
+  const { minX, maxX } = floorBounds(room);
+  // Items stand off the Slat panel face, not the bare Wall.
+  const panelFace = floorBounds(room).minZ + SLAT_PANEL.depth;
   const centreX = (minX + maxX) / 2;
 
   const standSize = CATALOG['tv-stand'].size;
@@ -32,19 +34,19 @@ export function tvWallItems(room: Room, tvSize: TvSize): Item[] {
   const tv = CATALOG[tvType].size;
   const ps5 = CATALOG.ps5.size;
   const bar = CATALOG.soundbar.size;
-  const standFront = minZ + standSize[2];
+  const standFront = panelFace + standSize[2];
 
   return [
     {
       id: 'tv-stand',
       type: 'tv-stand',
-      position: [centreX, STAND_UNDERSIDE + standSize[1] / 2, minZ + standSize[2] / 2],
+      position: [centreX, STAND_UNDERSIDE + standSize[1] / 2, panelFace + standSize[2] / 2],
       size: standSize,
     },
     {
       id: 'tv',
       type: tvType,
-      position: [centreX, standTop + tv[1] / 2, minZ + TV_SET_BACK + tv[2] / 2],
+      position: [centreX, standTop + tv[1] / 2, panelFace + TV_SET_BACK + tv[2] / 2],
       size: tv,
     },
     {
@@ -53,7 +55,7 @@ export function tvWallItems(room: Room, tvSize: TvSize): Item[] {
       position: [
         centreX - standSize[0] / 2 + PS5_IN_FROM_WEST + ps5[0] / 2,
         standTop + ps5[1] / 2,
-        minZ + standSize[2] / 2,
+        panelFace + standSize[2] / 2,
       ],
       size: ps5,
     },
