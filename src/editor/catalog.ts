@@ -17,7 +17,9 @@ export type ItemTypeId =
   | 'sofa-l-long'
   | 'sofa-l-short'
   | 'rug'
-  | 'pegboard';
+  | 'pegboard'
+  | 'headphones'
+  | 'shelf';
 
 /** An Item type Asher can place: its name and real size. */
 export interface ItemType {
@@ -130,6 +132,18 @@ export const CATALOG: Readonly<Record<ItemTypeId, ItemType>> = {
     id: 'pegboard',
     name: 'Pegboard',
     size: [4, 2, inches(1)], // agreed in the grill: black, typical
+    placeholder: true,
+  },
+  headphones: {
+    id: 'headphones',
+    name: 'Headphones',
+    size: [inches(7), inches(8), inches(3.5)], // typical, hung on a hook
+    placeholder: true,
+  },
+  shelf: {
+    id: 'shelf',
+    name: 'Pegboard shelf',
+    size: [1, inches(1), inches(4)], // typical small shelf
     placeholder: true,
   },
 };

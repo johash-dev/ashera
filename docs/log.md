@@ -233,3 +233,9 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Catalog gains the pegboard (4 ft × 2 ft × 1 in, typical, placeholder). `wallDecorItems` hangs it on the east wall face, facing west, centred on the desk, bottom edge 4½ ft up (above the monitor's top, below the Beam). Unit tests for its size, place, height and Door swing; the starter arrangement's inside-Room, below-Beam, no-overlap and Door-swing checks run over it for every TV size and sofa. `__ASHERA__.items` lists it; an e2e checks its spot.
 - Drawn as one flat black box. In the overview the open Door leaf hides most of it; it shows clearly in the right-from-entrance and entrance Views.
 - No new Room measurements, so no new "Measured values" rows.
+
+## [2026-11-23] feature | Wall décor slice 2: headphones and shelf on the pegboard
+
+- Catalog gains the headphones (7 × 8 × 3½ in, hung on a hook) and a small pegboard shelf (12 × 1 × 4 in), both typical placeholders. `wallDecorItems` stands them on the pegboard's front face: headphones in its north third (Asher's left as he sits), top ½ ft below the board's top; shelf in its south third at the board's mid-height. Unit tests: right Catalog size, on the board's face and within its outline, which third each sits in, shelf at mid-height; the starter arrangement's checks run over them for every TV size and sofa.
+- Drawn from simple boxes: headphones as a band, two cups and a hook; the shelf as one board. Near-black, lighter than the board so they read.
+- No new Room measurements, so no new "Measured values" rows.

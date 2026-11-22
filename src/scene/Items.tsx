@@ -4,6 +4,7 @@ import { itemBox, type Item, TV_LEG_HEIGHT, TV_STAND_DOORS } from '../editor';
 import {
   chairBoxes,
   deskBoxes,
+  headphonesBoxes,
   keyboardBoxes,
   monitorBoxes,
   ps5Boxes,
@@ -161,6 +162,19 @@ function ItemMeshes({ item, materials }: { item: Item; materials: ItemMaterials 
       return <BoxMesh box={itemBox(item)} material={materials.rug} />;
     case 'pegboard':
       return <BoxMesh box={itemBox(item)} material={materials.pegboard} />;
+    case 'shelf':
+      return <BoxMesh box={itemBox(item)} material={materials.deviceTrim} />;
+    case 'headphones': {
+      const { band, cups, hook } = headphonesBoxes(item);
+      return (
+        <>
+          {[band, ...cups].map((box, i) => (
+            <BoxMesh key={i} box={box} material={materials.deviceBody} />
+          ))}
+          <BoxMesh box={hook} material={materials.deviceTrim} />
+        </>
+      );
+    }
     case 'gaming-chair': {
       const { base, column, seat, back, arms } = chairBoxes(item);
       return (

@@ -171,6 +171,25 @@ export function monitorBoxes(item: Item): { foot: Box; neck: Box; panel: Box; sc
   };
 }
 
+/** Headphones on a hook: a band across the top, a cup at each end and the hook behind the band. */
+export function headphonesBoxes(item: Item): { band: Box; cups: Box[]; hook: Box } {
+  const [width, height, depth] = item.size;
+  const bandHeight = inches(1);
+  const cupWidth = inches(2);
+  const hookDepth = inches(1);
+  return {
+    band: part(item, 0, height - bandHeight, 0, [width, bandHeight, inches(1)]),
+    cups: [-1, 1].map((side) =>
+      part(item, (side * (width - cupWidth)) / 2, 0, 0, [cupWidth, height - bandHeight, depth]),
+    ),
+    hook: part(item, 0, height - bandHeight, -depth / 2 + hookDepth / 2, [
+      inches(0.6),
+      bandHeight,
+      hookDepth,
+    ]),
+  };
+}
+
 /** A PC tower: its body and a slightly lighter front panel. */
 export function towerBoxes(item: Item): { body: Box; front: Box } {
   const [width, height, depth] = item.size;
