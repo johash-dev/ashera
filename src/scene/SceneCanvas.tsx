@@ -2,7 +2,7 @@ import { OrbitControls } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect } from 'react';
 import { PerspectiveCamera, Vector3 } from 'three';
-import { type Item, type TvSize } from '../editor';
+import { type Item, type SofaChoice, type TvSize } from '../editor';
 import { DOOR_OPEN_ANGLE_DEG, type Room, wallPieces } from '../room';
 import { Items } from './Items';
 import { RoomShell } from './RoomShell';
@@ -47,11 +47,13 @@ export function SceneCanvas({
   room,
   items,
   tvSize,
+  sofa,
   view,
 }: {
   room: Room;
   items: readonly Item[];
   tvSize: TvSize;
+  sofa: SofaChoice;
   view: CameraView;
 }) {
   // Room facts are published once per Room; Items and the View report themselves when they change, and
@@ -71,12 +73,13 @@ export function SceneCanvas({
       door: { openAngleDeg: DOOR_OPEN_ANGLE_DEG },
       items: [],
       tvSize: null,
+      sofa: null,
       fittings: 0,
       drawCalls: 0,
       hidden: null,
     });
   }, [room]);
-  useEffect(() => reportItems(items, tvSize), [room, items, tvSize]);
+  useEffect(() => reportItems(items, tvSize, sofa), [room, items, tvSize, sofa]);
   useEffect(() => reportView(view.id), [view]);
 
   return (

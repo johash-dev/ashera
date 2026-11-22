@@ -108,6 +108,34 @@ test('?tv=65 loads the 65″ TV', async ({ page }) => {
   expect(await tvWidth(page)).toBeCloseTo(57 / 12);
 });
 
+const sofaTypes = (page: Page) =>
+  page.evaluate(() =>
+    window.__ASHERA__?.items.map((item) => item.type).filter((type) => type.startsWith('sofa')),
+  );
+
+test('the Header sofa button switches between the compact sofa and the L-shaped sofa', async ({ page }) => {
+  const errors = await openView(page, 'overview');
+  const button = page.getByTestId('sofa-choice');
+  await expect(button).toHaveText('Sofa: compact');
+  expect(await sofaTypes(page)).toEqual(['sofa-compact']);
+  await button.click();
+  await expect(button).toHaveText('Sofa: L-shaped');
+  await expect.poll(() => page.evaluate(() => window.__ASHERA__?.sofa)).toBe('l');
+  expect(await sofaTypes(page)).toEqual(['sofa-l-long', 'sofa-l-short']);
+  await button.click();
+  await expect.poll(() => page.evaluate(() => window.__ASHERA__?.sofa)).toBe('compact');
+  expect(await sofaTypes(page)).toEqual(['sofa-compact']);
+  expect(errors).toEqual([]);
+});
+
+test('?sofa=l loads the L-shaped sofa', async ({ page }) => {
+  await page.goto('/?view=overview&sofa=l');
+  await page.waitForFunction(() => window.__ASHERA__?.ready === true);
+  await expect.poll(() => page.evaluate(() => window.__ASHERA__?.sofa)).toBe('l');
+  await expect(page.getByTestId('sofa-choice')).toHaveText('Sofa: L-shaped');
+  expect(await sofaTypes(page)).toEqual(['sofa-l-long', 'sofa-l-short']);
+});
+
 const VIEWS = [
   { id: 'overview', label: 'Overview' },
   { id: 'top', label: 'Top-down plan' },
@@ -205,4 +233,11 @@ test('overview with the 65″ TV matches baseline @visual', async ({ page }) => 
   await page.waitForFunction(() => window.__ASHERA__?.ready === true);
   await page.waitForTimeout(500); // let the first frames settle
   await expect(page).toHaveScreenshot('overview-tv65.png');
+});
+
+test('overview with the L-shaped sofa matches baseline @visual', async ({ page }) => {
+  await page.goto('/?view=overview&sofa=l');
+  await page.waitForFunction(() => window.__ASHERA__?.ready === true);
+  await page.waitForTimeout(500); // let the first frames settle
+  await expect(page).toHaveScreenshot('overview-sofa-l.png');
 });

@@ -78,7 +78,8 @@ body,
   color: var(--fg);
 }
 
-.hud-tv-button {
+.hud-tv-button,
+.hud-sofa-button {
   margin-left: 12px;
   border-color: var(--muted);
   pointer-events: auto;

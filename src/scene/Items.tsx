@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { MeshStandardMaterial } from 'three';
 import { itemBox, type Item, TV_LEG_HEIGHT, TV_STAND_DOORS } from '../editor';
 import {
+  type ArmSide,
   chairBoxes,
   deskBoxes,
   keyboardBoxes,
@@ -41,6 +42,30 @@ function BoxMesh({ box, material }: { box: Box; material: MeshStandardMaterial }
     <mesh position={[...box.position]} material={material}>
       <boxGeometry args={[...box.size]} />
     </mesh>
+  );
+}
+
+function SofaMeshes({
+  item,
+  armSides,
+  materials,
+}: {
+  item: Item;
+  armSides: readonly ArmSide[];
+  materials: ItemMaterials;
+}) {
+  const { base, back, arms, cushions } = sofaBoxes(item, armSides);
+  return (
+    <>
+      <BoxMesh box={base} material={materials.sofaFrame} />
+      <BoxMesh box={back} material={materials.sofaFrame} />
+      {arms.map((box, i) => (
+        <BoxMesh key={i} box={box} material={materials.sofaFrame} />
+      ))}
+      {cushions.map((box, i) => (
+        <BoxMesh key={i} box={box} material={materials.sofaCushion} />
+      ))}
+    </>
   );
 }
 
@@ -134,21 +159,13 @@ function ItemMeshes({ item, materials }: { item: Item; materials: ItemMaterials 
     }
     case 'mouse':
       return <BoxMesh box={itemBox(item)} material={materials.deviceTrim} />;
-    case 'sofa-compact': {
-      const { base, back, arms, cushions } = sofaBoxes(item);
-      return (
-        <>
-          <BoxMesh box={base} material={materials.sofaFrame} />
-          <BoxMesh box={back} material={materials.sofaFrame} />
-          {arms.map((box, i) => (
-            <BoxMesh key={i} box={box} material={materials.sofaFrame} />
-          ))}
-          {cushions.map((box, i) => (
-            <BoxMesh key={i} box={box} material={materials.sofaCushion} />
-          ))}
-        </>
-      );
-    }
+    case 'sofa-compact':
+      return <SofaMeshes item={item} armSides={[-1, 1]} materials={materials} />;
+    // The L-shaped sofa's two sides join at the corner, so each has an arm only at its free end.
+    case 'sofa-l-long':
+      return <SofaMeshes item={item} armSides={[1]} materials={materials} />;
+    case 'sofa-l-short':
+      return <SofaMeshes item={item} armSides={[-1]} materials={materials} />;
     case 'gaming-chair': {
       const { base, column, seat, back, arms } = chairBoxes(item);
       return (
