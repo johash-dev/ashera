@@ -68,8 +68,8 @@ All must pass:
 - [x] `window.__ASHERA__.items` lists the TV stand, TV, PS5 and soundbar with the Catalog sizes above, and unit tests prove none intersects another, leaves the Room or enters the Door swing (both TV sizes)
 - [x] The stand's underside is 0.5 ft and its top 2 ft above the floor, centred on the TV wall (unit test)
 - [x] The Header TV button switches `window.__ASHERA__.tvSize` between 55 and 65 and the drawn TV's width changes to match; `?tv=65` loads 65″ (e2e)
-- [ ] The Slat panel covers the whole TV wall with a cut-out per TV-wall Fitting (unit test); draw calls in `overview` stay < 100 (e2e)
-- [ ] No new Room measurements, so no new "Measured values" rows (stated in the log entry)
+- [x] The Slat panel covers the whole TV wall with a cut-out per TV-wall Fitting (unit test); draw calls in `overview` stay < 100 (e2e)
+- [x] No new Room measurements, so no new "Measured values" rows (stated in the log entry)
 - [ ] Owner said "looks good" on before/after screenshots of every View, plus `overview` at 65″
 - [ ] docs updated (architecture: editor module now live; GLOSSARY if new terms), `docs/log.md` entry added
 

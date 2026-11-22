@@ -21,6 +21,9 @@ export const LOOK = {
   /** Soundbar: near-black body, its front grille a shade lighter. */
   soundbarBody: '#0e0e13',
   soundbarGrille: '#30323f',
+  /** Slat panel: black slats a shade lighter than the felt behind them, so the ribs read. */
+  slat: '#17181f',
+  slatBacking: '#050507',
   /** Soft white of the ceiling panel light and the light it casts. */
   ceilingLight: '#e8e6ff',
   /** The one accent colour, shared with the Header (--accent in styles.css): the floor-tile joints. */

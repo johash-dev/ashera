@@ -54,3 +54,16 @@ export const CATALOG: Readonly<Record<ItemTypeId, ItemType>> = {
 
 /** Doors across the front of the TV stand, side by side (owner's sketch). */
 export const TV_STAND_DOORS = 2;
+
+/** The Slat panel over the TV wall: a felt backing with vertical slats in front (typical acoustic panel). */
+export const SLAT_PANEL = {
+  slatWidth: inches(1),
+  gap: inches(0.5),
+  /** Overall depth, backing and slats together. */
+  depth: inches(0.75),
+  /** Depth of the felt backing; the slats make up the rest. */
+  backingDepth: inches(0.25),
+  /** Clearance left around each Fitting plate by its cut-out. */
+  cutoutMargin: inches(0.5),
+  placeholder: true,
+} as const;

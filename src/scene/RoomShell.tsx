@@ -1,5 +1,5 @@
 import { addAfterEffect, useFrame, useThree } from '@react-three/fiber';
-import { useEffect, useMemo, useRef } from 'react';
+import { type ReactNode, useEffect, useMemo, useRef } from 'react';
 import { type Group, MeshStandardMaterial, Vector3 } from 'three';
 import { type Fitting, floorTileLines, type Room, type WallId, WALLS } from '../room';
 import { hiddenSurfaces } from './cutaway';
@@ -85,9 +85,16 @@ function FloorTileLines({ room }: { room: Room }) {
 
 /**
  * The Room's shell: floor, ceiling, four Walls with their Openings cut out, Beams and Fittings.
- * Cutaway hides the Walls and ceiling facing the camera, with their Fittings, whenever the camera moves.
+ * Cutaway hides the Walls and ceiling facing the camera, with their Fittings and `wallContents`, whenever the camera moves.
  */
-export function RoomShell({ room }: { room: Room }) {
+export function RoomShell({
+  room,
+  wallContents,
+}: {
+  room: Room;
+  /** Things fixed to a Wall (the Slat panel), hidden by Cutaway together with it. */
+  wallContents: Partial<Record<WallId, ReactNode>>;
+}) {
   const root = useRef<Group>(null);
   const walls = useRef<Partial<Record<WallId, Group>>>({});
   const ceiling = useRef<Group>(null);
@@ -197,6 +204,7 @@ export function RoomShell({ room }: { room: Room }) {
               );
             })}
           <FittingPlates room={room} surface={wall} materials={materials} />
+          {wallContents[wall]}
         </group>
       ))}
       <Doors room={room} />
