@@ -1,4 +1,4 @@
-import { floorBounds, type Room } from '../room';
+import { doorSwing, floorBounds, type Room } from '../room';
 import { CATALOG, type ItemTypeId, type Size } from './catalog';
 
 /** An Item standing in the Room, facing south from the TV wall: centre of its box and size, in feet. */
@@ -9,20 +9,71 @@ export interface Item {
   readonly size: Size;
 }
 
+/** The TV sizes Asher compares. */
+export type TvSize = 55 | 65;
+export const TV_SIZES: readonly TvSize[] = [55, 65];
+const DEFAULT_TV_SIZE: TvSize = 55;
+
 /** The floating stand hangs this far above the floor (owner's sketch). */
 const STAND_UNDERSIDE = 0.5;
+/** The TV's back sits this far in front of the stand's back, leaving the front free for the soundbar. */
+const TV_SET_BACK = 0.25;
 
 /** The starter arrangement: the fixed Items of the TV wall, placed from the Room and the Catalog. */
-export function tvWallItems(room: Room): Item[] {
+export function tvWallItems(room: Room, tvSize: TvSize): Item[] {
   const { minX, maxX, minZ } = floorBounds(room);
-  const { size } = CATALOG['tv-stand'];
-  const [, height, depth] = size;
+  const centreX = (minX + maxX) / 2;
+
+  const standSize = CATALOG['tv-stand'].size;
+  const standTop = STAND_UNDERSIDE + standSize[1];
+  const tvType = tvSize === 55 ? 'tv-55' : 'tv-65';
+  const tv = CATALOG[tvType].size;
+
   return [
     {
       id: 'tv-stand',
       type: 'tv-stand',
-      position: [(minX + maxX) / 2, STAND_UNDERSIDE + height / 2, minZ + depth / 2],
-      size,
+      position: [centreX, STAND_UNDERSIDE + standSize[1] / 2, minZ + standSize[2] / 2],
+      size: standSize,
+    },
+    {
+      id: 'tv',
+      type: tvType,
+      position: [centreX, standTop + tv[1] / 2, minZ + TV_SET_BACK + tv[2] / 2],
+      size: tv,
     },
   ];
+}
+
+/** Overlaps smaller than this are rounding, not intersection (feet). */
+const TOUCH_TOLERANCE = 1e-9;
+const AXES = [0, 1, 2] as const;
+
+/** True when two Items' boxes overlap; boxes that only touch (one resting on another) do not. */
+export function itemsIntersect(a: Item, b: Item): boolean {
+  return AXES.every((axis) => {
+    const gap = Math.abs(a.position[axis] - b.position[axis]);
+    return gap < (a.size[axis] + b.size[axis]) / 2 - TOUCH_TOLERANCE;
+  });
+}
+
+/**
+ * True when an Item's footprint stays out of every Door swing. Conservative: it checks the whole
+ * circle the Door leaf's end could reach, not only the quarter it sweeps.
+ */
+export function clearOfDoorSwing(room: Room, item: Item): boolean {
+  const [x, , z] = item.position;
+  const [width, , depth] = item.size;
+  return room.doors.every((door) => {
+    const { hinge, radius } = doorSwing(room, door);
+    const nearestX = Math.min(Math.max(hinge[0], x - width / 2), x + width / 2);
+    const nearestZ = Math.min(Math.max(hinge[1], z - depth / 2), z + depth / 2);
+    return Math.hypot(nearestX - hinge[0], nearestZ - hinge[1]) >= radius;
+  });
+}
+
+/** The TV size asked for by `?tv=55|65`; 55 when missing or unknown. */
+export function tvSizeFromSearch(search: string): TvSize {
+  const requested = Number(new URLSearchParams(search).get('tv'));
+  return TV_SIZES.find((size) => size === requested) ?? DEFAULT_TV_SIZE;
 }

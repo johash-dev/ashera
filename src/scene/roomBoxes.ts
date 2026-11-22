@@ -5,9 +5,10 @@ import {
   skirtingRuns,
   type WallId,
   wallLength,
+  type WallFrame,
+  wallFrame,
   wallPieces,
 } from '../room';
-import { type WallFrame, wallFrame } from './wallFrame';
 
 type Vec3 = readonly [number, number, number];
 

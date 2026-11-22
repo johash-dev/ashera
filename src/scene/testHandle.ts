@@ -1,4 +1,4 @@
-import { type Item } from '../editor';
+import { type Item, type TvSize } from '../editor';
 import { type WallId } from '../room';
 import { type HiddenSurfaces } from './cutaway';
 import type { ViewId } from './views';
@@ -20,6 +20,8 @@ export interface SceneTestState {
   door: { openAngleDeg: number };
   /** Items drawn in the scene: type, size and centre (feet). */
   items: readonly Pick<Item, 'type' | 'size' | 'position'>[];
+  /** TV size shown, in inches; null until the Items are first reported. */
+  tvSize: TvSize | null;
   /** Number of Fitting plates mounted in the scene; 0 until the first frame is drawn. */
   fittings: number;
   /** WebGL draw calls in the latest frame; 0 until the first frame is drawn. */
@@ -48,6 +50,13 @@ export function reportHiddenSurfaces(hidden: HiddenSurfaces): void {
 
 export function reportDrawCalls(count: number): void {
   if (import.meta.env.DEV && window.__ASHERA__) window.__ASHERA__.drawCalls = count;
+}
+
+export function reportItems(items: readonly Item[], tvSize: TvSize): void {
+  if (import.meta.env.DEV && window.__ASHERA__) {
+    window.__ASHERA__.items = items.map(({ type, size, position }) => ({ type, size, position }));
+    window.__ASHERA__.tvSize = tvSize;
+  }
 }
 
 export function reportView(view: ViewId): void {

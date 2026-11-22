@@ -1,4 +1,4 @@
-import { type Door, type Room } from '../room';
+import type { Door, Room } from './types';
 import { wallFrame } from './wallFrame';
 
 type Vec2 = readonly [number, number];

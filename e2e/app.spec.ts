@@ -42,11 +42,42 @@ test('all five fittings are drawn', async ({ page }) => {
   await expect.poll(() => page.evaluate(() => window.__ASHERA__?.fittings)).toBe(5);
 });
 
-test('the TV stand is drawn at its real size, hung on the TV wall', async ({ page }) => {
+test('the TV stand is drawn at its real size, hung on the TV wall, with the 55″ TV on it', async ({
+  page,
+}) => {
   await openView(page, 'overview');
-  expect(await page.evaluate(() => window.__ASHERA__?.items)).toEqual([
-    { type: 'tv-stand', size: [8, 1.5, 1], position: [0, 1.25, -4] },
-  ]);
+  const items = await page.evaluate(() => window.__ASHERA__?.items);
+  expect(items?.map((item) => item.type)).toEqual(['tv-stand', 'tv-55']);
+  expect(items?.[0]).toEqual({ type: 'tv-stand', size: [8, 1.5, 1], position: [0, 1.25, -4] });
+  expect(items?.[1]?.size[0]).toBeCloseTo(48.4 / 12);
+  expect(await page.evaluate(() => window.__ASHERA__?.tvSize)).toBe(55);
+});
+
+const tvWidth = (page: Page) =>
+  page.evaluate(
+    () => window.__ASHERA__?.items.find((item) => item.type === 'tv-55' || item.type === 'tv-65')?.size[0],
+  );
+
+test('the Header TV button switches the TV between 55″ and 65″', async ({ page }) => {
+  const errors = await openView(page, 'overview');
+  const button = page.getByTestId('tv-size');
+  await expect(button).toHaveText('TV 55″');
+  await button.click();
+  await expect(button).toHaveText('TV 65″');
+  await expect.poll(() => page.evaluate(() => window.__ASHERA__?.tvSize)).toBe(65);
+  expect(await tvWidth(page)).toBeCloseTo(57 / 12);
+  await button.click();
+  await expect.poll(() => page.evaluate(() => window.__ASHERA__?.tvSize)).toBe(55);
+  expect(await tvWidth(page)).toBeCloseTo(48.4 / 12);
+  expect(errors).toEqual([]);
+});
+
+test('?tv=65 loads the 65″ TV', async ({ page }) => {
+  await page.goto('/?view=overview&tv=65');
+  await page.waitForFunction(() => window.__ASHERA__?.ready === true);
+  await expect.poll(() => page.evaluate(() => window.__ASHERA__?.tvSize)).toBe(65);
+  await expect(page.getByTestId('tv-size')).toHaveText('TV 65″');
+  expect(await tvWidth(page)).toBeCloseTo(57 / 12);
 });
 
 const VIEWS = [
@@ -140,3 +171,10 @@ for (const view of ['overview', 'top', 'entrance', 'window', 'left', 'right']) {
     await expect(page).toHaveScreenshot(`${view}.png`);
   });
 }
+
+test('overview with the 65″ TV matches baseline @visual', async ({ page }) => {
+  await page.goto('/?view=overview&tv=65');
+  await page.waitForFunction(() => window.__ASHERA__?.ready === true);
+  await page.waitForTimeout(500); // let the first frames settle
+  await expect(page).toHaveScreenshot('overview-tv65.png');
+});

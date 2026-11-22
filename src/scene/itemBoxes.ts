@@ -18,3 +18,32 @@ export function standBoxes(item: Item, doorCount: number): { body: Box; doors: B
   }));
   return { body: { position: item.position, size: item.size }, doors };
 }
+
+/** Width of the panel edge left showing around the screen. */
+const TV_EDGE = 0.04;
+/** How far the screen stands proud of the panel front. */
+const SCREEN_THICKNESS = 0.01;
+/** Each foot's width, and how far in from the panel's ends its centre sits (share of the width). */
+const TV_FOOT_WIDTH = 0.25;
+const TV_FOOT_INSET = 1 / 6;
+
+/** A TV standing on its feet: the panel, the screen on its front (south) face, and two feet below. */
+export function tvBoxes(item: Item, feetHeight: number): { panel: Box; screen: Box; feet: Box[] } {
+  const [x, y, z] = item.position;
+  const [width, height, depth] = item.size;
+  const floor = y - height / 2;
+  const panelHeight = height - feetHeight;
+  const panelY = floor + feetHeight + panelHeight / 2;
+  const footOffset = width / 2 - width * TV_FOOT_INSET;
+  return {
+    panel: { position: [x, panelY, z], size: [width, panelHeight, depth] },
+    screen: {
+      position: [x, panelY, z + depth / 2 + SCREEN_THICKNESS / 2],
+      size: [width - 2 * TV_EDGE, panelHeight - 2 * TV_EDGE, SCREEN_THICKNESS],
+    },
+    feet: [-footOffset, footOffset].map((dx): Box => ({
+      position: [x + dx, floor + feetHeight / 2, z],
+      size: [TV_FOOT_WIDTH, feetHeight, depth],
+    })),
+  };
+}

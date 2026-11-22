@@ -1,8 +1,7 @@
 import { Line } from '@react-three/drei';
 import { useEffect, useMemo } from 'react';
 import { MeshStandardMaterial } from 'three';
-import { type Room } from '../room';
-import { doorSwing } from './doorSwing';
+import { doorSwing, type Room } from '../room';
 import { LOOK } from './look';
 import { doorLeafBox } from './roomBoxes';
 

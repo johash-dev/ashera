@@ -12,6 +12,9 @@ export const LOOK = {
   /** The floating TV stand: near-black body, its doors a shade lighter so the seams show. */
   standBody: '#101016',
   standDoor: '#262838',
+  /** The TV: a dark glossy screen inside a faint, slightly lit edge. */
+  tvScreen: '#050508',
+  tvEdge: '#4a4d66',
   /** Soft white of the ceiling panel light and the light it casts. */
   ceilingLight: '#e8e6ff',
   /** The one accent colour, shared with the Header (--accent in styles.css): the floor-tile joints. */
@@ -20,6 +23,8 @@ export const LOOK = {
 
 /** Opacity of the floor-tile joints; faint on purpose. */
 export const TILE_LINE_OPACITY = 0.18;
+/** How strongly the TV's edge glows, so it reads against the dark Wall. */
+export const TV_EDGE_GLOW = 0.6;
 /** How strongly the ceiling panel glows. */
 export const CEILING_LIGHT_GLOW = 1.5;
 /** Brightness of the light cast from each ceiling light, and the distance (ft) at which it fades out. */
