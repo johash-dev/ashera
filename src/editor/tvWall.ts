@@ -23,9 +23,9 @@ const PS5_IN_FROM_WEST = 1;
 
 /** The starter arrangement: the fixed Items of the TV wall, placed from the Room and the Catalog. */
 export function tvWallItems(room: Room, tvSize: TvSize): Item[] {
-  const { minX, maxX } = floorBounds(room);
+  const { minX, maxX, minZ } = floorBounds(room);
   // Items stand off the Slat panel face, not the bare Wall.
-  const panelFace = floorBounds(room).minZ + SLAT_PANEL.depth;
+  const panelFace = minZ + SLAT_PANEL.depth;
   const centreX = (minX + maxX) / 2;
 
   const standSize = CATALOG['tv-stand'].size;

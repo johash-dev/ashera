@@ -91,8 +91,7 @@ export function SceneCanvas({
       <color attach="background" args={[LOOK.background]} />
       <ambientLight intensity={AMBIENT_INTENSITY} />
       <directionalLight position={[5, 12, 8]} intensity={KEY_LIGHT_INTENSITY} />
-      <RoomShell room={room} />
-      <SlatPanel room={room} />
+      <RoomShell room={room} wallContents={{ north: <SlatPanel room={room} /> }} />
       <Items items={items} />
       <OrbitControls makeDefault />
       <CameraRig view={view} />

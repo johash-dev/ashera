@@ -51,9 +51,16 @@ describe('slatPanelSlats', () => {
     expect(left(first) - minX).toBeCloseTo(maxX - right(last));
   });
 
-  it('runs each slat from the floor to the ceiling where no cut-out crosses it', () => {
-    const clear = slats.filter((s) => !cutouts.some((c) => left(s) < c.maxX && right(s) > c.minX));
-    expect(clear.length).toBeGreaterThan(70);
+  it('runs each slat from the floor to the ceiling where no cut-out or Beam crosses it', () => {
+    const { depth } = ASHERS_ROOM.beams;
+    const clear = slats.filter(
+      (s) =>
+        !cutouts.some((c) => left(s) < c.maxX && right(s) > c.minX) &&
+        left(s) >= minX + depth &&
+        right(s) <= maxX - depth,
+    );
+    // 80 columns − 6 under each ¾ ft Beam (9 in at a 1.5 in pitch) − 6 crossing the cut-outs = 62.
+    expect(clear.length).toBe(62);
     for (const s of clear) {
       expect(s.position[1] - s.size[1] / 2).toBeCloseTo(0);
       expect(s.position[1] + s.size[1] / 2).toBeCloseTo(ASHERS_ROOM.ceilingHeight);
@@ -108,5 +115,20 @@ describe('slatPanelBacking', () => {
         const top = b.position[1] + b.size[1] / 2;
         expect(top <= cut.minY + 1e-9 || bottom >= cut.maxY - 1e-9).toBe(true);
       }
+  });
+});
+
+describe('slatPanelSlats under the Beams', () => {
+  it('stops the slats under the east and west Beams at the Beam underside, not inside them', () => {
+    const { drop, depth } = ASHERS_ROOM.beams;
+    const underBeam = slats.filter((s) => left(s) < minX + depth || right(s) > maxX - depth);
+    expect(underBeam.length).toBeGreaterThan(0);
+    for (const s of underBeam)
+      expect(s.position[1] + s.size[1] / 2).toBeCloseTo(ASHERS_ROOM.ceilingHeight - drop);
+    for (const b of slatPanelBacking(ASHERS_ROOM).filter(
+      (p) => left(p) < minX + depth || right(p) > maxX - depth,
+    )) {
+      expect(b.position[1] + b.size[1] / 2).toBeCloseTo(ASHERS_ROOM.ceilingHeight - drop);
+    }
   });
 });

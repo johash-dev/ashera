@@ -1,4 +1,4 @@
-import { floorBounds, type Room } from '../room';
+import { clearHeightAtWall, floorBounds, type Room } from '../room';
 import { SLAT_PANEL } from './catalog';
 
 /** A box in scene coordinates (feet): centre and full size. */
@@ -29,8 +29,20 @@ export function slatPanelCutouts(room: Room): Cutout[] {
     }));
 }
 
-/** The vertical spans of a column from floor to ceiling, skipping the cut-outs it crosses. */
+/** How high a column at `xMin`–`xMax` can reach: the ceiling, or a Beam's underside where an end Wall's Beam projects over it. */
+function columnTop(room: Room, xMin: number, xMax: number): number {
+  const { minX, maxX } = floorBounds(room);
+  const { depth } = room.beams;
+  return Math.min(
+    room.ceilingHeight,
+    xMin < minX + depth ? clearHeightAtWall(room, 'west') : room.ceilingHeight,
+    xMax > maxX - depth ? clearHeightAtWall(room, 'east') : room.ceilingHeight,
+  );
+}
+
+/** The vertical spans of a column from the floor to its top, skipping the cut-outs it crosses. */
 function columnSpans(room: Room, cutouts: readonly Cutout[], xMin: number, xMax: number): [number, number][] {
+  const top = columnTop(room, xMin, xMax);
   const blocked = cutouts.filter((c) => xMin < c.maxX && xMax > c.minX).sort((a, b) => a.minY - b.minY);
   const spans: [number, number][] = [];
   let from = 0;
@@ -38,7 +50,7 @@ function columnSpans(room: Room, cutouts: readonly Cutout[], xMin: number, xMax:
     if (c.minY > from) spans.push([from, c.minY]);
     from = Math.max(from, c.maxY);
   }
-  if (from < room.ceilingHeight) spans.push([from, room.ceilingHeight]);
+  if (from < top) spans.push([from, top]);
   return spans;
 }
 
@@ -53,7 +65,8 @@ function columnCentres(room: Room): number[] {
 /** Pieces of the panel, one per span of each column: `width` wide, `depth` deep, front face at `front`. */
 function pieces(room: Room, width: number, depth: number, front: number): PanelBox[] {
   const cutouts = slatPanelCutouts(room);
-  const centreX = (floorBounds(room).minX + floorBounds(room).maxX) / 2;
+  const { minX, maxX } = floorBounds(room);
+  const centreX = (minX + maxX) / 2;
   return columnCentres(room).flatMap((dx) => {
     const x = centreX + dx;
     return columnSpans(room, cutouts, x - width / 2, x + width / 2).map(([bottom, top]): PanelBox => ({
