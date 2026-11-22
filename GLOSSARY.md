@@ -24,6 +24,7 @@ Vocabulary only — one line per term. Use these words in code, docs and convers
 | **Catalog**             | The set of Item types Asher can place (Phase 2).                                                                                            |
 | **Floor covering**      | An Item (the rug) that lies on the floor and that other Items may stand on, so it never counts as overlapping them.                         |
 | **Starter arrangement** | The fixed Items of the Room (TV wall, desk and its setup, chair, sofa, rug), placed from the Room and the Catalog until Items can be moved. |
+| **Wall décor**          | Things hung on a Wall rather than standing on the floor: the pegboard and the picture frames.                                               |
 | **Slat panel**          | Black vertical wooden slats covering the TV wall, with cut-outs for its Fittings.                                                           |
 | **Layout**              | A named arrangement of Items in the Room; saved and loaded as a whole (Phase 2).                                                            |
 | **Placeholder**         | A measurement that is an estimate until really measured (`placeholder: true`).                                                              |

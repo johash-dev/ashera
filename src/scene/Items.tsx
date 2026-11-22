@@ -34,7 +34,8 @@ type ItemMaterials = Record<
   | 'chairTrim'
   | 'sofaFrame'
   | 'sofaCushion'
-  | 'rug',
+  | 'rug'
+  | 'pegboard',
   MeshStandardMaterial
 >;
 
@@ -158,6 +159,8 @@ function ItemMeshes({ item, materials }: { item: Item; materials: ItemMaterials 
       return <SofaMeshes item={item} materials={materials} />;
     case 'rug':
       return <BoxMesh box={itemBox(item)} material={materials.rug} />;
+    case 'pegboard':
+      return <BoxMesh box={itemBox(item)} material={materials.pegboard} />;
     case 'gaming-chair': {
       const { base, column, seat, back, arms } = chairBoxes(item);
       return (
@@ -201,6 +204,7 @@ export function Items({ items }: { items: readonly Item[] }) {
       sofaFrame: new MeshStandardMaterial({ color: LOOK.sofaFrame, roughness: 0.9 }),
       sofaCushion: new MeshStandardMaterial({ color: LOOK.sofaCushion, roughness: 0.9 }),
       rug: new MeshStandardMaterial({ color: LOOK.rug, roughness: 1 }),
+      pegboard: new MeshStandardMaterial({ color: LOOK.pegboard, roughness: 0.8 }),
       chairTrim: new MeshStandardMaterial({ color: LOOK.chairTrim, roughness: 0.8 }),
     }),
     [],

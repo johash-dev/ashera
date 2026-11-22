@@ -35,6 +35,7 @@ One per feature, from [the template](specs/_template.md).
 - [empty-room-twin](specs/empty-room-twin.md) — Phase 1: the empty Room built from config, Cutaway, Door, Fittings, dark look, photo Views
 - [tv-wall](specs/tv-wall.md) — Phase 2 first feature: TV stand, TV 55″/65″ switch, PS5, soundbar and Slat panel at real size, fixed in place
 - [desk-and-sofa](specs/desk-and-sofa.md) — roadmap feature 1: desk with PC setup, gaming chair, compact/L-shaped sofa switch and rug, fixed in place
+- [wall-decor](specs/wall-decor.md) — roadmap feature 2: pegboard with headphones and shelf above the desk, three picture frames above the sofa, fixed in place
 
 ## History
 
