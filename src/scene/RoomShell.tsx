@@ -1,17 +1,24 @@
 import { useFrame } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
 import { type Group, MeshStandardMaterial, Vector3 } from 'three';
-import { type Fitting, type Room, type WallId, WALLS } from '../room';
+import { type Fitting, floorTileLines, type Room, type WallId, WALLS } from '../room';
 import { hiddenSurfaces } from './cutaway';
 import { Doors } from './Doors';
 import { fittingPlate } from './fittingPlates';
-import { beamBox, type Box, skirtingBoxes, wallBoxes } from './roomBoxes';
-import { reportFittingsDrawn, reportHiddenSurfaces } from './testHandle';
+import {
+  CEILING_LIGHT_GLOW,
+  CEILING_LIGHT_INTENSITY,
+  CEILING_LIGHT_RANGE,
+  LOOK,
+  TILE_LINE_OPACITY,
+} from './look';
+import { beamBox, type Box, skirtingBoxes, wallBoxes, windowBoxes } from './roomBoxes';
+import { reportDrawCalls, reportFittingsDrawn, reportHiddenSurfaces } from './testHandle';
 
-const WALL_COLOR = '#4a4c5c';
-const SKIRTING_COLOR = '#2a2c38';
-const FLOOR_COLOR = '#15161c';
-const FITTING_COLOR = '#8a8fb0';
+/** Lifts the floor-tile joints just off the floor so they do not z-fight with it. */
+const TILE_LINE_LIFT = 0.01;
+/** The cast light sits this far below its panel, so the panel itself is not inside it. */
+const CEILING_LIGHT_DROP = 0.3;
 /** Object name of every Fitting plate, so the test handle can count what is drawn. */
 const FITTING_PLATE = 'fitting-plate';
 
@@ -26,11 +33,11 @@ function BoxMesh({ box, material }: { box: Box; material: MeshStandardMaterial }
 function FittingPlates({
   room,
   surface,
-  material,
+  materials,
 }: {
   room: Room;
   surface: Fitting['surface'];
-  material: MeshStandardMaterial;
+  materials: { fitting: MeshStandardMaterial; light: MeshStandardMaterial };
 }) {
   return room.fittings
     .filter((fitting) => fitting.surface === surface)
@@ -42,12 +49,38 @@ function FittingPlates({
           name={FITTING_PLATE}
           position={[...plate.position]}
           rotation={[...plate.rotation]}
-          material={material}
+          material={fitting.kind === 'ceiling-light' ? materials.light : materials.fitting}
         >
           <planeGeometry args={[...plate.size]} />
         </mesh>
       );
     });
+}
+
+/** The floor-tile joints as one set of line segments (a single draw call). */
+function FloorTileLines({ room }: { room: Room }) {
+  const positions = useMemo(
+    () =>
+      new Float32Array(
+        floorTileLines(room).flatMap(({ from, to }) => [
+          from[0],
+          TILE_LINE_LIFT,
+          from[1],
+          to[0],
+          TILE_LINE_LIFT,
+          to[1],
+        ]),
+      ),
+    [room],
+  );
+  return (
+    <lineSegments>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+      </bufferGeometry>
+      <lineBasicMaterial color={LOOK.accent} transparent opacity={TILE_LINE_OPACITY} />
+    </lineSegments>
+  );
 }
 
 /**
@@ -61,10 +94,17 @@ export function RoomShell({ room }: { room: Room }) {
 
   const materials = useMemo(
     () => ({
-      wall: new MeshStandardMaterial({ color: WALL_COLOR }),
-      skirting: new MeshStandardMaterial({ color: SKIRTING_COLOR }),
-      floor: new MeshStandardMaterial({ color: FLOOR_COLOR }),
-      fitting: new MeshStandardMaterial({ color: FITTING_COLOR }),
+      wall: new MeshStandardMaterial({ color: LOOK.wall }),
+      skirting: new MeshStandardMaterial({ color: LOOK.skirting }),
+      floor: new MeshStandardMaterial({ color: LOOK.floor, roughness: 0.6 }),
+      fitting: new MeshStandardMaterial({ color: LOOK.fitting }),
+      light: new MeshStandardMaterial({
+        color: LOOK.ceilingLight,
+        emissive: LOOK.ceilingLight,
+        emissiveIntensity: CEILING_LIGHT_GLOW,
+      }),
+      windowFrame: new MeshStandardMaterial({ color: LOOK.windowFrame }),
+      windowGlass: new MeshStandardMaterial({ color: LOOK.windowGlass, roughness: 0.15 }),
     }),
     [],
   );
@@ -74,6 +114,9 @@ export function RoomShell({ room }: { room: Room }) {
       materials.skirting.dispose();
       materials.floor.dispose();
       materials.fitting.dispose();
+      materials.light.dispose();
+      materials.windowFrame.dispose();
+      materials.windowGlass.dispose();
     },
     [materials],
   );
@@ -81,7 +124,8 @@ export function RoomShell({ room }: { room: Room }) {
   // Re-run Cutaway only when the camera has moved; NaN forces the first frame through.
   const lastCamera = useMemo(() => new Vector3(NaN, NaN, NaN), []);
   const cameraTuple = useMemo<[number, number, number]>(() => [0, 0, 0], []);
-  useFrame(({ camera }) => {
+  useFrame(({ camera, gl }) => {
+    reportDrawCalls(gl.info.render.calls); // calls of the previous frame
     if (camera.position.equals(lastCamera)) return;
     if (Number.isNaN(lastCamera.x) && root.current) {
       reportFittingsDrawn(root.current.getObjectsByProperty('name', FITTING_PLATE).length);
@@ -101,11 +145,26 @@ export function RoomShell({ room }: { room: Room }) {
       <mesh rotation-x={-Math.PI / 2} material={materials.floor}>
         <planeGeometry args={[room.width, room.depth]} />
       </mesh>
+      <FloorTileLines room={room} />
+      {room.fittings
+        .filter((fitting) => fitting.kind === 'ceiling-light')
+        .map((fitting) => {
+          const [x, y, z] = fittingPlate(room, fitting).position;
+          return (
+            <pointLight
+              key={fitting.id}
+              position={[x, y - CEILING_LIGHT_DROP, z]}
+              color={LOOK.ceilingLight}
+              intensity={CEILING_LIGHT_INTENSITY}
+              distance={CEILING_LIGHT_RANGE}
+            />
+          );
+        })}
       <group ref={ceiling}>
         <mesh position-y={room.ceilingHeight} rotation-x={Math.PI / 2} material={materials.wall}>
           <planeGeometry args={[room.width, room.depth]} />
         </mesh>
-        <FittingPlates room={room} surface="ceiling" material={materials.fitting} />
+        <FittingPlates room={room} surface="ceiling" materials={materials} />
       </group>
       {WALLS.map((wall) => (
         <group
@@ -121,7 +180,20 @@ export function RoomShell({ room }: { room: Room }) {
             <BoxMesh key={`skirting-${i}`} box={box} material={materials.skirting} />
           ))}
           {room.beams.walls.includes(wall) && <BoxMesh box={beamBox(room, wall)} material={materials.wall} />}
-          <FittingPlates room={room} surface={wall} material={materials.fitting} />
+          {room.openings
+            .filter((opening) => opening.wall === wall && opening.kind === 'window')
+            .map((opening) => {
+              const { frame, glass } = windowBoxes(room, opening);
+              return (
+                <group key={opening.id}>
+                  {frame.map((box, i) => (
+                    <BoxMesh key={i} box={box} material={materials.windowFrame} />
+                  ))}
+                  <BoxMesh box={glass} material={materials.windowGlass} />
+                </group>
+              );
+            })}
+          <FittingPlates room={room} surface={wall} materials={materials} />
         </group>
       ))}
       <Doors room={room} />

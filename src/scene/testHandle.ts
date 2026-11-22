@@ -18,6 +18,8 @@ export interface SceneTestState {
   door: { openAngleDeg: number };
   /** Number of Fitting plates mounted in the scene; 0 until the first frame is drawn. */
   fittings: number;
+  /** WebGL draw calls in the latest frame; 0 until the first frame is drawn. */
+  drawCalls: number;
   /** Current Cutaway; updated whenever the camera moves. */
   hidden: HiddenSurfaces;
 }
@@ -38,4 +40,8 @@ export function reportFittingsDrawn(count: number): void {
 
 export function reportHiddenSurfaces(hidden: HiddenSurfaces): void {
   if (import.meta.env.DEV && window.__ASHERA__) window.__ASHERA__.hidden = hidden;
+}
+
+export function reportDrawCalls(count: number): void {
+  if (import.meta.env.DEV && window.__ASHERA__) window.__ASHERA__.drawCalls = count;
 }
