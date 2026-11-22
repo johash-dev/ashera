@@ -21,6 +21,7 @@ Vocabulary only — one line per term. Use these words in code, docs and convers
 | **View**         | A preset camera position (overview, top, or a reference-photo standpoint), picked with a Header button or `?view=`.       |
 | **Item**         | A placeable piece of furniture or equipment in the Twin (Phase 2).                                                        |
 | **Catalog**      | The set of Item types Asher can place (Phase 2).                                                                          |
+| **Slat panel**   | Black vertical wooden slats covering the TV wall, with cut-outs for its Fittings.                                         |
 | **Layout**       | A named arrangement of Items in the Room; saved and loaded as a whole (Phase 2).                                          |
 | **Placeholder**  | A measurement that is an estimate until really measured (`placeholder: true`).                                            |
 | **Device**       | A real smart device (light, plug, sensor) linked to the Twin (Phase 4).                                                   |
