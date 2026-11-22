@@ -29,6 +29,9 @@ export const LOOK = {
   deviceTrim: '#2a2c3a',
   chairBody: '#1a1b24',
   chairTrim: '#2e3042',
+  /** Sofa: dark charcoal fabric, the seat cushions a shade lighter so they read against the frame. */
+  sofaFrame: '#20222e',
+  sofaCushion: '#2b2d3c',
   /** Slat panel: black slats a shade lighter than the felt behind them, so the ribs read. */
   slat: '#17181f',
   slatBacking: '#050507',
