@@ -59,6 +59,7 @@ test('the TV stand is drawn at its real size, hung on the TV wall, with the 55â€
     'mouse',
     'gaming-chair',
     'sofa-compact',
+    'rug',
   ]);
   expect(items?.[0]).toEqual({
     type: 'tv-stand',

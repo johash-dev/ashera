@@ -32,6 +32,8 @@ export const LOOK = {
   /** Sofa: dark charcoal fabric, the seat cushions a shade lighter so they read against the frame. */
   sofaFrame: '#20222e',
   sofaCushion: '#2b2d3c',
+  /** Rug: dark, with a faint violet cast, a shade lighter than the floor so its edge reads. */
+  rug: '#2a2840',
   /** Slat panel: black slats a shade lighter than the felt behind them, so the ribs read. */
   slat: '#17181f',
   slatBacking: '#050507',
