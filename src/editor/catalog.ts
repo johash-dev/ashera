@@ -1,7 +1,7 @@
 /** Width (along the Wall it backs onto), height, depth — in feet. */
 export type Size = readonly [number, number, number];
 
-export type ItemTypeId = 'tv-stand' | 'tv-55' | 'tv-65';
+export type ItemTypeId = 'tv-stand' | 'tv-55' | 'tv-65' | 'ps5' | 'soundbar';
 
 /** An Item type Asher can place: its name and real size. */
 export interface ItemType {
@@ -36,6 +36,18 @@ export const CATALOG: Readonly<Record<ItemTypeId, ItemType>> = {
     id: 'tv-65',
     name: '65″ TV',
     size: [inches(57), inches(32.7) + TV_LEG_HEIGHT, inches(2)], // typical 65″ panel
+    placeholder: true,
+  },
+  ps5: {
+    id: 'ps5',
+    name: 'PS5',
+    size: [inches(3.8), inches(14.1), inches(8.5)], // PS5 slim, standing upright
+    placeholder: true,
+  },
+  soundbar: {
+    id: 'soundbar',
+    name: 'Soundbar',
+    size: [2.5, inches(2.6), inches(4)], // typical
     placeholder: true,
   },
 };

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { type Item } from '../editor';
-import { standBoxes, tvBoxes } from './itemBoxes';
+import { ps5Boxes, soundbarBoxes, standBoxes, tvBoxes } from './itemBoxes';
 
 const STAND: Item = { id: 'tv-stand', type: 'tv-stand', position: [0, 1.25, -4], size: [8, 1.5, 1] };
 
@@ -64,5 +64,31 @@ describe('tvBoxes', () => {
     expect(screen.size[1]).toBeLessThan(panel.size[1]);
     expect(screen.position[1]).toBe(panel.position[1]);
     expect(screen.position[2] - screen.size[2] / 2).toBeCloseTo(-3.9);
+  });
+});
+
+describe('ps5Boxes', () => {
+  const PS5: Item = { id: 'ps5', type: 'ps5', position: [-3, 2.6, -4], size: [0.3, 1.2, 0.7] };
+
+  it('puts the white side panels on its east and west faces around a black core, filling the Item box', () => {
+    const { core, sides } = ps5Boxes(PS5);
+    const [west, east] = sides;
+    if (!west || !east) throw new Error('expected two side panels');
+    expect(west.position[0] - west.size[0] / 2).toBeCloseTo(-3.15);
+    expect(east.position[0] + east.size[0] / 2).toBeCloseTo(-2.85);
+    expect(core.size[0] + west.size[0] + east.size[0]).toBeCloseTo(0.3);
+    expect(core.size[1]).toBe(1.2);
+  });
+});
+
+describe('soundbarBoxes', () => {
+  const BAR: Item = { id: 'soundbar', type: 'soundbar', position: [0, 2.1, -3.67], size: [2.5, 0.2, 0.33] };
+
+  it('draws the body at the Item box and the grille on its front face, inside its edge', () => {
+    const { body, grille } = soundbarBoxes(BAR);
+    expect(body).toEqual({ position: [0, 2.1, -3.67], size: [2.5, 0.2, 0.33] });
+    expect(grille.size[0]).toBeLessThan(2.5);
+    expect(grille.size[1]).toBeLessThan(0.2);
+    expect(grille.position[2] - grille.size[2] / 2).toBeCloseTo(-3.67 + 0.165);
   });
 });

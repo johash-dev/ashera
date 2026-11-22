@@ -1,11 +1,21 @@
 import { useEffect, useMemo } from 'react';
 import { MeshStandardMaterial } from 'three';
 import { type Item, TV_LEG_HEIGHT, TV_STAND_DOORS } from '../editor';
-import { standBoxes, tvBoxes } from './itemBoxes';
+import { ps5Boxes, soundbarBoxes, standBoxes, tvBoxes } from './itemBoxes';
 import { LOOK, TV_EDGE_GLOW } from './look';
 import { type Box } from './roomBoxes';
 
-type ItemMaterials = Record<'standBody' | 'standDoor' | 'tvPanel' | 'tvScreen', MeshStandardMaterial>;
+type ItemMaterials = Record<
+  | 'standBody'
+  | 'standDoor'
+  | 'tvPanel'
+  | 'tvScreen'
+  | 'ps5Side'
+  | 'ps5Core'
+  | 'soundbarBody'
+  | 'soundbarGrille',
+  MeshStandardMaterial
+>;
 
 function BoxMesh({ box, material }: { box: Box; material: MeshStandardMaterial }) {
   return (
@@ -43,6 +53,26 @@ function ItemMeshes({ item, materials }: { item: Item; materials: ItemMaterials 
         </>
       );
     }
+    case 'ps5': {
+      const { core, sides } = ps5Boxes(item);
+      return (
+        <>
+          <BoxMesh box={core} material={materials.ps5Core} />
+          {sides.map((side, i) => (
+            <BoxMesh key={i} box={side} material={materials.ps5Side} />
+          ))}
+        </>
+      );
+    }
+    case 'soundbar': {
+      const { body, grille } = soundbarBoxes(item);
+      return (
+        <>
+          <BoxMesh box={body} material={materials.soundbarBody} />
+          <BoxMesh box={grille} material={materials.soundbarGrille} />
+        </>
+      );
+    }
   }
 }
 
@@ -59,6 +89,10 @@ export function Items({ items }: { items: readonly Item[] }) {
         roughness: 0.4,
       }),
       tvScreen: new MeshStandardMaterial({ color: LOOK.tvScreen, roughness: 0.15 }),
+      ps5Side: new MeshStandardMaterial({ color: LOOK.ps5Side, roughness: 0.35 }),
+      ps5Core: new MeshStandardMaterial({ color: LOOK.ps5Core, roughness: 0.4 }),
+      soundbarBody: new MeshStandardMaterial({ color: LOOK.soundbarBody, roughness: 0.5 }),
+      soundbarGrille: new MeshStandardMaterial({ color: LOOK.soundbarGrille, roughness: 0.8 }),
     }),
     [],
   );

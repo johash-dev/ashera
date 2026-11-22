@@ -57,3 +57,38 @@ export function tvBoxes(item: Item, legHeight: number): { panel: Box; screen: Bo
     })),
   };
 }
+
+/** Share of the PS5's width taken by each white side panel. */
+const PS5_SIDE_SHARE = 0.3;
+
+/** An upright PS5: a black core between white side panels on its east and west faces. */
+export function ps5Boxes(item: Item): { core: Box; sides: Box[] } {
+  const [x, y, z] = item.position;
+  const [width, height, depth] = item.size;
+  const side = width * PS5_SIDE_SHARE;
+  return {
+    core: { position: [x, y, z], size: [width - 2 * side, height, depth] },
+    sides: [-1, 1].map((dir): Box => ({
+      position: [x + (dir * (width - side)) / 2, y, z],
+      size: [side, height, depth],
+    })),
+  };
+}
+
+/** Width of the soundbar body left showing around its grille. */
+const SOUNDBAR_EDGE = 0.03;
+/** How far the grille stands proud of the soundbar front. */
+const GRILLE_THICKNESS = 0.01;
+
+/** A soundbar: its body and the grille on its front (south) face. */
+export function soundbarBoxes(item: Item): { body: Box; grille: Box } {
+  const [x, y, z] = item.position;
+  const [width, height, depth] = item.size;
+  return {
+    body: { position: item.position, size: item.size },
+    grille: {
+      position: [x, y, z + depth / 2 + GRILLE_THICKNESS / 2],
+      size: [width - 2 * SOUNDBAR_EDGE, height - 2 * SOUNDBAR_EDGE, GRILLE_THICKNESS],
+    },
+  };
+}

@@ -60,6 +60,43 @@ describe('tvWallItems: the TV', () => {
   });
 });
 
+describe('tvWallItems: the PS5 and the soundbar', () => {
+  it('uses the Catalog sizes: PS5 3.8 × 14.1 × 8.5 in upright, soundbar 2.5 ft × 2.6 in × 4 in', () => {
+    expect(find(55, 'ps5').size.map(round)).toEqual([0.3167, 1.175, 0.7083]);
+    expect(find(55, 'soundbar').size.map(round)).toEqual([2.5, 0.2167, 0.3333]);
+  });
+
+  it.each(TV_SIZES)('stands the PS5 upright on the stand, 1 ft in from its west end (%i″)', (tvSize) => {
+    const ps5 = find(tvSize, 'ps5');
+    const s = stand();
+    expect(bottom(ps5)).toBeCloseTo(top(s));
+    expect(ps5.position[0] - ps5.size[0] / 2).toBeCloseTo(s.position[0] - s.size[0] / 2 + 1);
+  });
+
+  it.each(TV_SIZES)(
+    'stands the soundbar in front of the TV, centred, front flush with the stand (%i″)',
+    (tvSize) => {
+      const bar = find(tvSize, 'soundbar');
+      const tv = find(tvSize, tvSize === 55 ? 'tv-55' : 'tv-65');
+      const s = stand();
+      expect(bottom(bar)).toBeCloseTo(top(s));
+      expect(bar.position[0]).toBe(tv.position[0]);
+      expect(bar.position[2] + bar.size[2] / 2).toBeCloseTo(s.position[2] + s.size[2] / 2);
+      expect(bar.position[2]).toBeGreaterThan(tv.position[2]);
+    },
+  );
+
+  it.each(TV_SIZES)('keeps everything on the stand within its top (%i″)', (tvSize) => {
+    const s = stand();
+    for (const item of tvWallItems(ASHERS_ROOM, tvSize).filter((i) => i.type !== 'tv-stand')) {
+      expect(item.position[0] - item.size[0] / 2).toBeGreaterThanOrEqual(s.position[0] - s.size[0] / 2);
+      expect(item.position[0] + item.size[0] / 2).toBeLessThanOrEqual(s.position[0] + s.size[0] / 2);
+      expect(item.position[2] - item.size[2] / 2).toBeGreaterThanOrEqual(s.position[2] - s.size[2] / 2);
+      expect(item.position[2] + item.size[2] / 2).toBeLessThanOrEqual(s.position[2] + s.size[2] / 2 + 1e-9);
+    }
+  });
+});
+
 describe.each(TV_SIZES)('tvWallItems with the %i″ TV', (tvSize) => {
   const items = tvWallItems(ASHERS_ROOM, tvSize);
 
