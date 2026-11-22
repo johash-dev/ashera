@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ASHERS_ROOM } from '../room';
-import { beamBox, type Box, doorLeafBox, skirtingBoxes, wallBoxes } from './roomBoxes';
+import { beamBox, type Box, doorLeafBox, skirtingBoxes, wallBoxes, windowBoxes } from './roomBoxes';
 
 /** Rounds to 4 decimals so 1/12-ft measurements compare exactly. */
 const round = (n: number) => Math.round(n * 1e4) / 1e4;
@@ -71,6 +71,27 @@ describe('doorLeafBox', () => {
   it('mirrors when the hinge is at the far end of the doorway', () => {
     expect(rounded([doorLeafBox(ASHERS_ROOM, { ...DOOR, hinge: 'end' })])).toEqual([
       { position: [1.9792, 3.5833, 2.9583], size: [0.125, 7.1667, 3.0833] },
+    ]);
+  });
+});
+
+describe('windowBoxes', () => {
+  const [, WINDOW] = ASHERS_ROOM.openings;
+  if (!WINDOW) throw new Error('config has no window');
+
+  it('frames the opening with four bars, centred in the Wall', () => {
+    const { frame } = windowBoxes(ASHERS_ROOM, WINDOW);
+    expect(rounded(frame)).toEqual([
+      { position: [-5.25, 3.55, 0], size: [0.2, 0.1, 5.75] }, // bottom, on the sill
+      { position: [-5.25, 8.95, 0], size: [0.2, 0.1, 5.75] }, // top, under the Beam
+      { position: [-5.25, 6.25, 2.825], size: [0.2, 5.3, 0.1] }, // south side
+      { position: [-5.25, 6.25, -2.825], size: [0.2, 5.3, 0.1] }, // north side
+    ]);
+  });
+
+  it('fills the opening with one thin pane', () => {
+    expect(rounded([windowBoxes(ASHERS_ROOM, WINDOW).glass])).toEqual([
+      { position: [-5.25, 6.25, 0], size: [0.02, 5.5, 5.75] },
     ]);
   });
 });

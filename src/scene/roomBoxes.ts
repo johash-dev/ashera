@@ -1,4 +1,12 @@
-import { type Door, type Room, skirtingRuns, type WallId, wallLength, wallPieces } from '../room';
+import {
+  type Door,
+  type Opening,
+  type Room,
+  skirtingRuns,
+  type WallId,
+  wallLength,
+  wallPieces,
+} from '../room';
 import { type WallFrame, wallFrame } from './wallFrame';
 
 type Vec3 = readonly [number, number, number];
@@ -86,4 +94,30 @@ export function doorLeafBox(room: Room, door: Door): Box {
     opening.height,
     opening.width,
   );
+}
+
+/** Thickness of the window pane. */
+const GLASS_THICKNESS = 0.02;
+
+/** A window's four frame bars and its single pane, centred in the Wall thickness. */
+export function windowBoxes(room: Room, opening: Opening): { frame: Box[]; glass: Box } {
+  const frame = wallFrame(room, opening.wall);
+  const { width: bar, depth } = room.windowFrame;
+  const w = room.walls.thickness / 2;
+  const left = opening.offset;
+  const right = opening.offset + opening.width;
+  const bottom = opening.sill;
+  const top = opening.sill + opening.height;
+  const midU = (left + right) / 2;
+  const midY = (bottom + top) / 2;
+  const sideHeight = opening.height - 2 * bar;
+  return {
+    frame: [
+      boxOnWall(frame, midU, w, bottom + bar / 2, opening.width, bar, depth),
+      boxOnWall(frame, midU, w, top - bar / 2, opening.width, bar, depth),
+      boxOnWall(frame, left + bar / 2, w, midY, bar, sideHeight, depth),
+      boxOnWall(frame, right - bar / 2, w, midY, bar, sideHeight, depth),
+    ],
+    glass: boxOnWall(frame, midU, w, midY, opening.width, opening.height, GLASS_THICKNESS),
+  };
 }

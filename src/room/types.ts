@@ -61,6 +61,24 @@ export interface Skirting {
   readonly placeholder: boolean;
 }
 
+export interface FloorTile {
+  /** Long side of a tile. */
+  readonly length: number;
+  /** Short side of a tile. */
+  readonly width: number;
+  /** Direction the long side runs; the grid starts at the south-west corner. */
+  readonly longSide: 'north-south' | 'east-west';
+  readonly placeholder: boolean;
+}
+
+export interface WindowFrame {
+  /** How far each frame bar reaches into the opening from its edge. */
+  readonly width: number;
+  /** How deep the frame is, centred in the Wall thickness. */
+  readonly depth: number;
+  readonly placeholder: boolean;
+}
+
 export type FittingKind = 'double-socket' | 'switch-plate' | 'data-plate' | 'ceiling-light';
 
 /** A fixed electrical point, drawn as a flat plate on a Wall or the ceiling. */
@@ -90,5 +108,7 @@ export interface Room {
   readonly beams: Beams;
   readonly walls: Walls;
   readonly skirting: Skirting;
+  readonly floorTile: FloorTile;
+  readonly windowFrame: WindowFrame;
   readonly fittings: readonly Fitting[];
 }

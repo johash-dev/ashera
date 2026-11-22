@@ -122,6 +122,16 @@ describe('validateRoom', () => {
     expect(validateRoom(room).some((p) => p.includes('Skirting depth'))).toBe(true);
   });
 
+  it('rejects a floor tile that is not positive', () => {
+    const room: Room = { ...ASHERS_ROOM, floorTile: { ...ASHERS_ROOM.floorTile, width: 0 } };
+    expect(validateRoom(room).some((p) => p.includes('Floor tile'))).toBe(true);
+  });
+
+  it('rejects a window frame that is not positive', () => {
+    const room: Room = { ...ASHERS_ROOM, windowFrame: { ...ASHERS_ROOM.windowFrame, width: 0 } };
+    expect(validateRoom(room).some((p) => p.includes('Window frame'))).toBe(true);
+  });
+
   it('rejects a door thickness that is not positive', () => {
     const [door] = ASHERS_ROOM.doors;
     if (!door) throw new Error('config has no door');

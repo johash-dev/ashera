@@ -51,6 +51,12 @@ export function validateRoom(room: Room): string[] {
   if (room.skirting.height <= 0 || room.skirting.depth <= 0) {
     problems.push('Skirting depth and height must be positive.');
   }
+  if (room.floorTile.length <= 0 || room.floorTile.width <= 0) {
+    problems.push('Floor tile length and width must be positive.');
+  }
+  if (room.windowFrame.width <= 0 || room.windowFrame.depth <= 0) {
+    problems.push('Window frame width and depth must be positive.');
+  }
 
   const ids = new Set<string>();
   for (const opening of room.openings) {

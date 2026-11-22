@@ -1,0 +1,25 @@
+/** The dark look: every colour in the scene. One restrained accent, everything else near-black. */
+export const LOOK = {
+  background: '#0b0b10',
+  wall: '#33364a',
+  skirting: '#1f212b',
+  floor: '#1d1e27',
+  fitting: '#8a8fb0',
+  windowFrame: '#5c6080',
+  windowGlass: '#10142a',
+  /** Soft white of the ceiling panel light and the light it casts. */
+  ceilingLight: '#e8e6ff',
+  /** The one accent colour, shared with the Header (--accent in styles.css): the floor-tile joints. */
+  accent: '#7c5cff',
+} as const;
+
+/** Opacity of the floor-tile joints; faint on purpose. */
+export const TILE_LINE_OPACITY = 0.18;
+/** How strongly the ceiling panel glows. */
+export const CEILING_LIGHT_GLOW = 1.5;
+/** Brightness of the light cast from each ceiling light, and the distance (ft) at which it fades out. */
+export const CEILING_LIGHT_INTENSITY = 60;
+export const CEILING_LIGHT_RANGE = 16;
+/** Faint fill so the shadowed side of the Room never goes fully black. */
+export const AMBIENT_INTENSITY = 0.25;
+export const KEY_LIGHT_INTENSITY = 0.5;

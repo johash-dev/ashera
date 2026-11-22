@@ -6,6 +6,7 @@ import { hiddenSurfaces } from './cutaway';
 import { DOOR_OPEN_ANGLE_DEG } from './doorSwing';
 import { RoomShell } from './RoomShell';
 import { publishSceneState } from './testHandle';
+import { AMBIENT_INTENSITY, KEY_LIGHT_INTENSITY, LOOK } from './look';
 import { type CameraView } from './views';
 
 export function SceneCanvas({ room, view }: { room: Room; view: CameraView }) {
@@ -23,6 +24,7 @@ export function SceneCanvas({ room, view }: { room: Room; view: CameraView }) {
       beams: room.beams.walls,
       door: { openAngleDeg: DOOR_OPEN_ANGLE_DEG },
       fittings: 0,
+      drawCalls: 0,
       hidden: hiddenSurfaces(room, view.position),
     });
   }, [room, view]);
@@ -35,9 +37,9 @@ export function SceneCanvas({ room, view }: { room: Room; view: CameraView }) {
         if (window.__ASHERA__) window.__ASHERA__.ready = true;
       }}
     >
-      <color attach="background" args={['#0b0b10']} />
-      <ambientLight intensity={0.4} />
-      <directionalLight position={[5, 12, 8]} intensity={1.2} />
+      <color attach="background" args={[LOOK.background]} />
+      <ambientLight intensity={AMBIENT_INTENSITY} />
+      <directionalLight position={[5, 12, 8]} intensity={KEY_LIGHT_INTENSITY} />
       <RoomShell room={room} />
       <OrbitControls target={[...view.target]} makeDefault />
     </Canvas>
