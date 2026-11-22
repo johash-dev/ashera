@@ -141,4 +141,4 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - The `editor` module is live: `CATALOG` with the TV stand (8 × 1.5 × 1 ft, two doors, from the owner's sketch) and `tvWallItems(room)`, the starter arrangement — the stand centred on the TV wall, its back against the Wall, underside 0.5 ft and top 2 ft above the floor.
 - Drawn as a near-black body with two door fronts a shade lighter (`standBoxes`, colours in `look.ts`); the first, all-black version hid the doors in every View. `__ASHERA__.items` lists type, size and centre of each Item drawn.
 - No new Room measurements, so no new "Measured values" rows. The low TV socket is hidden behind the stand, as the spec expected.
-- Door-swing and Item-to-Item checks wait for slice 3, when there is more than one Item on the north Wall; the stand stands about 4.9 ft clear of the Door swing.
+- Door-swing and Item-to-Item checks come in slice 2, with the second Item (the TV); the stand stands about 4.9 ft clear of the Door swing.
