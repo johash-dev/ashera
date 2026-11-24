@@ -297,3 +297,11 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Colours and light values only: no geometry, size, Catalog or Slat panel change, no new meshes (draw calls still under the budget). Desk, TV and sofa colours are slice 2.
 - No new Room measurements, so no new "Measured values" rows.
 - Still open: the owner judges the greys and whites on the Approval card; visual baselines refresh via the `update-snapshots` workflow.
+
+## [2026-11-25] feature | Real colours slice 2: black furniture and charcoal sofa
+
+- Desk top is now near-black (`#0d0d10`) on black legs; the TV is full black with its edge glow set to 0 (unit-tested); the sofa is charcoal grey (`#3a3d46`) with seat cushions one shade lighter, in both the compact and the L-shaped form. All values are in the look file only.
+- No other Item was re-tuned: on the screenshots the stand, pegboard, frames, rug, chair and PC gear read fine against the light room.
+- Colours only: no geometry, size or Catalog change; no new Room measurements, so no new "Measured values" rows. The Slat panel's colours are untouched in the diff (the look file's slat values did not change).
+- With this slice every Done-when item is in; the spec is marked done once the owner approves.
+- Noticed, not fixed: untracked `.agents/` and `.claude/skills/threejs-*` files (from another session) fail Prettier in a local `npm run verify`; they are not part of this change.

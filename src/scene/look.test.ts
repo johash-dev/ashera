@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LOOK } from './look';
+import { LOOK, TV_EDGE_GLOW } from './look';
 
 /** Perceived brightness (0-255) of a `#rrggbb` colour. */
 const brightness = (hex: string) => {
@@ -17,5 +17,12 @@ describe('LOOK', () => {
   it('makes the white wall lighter than the grey wall, and the grey wall lighter than the desk', () => {
     expect(brightness(LOOK.wall)).toBeGreaterThan(brightness(LOOK.wallGrey));
     expect(brightness(LOOK.wallGrey)).toBeGreaterThan(brightness(LOOK.deskTop));
+  });
+
+  it('makes the desk and the TV near-black, with no lit TV edge', () => {
+    expect(brightness(LOOK.deskTop)).toBeLessThan(20);
+    expect(brightness(LOOK.tvScreen)).toBeLessThan(20);
+    expect(brightness(LOOK.tvEdge)).toBeLessThan(20);
+    expect(TV_EDGE_GLOW).toBe(0);
   });
 });

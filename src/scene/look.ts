@@ -15,18 +15,18 @@ export const LOOK = {
   /** The floating TV stand: near-black body, its doors a shade lighter so the seams show. */
   standBody: '#101016',
   standDoor: '#262838',
-  /** The TV: a dark glossy screen inside a faint, slightly lit edge. */
+  /** The TV: full black, a black glossy screen inside a black edge (no glow). */
   tvScreen: '#050508',
-  tvEdge: '#4a4d66',
+  tvEdge: '#050508',
   /** PS5: white side panels around a black core. */
   ps5Side: '#c9cbd6',
   ps5Core: '#08080c',
   /** Soundbar: near-black body, its front grille a shade lighter. */
   soundbarBody: '#0e0e13',
   soundbarGrille: '#30323f',
-  /** Computer desk: a dark top a shade lighter than the floor, on darker legs, until the owner says what the real desk looks like. */
-  deskTop: '#2e3040',
-  deskLeg: '#1c1d27',
+  /** Computer desk: full black (near-black top, black legs). */
+  deskTop: '#0d0d10',
+  deskLeg: '#08080b',
   /** Desk setup: near-black PC gear (monitor, tower, keyboard, mouse) with lighter fronts and keys; the gaming chair a shade lighter than the floor. */
   deviceBody: '#121218',
   deviceTrim: '#2a2c3a',
@@ -35,9 +35,9 @@ export const LOOK = {
   /** PC tower's dark glass side panel, and the chair's accent stripes (a dim violet, no glow). */
   deviceGlass: '#07080d',
   chairStripe: '#4b3a9a',
-  /** Sofa: dark charcoal fabric, the seat cushions a shade lighter so they read against the frame. */
-  sofaFrame: '#20222e',
-  sofaCushion: '#2b2d3c',
+  /** Sofa: charcoal grey fabric to match the grey wall, the seat cushions a shade lighter so they read against the frame. */
+  sofaFrame: '#3a3d46',
+  sofaCushion: '#464a55',
   /** Rug: dark, with a faint violet cast, a shade lighter than the floor so its edge reads. */
   rug: '#2a2840',
   /** The rug's darker border and the dim accent line round it. */
@@ -65,8 +65,8 @@ export const LOOK = {
 
 /** Opacity of the floor-tile joints; faint on purpose. */
 export const TILE_LINE_OPACITY = 0.18;
-/** How strongly the TV's edge glows, so it reads against the dark Wall. */
-export const TV_EDGE_GLOW = 0.6;
+/** How strongly the TV's edge glows: not at all, the TV is full black. */
+export const TV_EDGE_GLOW = 0;
 /** How strongly small accent lights (tower strip, monitor light, mouse wheel) glow. */
 export const ACCENT_GLOW = 1.5;
 /** How strongly the ceiling panel glows. */

@@ -1,5 +1,5 @@
 ---
-status: in-progress # draft | approved | in-progress | done | superseded
+status: done # draft | approved | in-progress | done | superseded
 updated: 2026-11-25
 phase: 2
 ---
@@ -52,16 +52,16 @@ Visual (`@visual`): per-View baselines updated each slice via the `update-snapsh
 
 All must pass:
 
-- [ ] `npm run verify` prints ALL GREEN
-- [ ] The east Wall renders mid grey; west, south, ceiling and Beams render white (unit test on the Wall-colour function)
-- [ ] Floor tiles render white with faint grey joints; skirting stays dark wood (screenshot, `overview` and `top` Views)
-- [ ] Desk top and TV are black and the TV has no lit edge (unit test: glow 0; screenshot)
-- [ ] Sofa is charcoal grey in both forms (screenshots of `overview` and `overview` with the L-shaped sofa)
-- [ ] The Slat panel is visually unchanged (before/after compare in the `entrance` View)
-- [ ] Draw calls < 100 in every View (e2e)
-- [ ] No new Room measurements, so no new "Measured values" rows (stated in the log entry)
+- [x] `npm run verify` prints ALL GREEN
+- [x] The east Wall renders mid grey; west, south, ceiling and Beams render white (unit test on the Wall-colour function)
+- [x] Floor tiles render white with faint grey joints; skirting stays dark wood (screenshot, `overview` and `top` Views)
+- [x] Desk top and TV are black and the TV has no lit edge (unit test: glow 0; screenshot)
+- [x] Sofa is charcoal grey in both forms (screenshots of `overview` and `overview` with the L-shaped sofa)
+- [x] The Slat panel is visually unchanged (before/after compare in the `entrance` View)
+- [x] Draw calls < 100 in every View (e2e)
+- [x] No new Room measurements, so no new "Measured values" rows (stated in the log entry)
 - [ ] Owner said "looks good" on before/after screenshots of every View
-- [ ] docs updated (room-spec "Real colours" matches the final look, concept "Visual style" already updated), `docs/log.md` entry added
+- [x] docs updated (room-spec "Real colours" matches the final look, concept "Visual style" already updated), `docs/log.md` entry added
 
 ## Slices
 
