@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { MeshStandardMaterial } from 'three';
-import { itemBox, type Item, TV_LEG_HEIGHT, TV_STAND_DOORS } from '../editor';
+import { type Item, TV_LEG_HEIGHT, TV_STAND_DOORS } from '../editor';
 import {
   chairBoxes,
   deskBoxes,
@@ -9,8 +9,10 @@ import {
   keyboardBoxes,
   monitorBoxes,
   mouseBoxes,
+  pegboardBoxes,
   ps5Boxes,
   rugBoxes,
+  shelfBoxes,
   sofaArmSides,
   sofaBoxes,
   soundbarBoxes,
@@ -20,7 +22,6 @@ import {
 } from './itemBoxes';
 import { ACCENT_GLOW, LOOK, TV_EDGE_GLOW } from './look';
 import { type DrawnBox, mergeBoxes } from './mergedBoxes';
-import { type Box } from './roomBoxes';
 
 type ItemMaterials = Record<
   | 'standBody'
@@ -46,19 +47,13 @@ type ItemMaterials = Record<
   | 'rugBorder'
   | 'rugLine'
   | 'pegboard'
+  | 'pegboardRim'
+  | 'frameMat'
   | 'frame'
   | 'frameArt'
   | 'frameLine',
   MeshStandardMaterial
 >;
-
-function BoxMesh({ box, material }: { box: Box; material: MeshStandardMaterial }) {
-  return (
-    <mesh position={[...box.position]} material={material}>
-      <boxGeometry args={[...box.size]} />
-    </mesh>
-  );
-}
 
 /** Boxes drawn as one mesh: parts of an Item sharing a material cost one draw call however many there are. */
 function MergedBoxes({ boxes, material }: { boxes: readonly DrawnBox[]; material: MeshStandardMaterial }) {
@@ -124,6 +119,51 @@ function SoundbarMeshes({ item, materials }: { item: Item; materials: ItemMateri
       <MergedBoxes boxes={bodyBoxes} material={materials.soundbarBody} />
       <MergedBoxes boxes={grilleBoxes} material={materials.soundbarGrille} />
       <MergedBoxes boxes={ledBoxes} material={materials.accentGlow} />
+    </>
+  );
+}
+
+function PegboardMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
+  const { board, rails } = useMemo(() => pegboardBoxes(item), [item]);
+  const boardBoxes = useMemo(() => [board], [board]);
+  return (
+    <>
+      <MergedBoxes boxes={boardBoxes} material={materials.pegboard} />
+      <MergedBoxes boxes={rails} material={materials.pegboardRim} />
+    </>
+  );
+}
+
+function FrameMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
+  const { body, mat, art, line } = useMemo(() => frameBoxes(item), [item]);
+  const bodyBoxes = useMemo(() => [body], [body]);
+  const matBoxes = useMemo(() => [mat], [mat]);
+  const artBoxes = useMemo(() => [art], [art]);
+  const lineBoxes = useMemo(() => [line], [line]);
+  return (
+    <>
+      <MergedBoxes boxes={bodyBoxes} material={materials.frame} />
+      <MergedBoxes boxes={matBoxes} material={materials.frameMat} />
+      <MergedBoxes boxes={artBoxes} material={materials.frameArt} />
+      <MergedBoxes boxes={lineBoxes} material={materials.frameLine} />
+    </>
+  );
+}
+
+function ShelfMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
+  const { board, lip, rail } = useMemo(() => shelfBoxes(item), [item]);
+  const boxes = useMemo(() => [board, lip, rail], [board, lip, rail]);
+  return <MergedBoxes boxes={boxes} material={materials.deviceTrim} />;
+}
+
+function HeadphonesMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
+  const { band, arms, cups, pads, headbandPad, hook } = useMemo(() => headphonesBoxes(item), [item]);
+  const shell = useMemo(() => [band, ...arms, ...cups], [band, arms, cups]);
+  const soft = useMemo(() => [...pads, headbandPad, hook], [pads, headbandPad, hook]);
+  return (
+    <>
+      <MergedBoxes boxes={shell} material={materials.deviceBody} />
+      <MergedBoxes boxes={soft} material={materials.deviceTrim} />
     </>
   );
 }
@@ -275,30 +315,13 @@ function ItemMeshes({ item, materials }: { item: Item; materials: ItemMaterials 
     case 'rug':
       return <RugMeshes item={item} materials={materials} />;
     case 'pegboard':
-      return <BoxMesh box={itemBox(item)} material={materials.pegboard} />;
-    case 'frame': {
-      const { body, art, line } = frameBoxes(item);
-      return (
-        <>
-          <BoxMesh box={body} material={materials.frame} />
-          <BoxMesh box={art} material={materials.frameArt} />
-          <BoxMesh box={line} material={materials.frameLine} />
-        </>
-      );
-    }
+      return <PegboardMeshes item={item} materials={materials} />;
+    case 'frame':
+      return <FrameMeshes item={item} materials={materials} />;
     case 'shelf':
-      return <BoxMesh box={itemBox(item)} material={materials.deviceTrim} />;
-    case 'headphones': {
-      const { band, cups, hook } = headphonesBoxes(item);
-      return (
-        <>
-          {[band, ...cups].map((box, i) => (
-            <BoxMesh key={i} box={box} material={materials.deviceBody} />
-          ))}
-          <BoxMesh box={hook} material={materials.deviceTrim} />
-        </>
-      );
-    }
+      return <ShelfMeshes item={item} materials={materials} />;
+    case 'headphones':
+      return <HeadphonesMeshes item={item} materials={materials} />;
     case 'gaming-chair':
       return <ChairMeshes item={item} materials={materials} />;
   }
@@ -343,6 +366,8 @@ export function Items({ items }: { items: readonly Item[] }) {
       frameArt: new MeshStandardMaterial({ color: LOOK.frameArt, roughness: 0.8 }),
       frameLine: new MeshStandardMaterial({ color: LOOK.frameLine, roughness: 0.8 }),
       pegboard: new MeshStandardMaterial({ color: LOOK.pegboard, roughness: 0.8 }),
+      pegboardRim: new MeshStandardMaterial({ color: LOOK.pegboardRim, roughness: 0.6 }),
+      frameMat: new MeshStandardMaterial({ color: LOOK.frameMat, roughness: 0.9 }),
       chairTrim: new MeshStandardMaterial({ color: LOOK.chairTrim, roughness: 0.8 }),
     }),
     [],
