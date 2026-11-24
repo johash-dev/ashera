@@ -122,3 +122,8 @@ export function windowBoxes(room: Room, opening: Opening): { frame: Box[]; glass
     glass: boxOnWall(frame, midU, w, midY, opening.width, opening.height, GLASS_THICKNESS),
   };
 }
+
+/** Which LOOK colour a Wall's surface gets: the east (PC) Wall is grey, the others white. The ceiling and Beams are always white. */
+export function wallColour(wall: WallId): 'wall' | 'wallGrey' {
+  return wall === 'east' ? 'wallGrey' : 'wall';
+}

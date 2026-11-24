@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { ASHERS_ROOM } from '../room';
-import { beamBox, type Box, doorLeafBox, skirtingBoxes, wallBoxes, windowBoxes } from './roomBoxes';
+import {
+  beamBox,
+  type Box,
+  doorLeafBox,
+  skirtingBoxes,
+  wallBoxes,
+  wallColour,
+  windowBoxes,
+} from './roomBoxes';
 
 /** Rounds to 4 decimals so 1/12-ft measurements compare exactly. */
 const round = (n: number) => Math.round(n * 1e4) / 1e4;
@@ -93,5 +101,12 @@ describe('windowBoxes', () => {
     expect(rounded([windowBoxes(ASHERS_ROOM, WINDOW).glass])).toEqual([
       { position: [-5.25, 6.25, 0], size: [0.02, 5.5, 5.75] },
     ]);
+  });
+});
+
+describe('wallColour', () => {
+  it('gives the east Wall the grey and every other Wall the white', () => {
+    expect(wallColour('east')).toBe('wallGrey');
+    for (const wall of ['west', 'south', 'north'] as const) expect(wallColour(wall)).toBe('wall');
   });
 });

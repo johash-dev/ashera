@@ -86,6 +86,18 @@ Wall décor (grill, 2026-11-23; all sizes typical until measured):
 - **Picture frames:** three black portrait frames, each 1 ft wide × 1½ ft tall, on the south wall, evenly spaced and centred over the compact sofa, hung about 4 ft up. Same spot with the L-shaped sofa. Plain dark placeholder art for now; real pictures are a later feature.
 - Everything stays below the Beam underside (9 ft) and clear of the open Door leaf, which rests against the east wall's south end.
 
+## Real colours (grill, 2026-11-25)
+
+The Twin moves from the all-dark look toward the real room: a light room with black furniture. Colours are the owner's words; exact hex values are picked in the spec and approved on screenshots.
+
+- **Floor tiles:** white (very light, slightly cool; reality is pale grey marble-look).
+- **Walls:** west (window wall), south (door wall, picture frames) and north (behind the slat panel's edges, if any shows) white. East (PC wall) mid grey.
+- **TV wall:** the existing black Slat panel, unchanged.
+- **Black:** the computer desk and the TV (full black, no lit edge).
+- **Skirting:** stays dark wood, as in the photos.
+- **Sofa** (custom-made, not yet built): charcoal grey, to match the grey PC wall and black furniture.
+- Ceiling light is brightened so white reads as white; the violet accent stays for small details only.
+
 ## Still to measure
 
 Placeholders are flagged `placeholder: true` in the config.

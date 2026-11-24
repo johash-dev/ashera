@@ -1,9 +1,12 @@
-/** The dark look: every colour in the scene. One restrained accent, everything else near-black. */
+/** The look: every colour in the scene. A light room (white walls and floor, grey east Wall) with dark furniture and one restrained accent. */
 export const LOOK = {
   background: '#0b0b10',
-  wall: '#33364a',
-  skirting: '#1f212b',
-  floor: '#1d1e27',
+  wall: '#f2f2f4',
+  /** The east (PC) Wall, mid grey. */
+  wallGrey: '#8a8d94',
+  /** Dark wood skirting, as in the photos. */
+  skirting: '#3a2616',
+  floor: '#e6e8ec',
   fitting: '#8a8fb0',
   windowFrame: '#5c6080',
   windowGlass: '#10142a',
@@ -54,7 +57,9 @@ export const LOOK = {
   slatBacking: '#050507',
   /** Soft white of the ceiling panel light and the light it casts. */
   ceilingLight: '#e8e6ff',
-  /** The one accent colour, shared with the Header (--accent in styles.css): the floor-tile joints. */
+  /** Faint grey grout between the floor tiles. */
+  tileLine: '#8a8d94',
+  /** The one accent colour, shared with the Header (--accent in styles.css): small glowing details. */
   accent: '#7c5cff',
 } as const;
 
@@ -65,10 +70,10 @@ export const TV_EDGE_GLOW = 0.6;
 /** How strongly small accent lights (tower strip, monitor light, mouse wheel) glow. */
 export const ACCENT_GLOW = 1.5;
 /** How strongly the ceiling panel glows. */
-export const CEILING_LIGHT_GLOW = 1.5;
+export const CEILING_LIGHT_GLOW = 2.5;
 /** Brightness of the light cast from each ceiling light, and the distance (ft) at which it fades out. */
-export const CEILING_LIGHT_INTENSITY = 60;
+export const CEILING_LIGHT_INTENSITY = 110;
 export const CEILING_LIGHT_RANGE = 16;
 /** Faint fill so the shadowed side of the Room never goes fully black. */
-export const AMBIENT_INTENSITY = 0.25;
+export const AMBIENT_INTENSITY = 0.6;
 export const KEY_LIGHT_INTENSITY = 0.5;
