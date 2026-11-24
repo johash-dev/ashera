@@ -17,6 +17,7 @@ Target: smooth on Asher's PC; the Twin must not stutter while orbiting or draggi
 
 - Declarative geometries/materials in JSX are disposed by R3F automatically. Anything created manually with `new` must be disposed in a cleanup.
 - Share geometries and materials between identical meshes; use `<Instances>`/`InstancedMesh` for repeated objects (wall tiles, floor tiles).
+- Draw solid parts through `MergedBoxes` (one mesh per material). `mergeBoxes` rounds every box edge by a small default radius, clamped to a quarter of its thinnest side; pass `radius: 0` where pieces form one flat surface (Wall pieces) so no seam shows.
 - Textures small and power-of-two; load through Drei helpers so they are cached.
 
 ## Lighting and look

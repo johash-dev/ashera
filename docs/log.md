@@ -316,3 +316,10 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 
 - Owner: light placements are decided later; the Room and its props still need work. Checked the dev server (Overview, Entrance): black furniture merges into the black Slat panel wall, edges are sharp boxes, no trim or depth, Overview is small with the open door in the way.
 - `docs/specs/photoreal-pass.md` now starts with rounded edges, redone props, room details and black-on-black separation (slices 1 to 4); the light rig, shadows, glow and finish pass follow (slices 5 to 8). Spec only; no code changed.
+
+## [2026-11-25] feature | Diorama look slice 1: rounded edges and merged room shell
+
+- `mergeBoxes` now rounds every box edge (default 0.04 ft, never more than a quarter of the box's thinnest side; `radius: 0` keeps a box sharp). Every Item part and the room shell pick it up; sizes, footprints and the Catalog are unchanged.
+- The room shell draws each Wall's skirting, Beam, window frames and glass as merged meshes (`WallMeshes`) instead of one mesh per piece. Wall pieces stay sharp so the seams around Openings do not show. The shared `MergedBoxes` component moved out of Items into its own file.
+- Draw calls in the Overview are 68 (gate: under 100); not compared with before.
+- Noticed, not fixed: the untracked `.agents/` and `.claude/skills/threejs-*` files fail Prettier and docs-check in a local `npm run verify`; the run was done with them moved aside.
