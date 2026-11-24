@@ -266,5 +266,6 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - TV stand gains a top slab, doors set into its front and a handle bar on each door's inner edge. TV is now a thin panel with a housing behind its middle, a status light in the bottom edge and the same slanted legs. PS5 stands on a base plate with a glowing strip down its front. Soundbar gets a status light in its end edge.
 - Doors, handles, screen, grille and lights are now set into each Item's own box instead of standing a hair outside it, so every drawn part lies within its Item's size box (unit-tested). Sizes and spots unchanged.
 - Parts sharing a material are merged into one mesh each (as in slice 1). Draw calls: 62 in the entrance close-up; every View stays under the budget (< 100).
+- The spec's "doors and shelves" became doors, a top slab and handles: the stand's front is two doors, so there is nothing to show of shelves behind them. The owner can ask for open shelves.
 - The Slat panel is already slats on a felt backing in one instanced draw, so it was left as is; the glow under the TV stand stays with the later lighting feature.
 - No new Room measurements, so no new "Measured values" rows.

@@ -88,6 +88,10 @@ const TV_PANEL_DEPTH = inches(0.7);
 const TV_LEG_THICKNESS = 0.04;
 const TV_LEG_SLANT_RAD = (35 * Math.PI) / 180;
 const TV_LEG_INSET = 1 / 6;
+/** The housing behind the panel: its share of the panel's width and height, and how far up from the panel's bottom (share of height). */
+const TV_HOUSING_WIDTH = 0.7;
+const TV_HOUSING_HEIGHT = 0.7;
+const TV_HOUSING_RAISE = 0.15;
 
 /** A box tilted about the z axis (from the front): a positive angle tilts its top towards -x. */
 export interface TiltedBox extends Box {
@@ -114,9 +118,9 @@ export function tvBoxes(
   const legOffset = width / 2 - width * TV_LEG_INSET + (legHeight / 2) * Math.tan(TV_LEG_SLANT_RAD);
   return {
     panel: part(item, 0, legHeight, panelForward, [width, panelHeight, TV_PANEL_DEPTH]),
-    housing: part(item, 0, legHeight + panelHeight * 0.15, -depth / 2 + housingDepth / 2, [
-      width * 0.7,
-      panelHeight * 0.7,
+    housing: part(item, 0, legHeight + panelHeight * TV_HOUSING_RAISE, -depth / 2 + housingDepth / 2, [
+      width * TV_HOUSING_WIDTH,
+      panelHeight * TV_HOUSING_HEIGHT,
       housingDepth,
     ]),
     screen: part(item, 0, legHeight + TV_EDGE, depth / 2 - SCREEN_THICKNESS / 2, [
@@ -151,7 +155,7 @@ export function ps5Boxes(item: Item): { core: Box; sides: Box[]; base: Box; stri
   const side = width * PS5_SIDE_SHARE;
   const stripDepth = inches(0.1);
   return {
-    core: part(item, 0, PS5_BASE, 0, [width - 2 * side, height - PS5_BASE, depth]),
+    core: part(item, 0, PS5_BASE, -stripDepth / 2, [width - 2 * side, height - PS5_BASE, depth - stripDepth]),
     sides: [-1, 1].map((dir) =>
       part(item, (dir * (width - side)) / 2, PS5_BASE, 0, [side, height - PS5_BASE, depth]),
     ),

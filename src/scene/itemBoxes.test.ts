@@ -88,6 +88,15 @@ describe('tvBoxes', () => {
     for (const part of [panel, housing, screen, led]) expect(within(part, BOX)).toBe(true);
   });
 
+  it('keeps the slanted legs within the Item box, along the width', () => {
+    const { legs } = tvBoxes(TV, 0.25);
+    for (const leg of legs) {
+      const reach =
+        (leg.size[1] / 2) * Math.sin(Math.abs(leg.angleRad)) + (leg.size[0] / 2) * Math.cos(leg.angleRad);
+      expect(Math.abs(leg.position[0]) + reach).toBeLessThanOrEqual(2 + 1e-9);
+    }
+  });
+
   it('puts the panel above the feet, the full width of the Item, thinner than the Item', () => {
     const { panel } = tvBoxes(TV, 0.25);
     expect(panel.size[0]).toBe(4);
@@ -189,6 +198,8 @@ describe('ps5Boxes', () => {
     expect(strip.size[0]).toBeLessThan(core.size[0]);
     expect(strip.size[1]).toBeGreaterThan(0.5);
     expect(strip.position[2] + strip.size[2] / 2).toBeCloseTo(-4 + 0.35);
+    // In front of the core, not inside it, so their faces never overlap.
+    expect(strip.position[2] - strip.size[2] / 2).toBeCloseTo(core.position[2] + core.size[2] / 2);
   });
 });
 
