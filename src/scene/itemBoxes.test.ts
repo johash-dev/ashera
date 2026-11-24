@@ -310,6 +310,12 @@ function within(inner: Box, outer: Box): boolean {
   });
 }
 
+/** The Item's size laid out along the Room axes: width and depth swap when it faces east or west. */
+function itemBoxSize(item: Item): Box['size'] {
+  const [width, height, depth] = item.size;
+  return item.facing === 'east' || item.facing === 'west' ? [depth, height, width] : item.size;
+}
+
 describe('sofaArmSides', () => {
   const armCentres = (choice: 'compact' | 'l') =>
     starterArrangement(ASHERS_ROOM, 55, choice)
@@ -414,6 +420,7 @@ describe('sofaBoxes', () => {
   it('puts a back cushion in front of the back frame (north) behind each seat cushion, rising above the arms', () => {
     const { back, arms, cushions, backCushions } = sofaBoxes(SOFA, BOTH_ARMS);
     expect(backCushions).toHaveLength(cushions.length);
+    // The test sofa faces north, so its back is on the south side and the cushions lie to the north of it.
     backCushions.forEach((backCushion, i) => {
       const seat = cushions[i];
       if (!seat) throw new Error('expected a seat cushion');
@@ -436,6 +443,36 @@ describe('sofaBoxes', () => {
     // South face of the back cushion meets the frame's north face; its north face meets the seat's south face.
     expect(cushion.position[2] + cushion.size[2] / 2).toBeCloseTo(back.position[2] - back.size[2] / 2);
     expect(cushion.position[2] - cushion.size[2] / 2).toBeCloseTo(seat.position[2] + seat.size[2] / 2);
+  });
+
+  it('keeps every part within the Item box for each sofa of both arrangements, as the editor places them', () => {
+    for (const choice of ['compact', 'l'] as const) {
+      for (const item of starterArrangement(ASHERS_ROOM, 55, choice).filter((i) =>
+        i.type.startsWith('sofa'),
+      )) {
+        const { base, back, arms, cushions, backCushions, feet } = sofaBoxes(item, sofaArmSides(item.type));
+        const itemBox = { position: item.position, size: itemBoxSize(item) };
+        for (const part of [base, back, ...arms, ...cushions, ...backCushions, ...feet]) {
+          expect(within(part, itemBox)).toBe(true);
+        }
+      }
+    }
+  });
+
+  it('keeps every part within the Item box whichever way the sofa faces', () => {
+    for (const facing of ['north', 'south', 'east', 'west'] as const) {
+      const item: Item = { ...SOFA, facing };
+      const { base, back, arms, cushions, backCushions, feet } = sofaBoxes(item, BOTH_ARMS);
+      const itemBox = { position: item.position, size: itemBoxSize(item) };
+      for (const part of [base, back, ...arms, ...cushions, ...backCushions, ...feet]) {
+        expect(within(part, itemBox)).toBe(true);
+      }
+    }
+  });
+
+  it('stays within a part budget: a piece is at most 20 boxes however wide', () => {
+    const { base, back, arms, cushions, backCushions, feet } = sofaBoxes(SOFA, BOTH_ARMS);
+    expect([base, back, ...arms, ...cushions, ...backCushions, ...feet].length).toBeLessThanOrEqual(20);
   });
 
   it('gives a narrow seat one cushion', () => {

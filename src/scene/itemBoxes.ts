@@ -563,6 +563,8 @@ const CUSHION_WIDTH = 2.2;
 const SOFA_FOOT = inches(3);
 const SOFA_FOOT_SIZE = inches(2);
 const SOFA_FOOT_INSET = inches(1.5);
+/** How far the back cushions stop short of the top of the back frame. */
+const SOFA_BACK_CUSHION_CLEARANCE = inches(2);
 
 /**
  * A sofa piece: a low base on four feet, a back frame, slim arms at the given ends, seat cushions
@@ -578,7 +580,7 @@ export function sofaBoxes(
   const armHeight = inches(10);
   const backDepth = inches(10);
   const frameDepth = inches(5);
-  const backCushionHeight = height - baseHeight - inches(2);
+  const backCushionHeight = height - baseHeight - SOFA_BACK_CUSHION_CLEARANCE;
   const cushionHeight = inches(5);
   const cushionGap = inches(0.5);
   const left = armSides.includes(-1) ? armWidth : 0;
