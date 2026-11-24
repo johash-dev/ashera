@@ -293,7 +293,7 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 
 ## [2026-11-25] feature | Real colours slice 1: the light room
 
-- Walls, ceiling and Beams are now white; the east (PC) Wall is mid grey, picked by a small pure function (`wallColour`, unit-tested). Floor is white with faint grey tile joints instead of violet; skirting stays dark wood. The ceiling light and ambient light are brighter so white reads white; no surface clips to pure white in any View (pixel scan of the screenshots).
+- Walls, ceiling and Beams are now white; the east (PC) Wall is mid grey, picked by a small pure function (`wallColour`, unit-tested). Floor is white with faint grey tile joints instead of violet; skirting stays dark wood (now `#3a2616`, a dark brown, instead of the old blue-grey). The ceiling light and ambient light are brighter so white reads white; no surface clips to pure white in any View (pixel scan of the screenshots).
 - Colours and light values only: no geometry, size, Catalog or Slat panel change, no new meshes (draw calls still under the budget). Desk, TV and sofa colours are slice 2.
 - No new Room measurements, so no new "Measured values" rows.
 - Still open: the owner judges the greys and whites on the Approval card; visual baselines refresh via the `update-snapshots` workflow.
