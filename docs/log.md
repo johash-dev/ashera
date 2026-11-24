@@ -269,3 +269,10 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - The spec's "doors and shelves" became doors, a top slab and handles: the stand's front is two doors, so there is nothing to show of shelves behind them. The owner can ask for open shelves.
 - The Slat panel is already slats on a felt backing in one instanced draw, so it was left as is; the glow under the TV stand stays with the later lighting feature.
 - No new Room measurements, so no new "Measured values" rows.
+
+## [2026-11-25] feature | Object detail slice 3: sofa and rug
+
+- Sofas (the compact one and both L pieces) stand on four small feet, have a slimmer back frame with a back cushion in front of it behind each seat cushion, and keep the slim arms and seat cushions. The L's corner is unchanged (arms only at the free ends). Rug gains a darker border, a field inside it and a dim violet accent line round the border's middle; the top layers are a hair above the base so nothing shares a face.
+- Everything stays inside each Item's size box (unit tests for the sofa with every arm arrangement, and for the rug). Sizes and spots unchanged.
+- Parts sharing a material are merged: each sofa piece is now 2 draw calls (frame, cushions) instead of 4–6 (the compact sofa: base, back, two arms, two cushions), the rug 3 instead of 1. Draw calls 72–81 in the overview and top-down with the compact sofa, 74 with the L; budget < 100.
+- No new Room measurements, so no new "Measured values" rows.

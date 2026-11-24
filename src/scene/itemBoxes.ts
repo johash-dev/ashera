@@ -559,16 +559,26 @@ export function sofaArmSides(type: ItemTypeId): readonly ArmSide[] {
 /** Seats wider than this get another cushion (feet). */
 const CUSHION_WIDTH = 2.2;
 
-/** A sofa piece: a low base, a low back, slim arms at the given ends, and seat cushions between them. */
+/** Height of a sofa's feet, and the side and inset from the corners of each (feet). */
+const SOFA_FOOT = inches(3);
+const SOFA_FOOT_SIZE = inches(2);
+const SOFA_FOOT_INSET = inches(1.5);
+
+/**
+ * A sofa piece: a low base on four feet, a back frame, slim arms at the given ends, seat cushions
+ * between them and a back cushion in front of the frame behind each seat cushion.
+ */
 export function sofaBoxes(
   item: Item,
   armSides: readonly ArmSide[],
-): { base: Box; back: Box; arms: Box[]; cushions: Box[] } {
+): { base: Box; back: Box; arms: Box[]; cushions: Box[]; backCushions: Box[]; feet: Box[] } {
   const [width, height, depth] = item.size;
   const baseHeight = inches(14);
   const armWidth = inches(5);
   const armHeight = inches(10);
   const backDepth = inches(10);
+  const frameDepth = inches(5);
+  const backCushionHeight = height - baseHeight - inches(2);
   const cushionHeight = inches(5);
   const cushionGap = inches(0.5);
   const left = armSides.includes(-1) ? armWidth : 0;
@@ -578,24 +588,75 @@ export function sofaBoxes(
   const cushionCount = Math.max(1, Math.round(seatWidth / CUSHION_WIDTH));
   const cushionWidth = (seatWidth - (cushionCount - 1) * cushionGap) / cushionCount;
   const cushionDepth = depth - backDepth;
+  const cushionLateral = (i: number) =>
+    seatCentre - seatWidth / 2 + cushionWidth / 2 + i * (cushionWidth + cushionGap);
   return {
-    base: part(item, 0, 0, 0, [width, baseHeight, depth]),
-    back: part(item, seatCentre, baseHeight, -depth / 2 + backDepth / 2, [
+    base: part(item, 0, SOFA_FOOT, 0, [width, baseHeight - SOFA_FOOT, depth]),
+    back: part(item, seatCentre, baseHeight, -depth / 2 + frameDepth / 2, [
       seatWidth,
       height - baseHeight,
-      backDepth,
+      frameDepth,
     ]),
     arms: armSides.map((side) =>
       part(item, side * (width / 2 - armWidth / 2), baseHeight, 0, [armWidth, armHeight, depth]),
     ),
     cushions: Array.from({ length: cushionCount }, (_, i) =>
-      part(
-        item,
-        seatCentre - seatWidth / 2 + cushionWidth / 2 + i * (cushionWidth + cushionGap),
-        baseHeight,
-        backDepth / 2,
-        [cushionWidth, cushionHeight, cushionDepth],
+      part(item, cushionLateral(i), baseHeight, backDepth / 2, [cushionWidth, cushionHeight, cushionDepth]),
+    ),
+    backCushions: Array.from({ length: cushionCount }, (_, i) =>
+      part(item, cushionLateral(i), baseHeight, -depth / 2 + frameDepth + (backDepth - frameDepth) / 2, [
+        cushionWidth,
+        backCushionHeight,
+        backDepth - frameDepth,
+      ]),
+    ),
+    feet: [-1, 1].flatMap((sx) =>
+      [-1, 1].map((sz) =>
+        part(
+          item,
+          sx * (width / 2 - SOFA_FOOT_INSET - SOFA_FOOT_SIZE / 2),
+          0,
+          sz * (depth / 2 - SOFA_FOOT_INSET - SOFA_FOOT_SIZE / 2),
+          [SOFA_FOOT_SIZE, SOFA_FOOT, SOFA_FOOT_SIZE],
+        ),
       ),
     ),
+  };
+}
+
+/** Width of the rug's border, the thickness of its top layer and of the accent line, and the line's inset (feet). */
+const RUG_BORDER = 0.25;
+const RUG_LAYER = 0.005;
+const RUG_LINE = 0.03;
+
+/**
+ * A rug: a base the full footprint, a field on top inside a border, and a thin accent line round the
+ * border's middle. The field and the line share the same top, a hair above the base.
+ */
+export function rugBoxes(item: Item): { base: Box; field: Box; lines: Box[] } {
+  const { position, size } = itemBox(item);
+  const [x, y, z] = position;
+  const [width, height, depth] = size;
+  const top = y + height / 2;
+  const layerY = top - RUG_LAYER / 2;
+  const half = RUG_BORDER / 2;
+  const alongX = width - RUG_BORDER + RUG_LINE;
+  const alongZ = depth - RUG_BORDER - RUG_LINE;
+  return {
+    base: { position: [x, y - RUG_LAYER / 2, z], size: [width, height - RUG_LAYER, depth] },
+    field: {
+      position: [x, layerY, z],
+      size: [width - 2 * RUG_BORDER, RUG_LAYER, depth - 2 * RUG_BORDER],
+    },
+    lines: [
+      ...[-1, 1].map((side): Box => ({
+        position: [x, layerY, z + side * (depth / 2 - half)],
+        size: [alongX, RUG_LAYER, RUG_LINE],
+      })),
+      ...[-1, 1].map((side): Box => ({
+        position: [x + side * (width / 2 - half), layerY, z],
+        size: [RUG_LINE, RUG_LAYER, alongZ],
+      })),
+    ],
   };
 }
