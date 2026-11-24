@@ -284,3 +284,9 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Parts sharing a material are merged: pegboard 2 draw calls, shelf 1, headphones 2, each frame 4 (it was 3). Draw calls 57 in the right-from-entrance close-up; the e2e budget check (< 100) passes in every View.
 - The pegboard's holes are still not drawn (out of scope in the spec). With this slice every group of the object-detail spec is in; the spec is marked done once the owner approves.
 - No new Room measurements, so no new "Measured values" rows.
+
+## [2026-11-25] decision | Object detail spec done
+
+- Slice 4 merged (#34) after the owner's "looks good"; all four slices (#31–#34) went through Approval cards with before/after screenshots. All Done-when items checked; the object-detail pass is complete before Surround sound.
+- Changes the owner asked for on the cards: none. Differences from the spec: the TV stand has doors and handles but no shelves, and the Slat panel was left as it is.
+- Still open: the pegboard's holes are not drawn; all sizes remain typical until measured; no reference photos exist for the desk, sofa, rug or décor detail.

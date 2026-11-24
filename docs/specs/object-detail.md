@@ -1,6 +1,6 @@
 ---
-status: in-progress # draft | approved | in-progress | done | superseded
-updated: 2026-11-23
+status: done # draft | approved | in-progress | done | superseded
+updated: 2026-11-25
 phase: 2
 ---
 
@@ -44,21 +44,21 @@ Visual (`@visual`): baselines updated per slice via the `update-snapshots` workf
 
 All must pass:
 
-- [ ] `npm run verify` prints ALL GREEN
-- [ ] `__ASHERA__.items` is identical to before this spec (types, sizes, centres, facing) — e2e
-- [ ] Unit tests show every drawn part of every Item stays within that Item's size box
-- [ ] Draw calls < 100 in every View, both sofas, both TV sizes (e2e)
-- [ ] Each group below has visible detail the Owner approved (slices 1–4)
-- [ ] No new Room measurements, so no new "Measured values" rows (stated in the log entry)
-- [ ] Owner said "looks good" on before/after screenshots of every affected View, per slice
-- [ ] docs updated, `docs/log.md` entry added
+- [x] `npm run verify` prints ALL GREEN
+- [x] `__ASHERA__.items` is identical to before this spec (types, sizes, centres, facing) — e2e
+- [x] Unit tests show every drawn part of every Item stays within that Item's size box
+- [x] Draw calls < 100 in every View, both sofas, both TV sizes (e2e)
+- [x] Each group below has visible detail the Owner approved (slices 1–4)
+- [x] No new Room measurements, so no new "Measured values" rows (stated in the log entry)
+- [x] Owner said "looks good" on before/after screenshots of every affected View, per slice
+- [x] docs updated, `docs/log.md` entry added
 
 ## Slices
 
 Vertical, each its own PR with before/after screenshots. Slice 1 is the tracer: it also settles how detail is built cheaply for the rest.
 
 1. **Desk setup** — desk, monitor, PC tower, keyboard, mouse, gaming chair. — _you'll see: a desk with legs and a stand-mounted monitor, a PC tower with vents and a lit strip, keys on the keyboard and a chair with seat, back, arms and base, in the overview and right-from-entrance Views._
-2. **TV wall** — TV, TV stand, PS5, soundbar, Slat panel. — _you'll see: a TV with a thin bezel and stand feet, a TV stand with doors and shelves, a recognisable PS5 and soundbar, in the overview and entrance Views._
+2. **TV wall** — TV, TV stand, PS5, soundbar (the Slat panel was left as it is: already slats on a felt backing; the stand has doors but no shelves). — _you'll see: a TV with a thin bezel and stand feet, a TV stand with doors and shelves, a recognisable PS5 and soundbar, in the overview and entrance Views._
 3. **Sofa and rug** — compact sofa, L-shaped sofa, rug. — _you'll see: sofas with seat and back cushions, arms and feet, and a rug with a subtle border, in the overview and window Views, with both sofas._
 4. **Wall décor** — pegboard, headphones, shelf, frames. — _you'll see: a framed pegboard, headphones with a headband and ear pads, a shelf with a lip, and frames with a mat around the art, in the right-from-entrance and overview Views._
 
