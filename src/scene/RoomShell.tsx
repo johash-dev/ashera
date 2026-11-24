@@ -12,7 +12,7 @@ import {
   LOOK,
   TILE_LINE_OPACITY,
 } from './look';
-import { beamBox, type Box, skirtingBoxes, wallBoxes, windowBoxes } from './roomBoxes';
+import { beamBox, type Box, skirtingBoxes, wallBoxes, wallColour, windowBoxes } from './roomBoxes';
 import { reportDrawCalls, reportFittingsDrawn, reportHiddenSurfaces } from './testHandle';
 
 /** Lifts the floor-tile joints just off the floor so they do not z-fight with it. */
@@ -78,7 +78,7 @@ function FloorTileLines({ room }: { room: Room }) {
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
-      <lineBasicMaterial color={LOOK.accent} transparent opacity={TILE_LINE_OPACITY} />
+      <lineBasicMaterial color={LOOK.tileLine} transparent opacity={TILE_LINE_OPACITY} />
     </lineSegments>
   );
 }
@@ -102,6 +102,7 @@ export function RoomShell({
   const materials = useMemo(
     () => ({
       wall: new MeshStandardMaterial({ color: LOOK.wall }),
+      wallGrey: new MeshStandardMaterial({ color: LOOK.wallGrey }),
       skirting: new MeshStandardMaterial({ color: LOOK.skirting }),
       floor: new MeshStandardMaterial({ color: LOOK.floor, roughness: 0.6 }),
       fitting: new MeshStandardMaterial({ color: LOOK.fitting }),
@@ -118,6 +119,7 @@ export function RoomShell({
   useEffect(
     () => () => {
       materials.wall.dispose();
+      materials.wallGrey.dispose();
       materials.skirting.dispose();
       materials.floor.dispose();
       materials.fitting.dispose();
@@ -184,7 +186,7 @@ export function RoomShell({
           }}
         >
           {wallBoxes(room, wall).map((box, i) => (
-            <BoxMesh key={i} box={box} material={materials.wall} />
+            <BoxMesh key={i} box={box} material={materials[wallColour(wall)]} />
           ))}
           {skirtingBoxes(room, wall).map((box, i) => (
             <BoxMesh key={`skirting-${i}`} box={box} material={materials.skirting} />
