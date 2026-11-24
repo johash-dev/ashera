@@ -290,3 +290,10 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Slice 4 merged (#34) after the owner's "looks good"; all four slices (#31–#34) went through Approval cards with before/after screenshots. All Done-when items checked; the object-detail pass is complete before Surround sound.
 - Changes the owner asked for on the cards: none. Differences from the spec: the TV stand has doors and handles but no shelves, and the Slat panel was left as it is.
 - Still open: the pegboard's holes are not drawn; all sizes remain typical until measured; no reference photos exist for the desk, sofa, rug or décor detail.
+
+## [2026-11-25] feature | Real colours slice 1: the light room
+
+- Walls, ceiling and Beams are now white; the east (PC) Wall is mid grey, picked by a small pure function (`wallColour`, unit-tested). Floor is white with faint grey tile joints instead of violet; skirting stays dark wood. The ceiling light and ambient light are brighter so white reads white; no surface clips to pure white in any View (pixel scan of the screenshots).
+- Colours and light values only: no geometry, size, Catalog or Slat panel change, no new meshes (draw calls still under the budget). Desk, TV and sofa colours are slice 2.
+- No new Room measurements, so no new "Measured values" rows.
+- Still open: the owner judges the greys and whites on the Approval card; visual baselines refresh via the `update-snapshots` workflow.

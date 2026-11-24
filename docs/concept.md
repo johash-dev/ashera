@@ -10,15 +10,15 @@ A stylized 3D digital twin of Asher's gaming room, used on his PC to plan the ro
 
 ## Decisions
 
-| Topic             | Decision                                                                                                 |
-| ----------------- | -------------------------------------------------------------------------------------------------------- |
-| Audience          | One user: Asher. Not a product or multi-room platform.                                                   |
-| Device            | PC browser only (mouse + keyboard).                                                                      |
-| First goal        | Recreate the empty room accurately in 3D.                                                                |
-| Visual style      | Stylized dark gaming vibe — real geometry, moody materials and accent lighting. Not photoreal.           |
-| Furniture         | Asher places, moves and rotates furniture himself.                                                       |
-| Saved layouts     | Browser storage on Asher's PC + JSON export/import ([ADR 0002](adr/0002-layouts-in-browser-storage.md)). |
-| Hardware / budget | Deferred until Phase 4.                                                                                  |
+| Topic             | Decision                                                                                                                            |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Audience          | One user: Asher. Not a product or multi-room platform.                                                                              |
+| Device            | PC browser only (mouse + keyboard).                                                                                                 |
+| First goal        | Recreate the empty room accurately in 3D.                                                                                           |
+| Visual style      | Stylized gaming vibe — real geometry and real colours (light room, black furniture; see room-spec), accent lighting. Not photoreal. |
+| Furniture         | Asher places, moves and rotates furniture himself.                                                                                  |
+| Saved layouts     | Browser storage on Asher's PC + JSON export/import ([ADR 0002](adr/0002-layouts-in-browser-storage.md)).                            |
+| Hardware / budget | Deferred until Phase 4.                                                                                                             |
 
 Room measurements: [room-spec.md](room-spec.md).
 

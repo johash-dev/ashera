@@ -37,6 +37,7 @@ One per feature, from [the template](specs/_template.md).
 - [desk-and-sofa](specs/desk-and-sofa.md) — roadmap feature 1: desk with PC setup, gaming chair, compact/L-shaped sofa switch and rug, fixed in place
 - [wall-decor](specs/wall-decor.md) — roadmap feature 2: pegboard with headphones and shelf above the desk, three picture frames above the sofa, fixed in place
 - [object-detail](specs/object-detail.md) — detail pass: shapes, materials and small details for every existing Item, one group per slice
+- [real-colours](specs/real-colours.md) — real room colours: white floor and walls, grey PC wall, black desk and TV, charcoal sofa
 
 ## History
 
