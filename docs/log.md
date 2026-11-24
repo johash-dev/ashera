@@ -217,7 +217,7 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Rule: a rug is a floor covering, so `itemsIntersect` never counts it as overlapping anything (new glossary term); the inside-Room and Door-swing checks still apply to it. Unit tests for its size, spot, and those checks.
 - Drawn as one flat box, a shade lighter than the floor with a faint violet cast so its edge reads. Draw calls 48–75 across the Views with either sofa (budget < 100).
 - Spec reading: "east edge at the chair" taken as the chair standing on the rug (east edge level with the desk front); if Asher wants the rug clear of the chair, it is one line in `rug.ts`.
-- All five slices of the spec are in; the spec is marked done once the owner approves this slice.
+- All five slices of the spec are in; the spec is marked done once the owner approves (Done-when ticked except the owner's "looks good"; the Slat panel check is a visual compare on the Approval card) this slice.
 - No new Room measurements, so no new "Measured values" rows.
 
 ## [2026-11-23] decision | Desk and sofa spec done
@@ -244,7 +244,7 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 
 - Catalog gains the picture frame (1 ft × 1½ ft × 1 in, typical placeholder). `wallDecorItems` hangs three on the south wall, facing north, backs on the wall face, bottom edge 4 ft up (above the sofa's 2½ ft top), 6 in apart, the middle one centred on the sofa's long side; the same spot for both sofas. Unit tests per sofa: Catalog size, wall face, height, spacing, centred on the sofa, below the Beam, clear of both south-wall Fittings. An e2e checks the spot and that `?sofa=l` leaves the frames unchanged.
 - Drawn as a black body with dark art inset in front and a thin accent-violet line across the art (placeholder art); three boxes per frame. Draw calls stay under the budget in every View.
-- All three slices are in; the spec is marked done once the owner approves this slice.
+- All three slices are in; the spec is marked done once the owner approves (Done-when ticked except the owner's "looks good"; the Slat panel check is a visual compare on the Approval card) this slice.
 - No new Room measurements, so no new "Measured values" rows.
 
 ## [2026-11-23] decision | Wall décor spec done
@@ -282,7 +282,7 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Pegboard gains a lighter frame round its edge, standing a little proud of the board. Headphones gain arms joining the band to each cup, an ear pad on each cup's inner face and a pad under the headband. The shelf gets a lip along its front and a rail along its back. Each picture frame gets a mat between the black frame and the art, so the art sits in a border; the accent line stays.
 - Everything stays inside each Item's size box and no parts overlap (unit tests, including that the pegboard's frame never overlaps its board and that each frame layer starts where the one behind ends). Sizes and spots unchanged. The headphones and shelf now hang 0.3 in off the board's recessed face, which is not visible at room scale.
 - Parts sharing a material are merged: pegboard 2 draw calls, shelf 1, headphones 2, each frame 4 (it was 3). Draw calls 57 in the right-from-entrance close-up; the e2e budget check (< 100) passes in every View.
-- The pegboard's holes are still not drawn (out of scope in the spec). With this slice every group of the object-detail spec is in; the spec is marked done once the owner approves.
+- The pegboard's holes are still not drawn (out of scope in the spec). With this slice every group of the object-detail spec is in; the spec is marked done once the owner approves (Done-when ticked except the owner's "looks good"; the Slat panel check is a visual compare on the Approval card).
 - No new Room measurements, so no new "Measured values" rows.
 
 ## [2026-11-25] decision | Object detail spec done
@@ -297,3 +297,22 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Colours and light values only: no geometry, size, Catalog or Slat panel change, no new meshes (draw calls still under the budget). Desk, TV and sofa colours are slice 2.
 - No new Room measurements, so no new "Measured values" rows.
 - Still open: the owner judges the greys and whites on the Approval card; visual baselines refresh via the `update-snapshots` workflow.
+
+## [2026-11-25] feature | Real colours slice 2: black furniture and charcoal sofa
+
+- Desk top is now near-black (`#0d0d10`) on black legs; the TV is full black with its edge glow set to 0 (unit-tested); the sofa is charcoal grey (`#3a3d46`) with seat cushions one shade lighter, in both the compact and the L-shaped form. All values are in the look file only.
+- No other Item was re-tuned: on the screenshots the stand, pegboard, frames, rug, chair and PC gear read fine against the light room.
+- Colours only: no geometry, size or Catalog change; no new Room measurements, so no new "Measured values" rows. The Slat panel's colours are untouched in the diff (the look file's slat values did not change).
+- With this slice every Done-when item is in; the spec is marked done once the owner approves (Done-when ticked except the owner's "looks good"; the Slat panel check is a visual compare on the Approval card).
+- Noticed, not fixed: untracked `.agents/` and `.claude/skills/threejs-*` files (from another session) fail Prettier in a local `npm run verify`; they are not part of this change.
+
+## [2026-11-25] decision | Diorama look pass drafted (spec only)
+
+- Four read-only reviews (lighting, materials, post-processing and camera, geometry) found: no environment light, no shadows or corner darkening, sharp box edges, flat colours, untuned tone curve. Drafted `docs/specs/photoreal-pass.md`.
+- Owner then set the target: not photoreal, but a subtle game-engine diorama look like three isometric references, with every light live so the Twin can mirror real light changes later. Spec rewritten around a data-driven light rig and "no baked light"; concept.md's "Not photoreal" stays true.
+- No code changed; nothing rendered or measured. Open: which lights first, post-processing library ADR, backdrop colour, lens, draw-call gate.
+
+## [2026-11-25] decision | Diorama look spec reordered: Room and props first
+
+- Owner: light placements are decided later; the Room and its props still need work. Checked the dev server (Overview, Entrance): black furniture merges into the black Slat panel wall, edges are sharp boxes, no trim or depth, Overview is small with the open door in the way.
+- `docs/specs/photoreal-pass.md` now starts with rounded edges, redone props, room details and black-on-black separation (slices 1 to 4); the light rig, shadows, glow and finish pass follow (slices 5 to 8). Spec only; no code changed.
