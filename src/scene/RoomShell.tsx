@@ -12,7 +12,9 @@ import {
   LOOK,
   TILE_LINE_OPACITY,
 } from './look';
-import { beamBox, type Box, skirtingBoxes, wallBoxes, wallColour, windowBoxes } from './roomBoxes';
+import { MergedBoxes } from './MergedBoxesMesh';
+import { type DrawnBox } from './mergedBoxes';
+import { beamBox, skirtingBoxes, wallBoxes, wallColour, windowBoxes } from './roomBoxes';
 import { reportDrawCalls, reportFittingsDrawn, reportHiddenSurfaces } from './testHandle';
 
 /** Lifts the floor-tile joints just off the floor so they do not z-fight with it. */
@@ -22,11 +24,39 @@ const LIGHT_BELOW_BEAMS = 1;
 /** Object name of every Fitting plate, so the test handle can count what is drawn. */
 const FITTING_PLATE = 'fitting-plate';
 
-function BoxMesh({ box, material }: { box: Box; material: MeshStandardMaterial }) {
+type ShellMaterials = Record<
+  'wall' | 'wallGrey' | 'skirting' | 'windowFrame' | 'windowGlass',
+  MeshStandardMaterial
+>;
+
+/**
+ * One Wall's solid parts, merged per material (a few draw calls instead of one per piece). Wall pieces stay sharp so
+ * the seams around an Opening do not show; skirting, Beam and window frames get the soft edge.
+ */
+function WallMeshes({ room, wall, materials }: { room: Room; wall: WallId; materials: ShellMaterials }) {
+  const pieces = useMemo(
+    () => wallBoxes(room, wall).map((box): DrawnBox => ({ ...box, radius: 0 })),
+    [room, wall],
+  );
+  const skirting = useMemo(() => skirtingBoxes(room, wall), [room, wall]);
+  const beam = useMemo(() => (room.beams.walls.includes(wall) ? [beamBox(room, wall)] : []), [room, wall]);
+  const windows = useMemo(
+    () =>
+      room.openings
+        .filter((opening) => opening.wall === wall && opening.kind === 'window')
+        .map((opening) => windowBoxes(room, opening)),
+    [room, wall],
+  );
+  const frames = useMemo(() => windows.flatMap(({ frame }) => frame), [windows]);
+  const glass = useMemo(() => windows.map((window) => window.glass), [windows]);
   return (
-    <mesh position={[...box.position]} material={material}>
-      <boxGeometry args={[...box.size]} />
-    </mesh>
+    <>
+      <MergedBoxes boxes={pieces} material={materials[wallColour(wall)]} />
+      <MergedBoxes boxes={skirting} material={materials.skirting} />
+      {beam.length > 0 && <MergedBoxes boxes={beam} material={materials.wall} />}
+      {frames.length > 0 && <MergedBoxes boxes={frames} material={materials.windowFrame} />}
+      {glass.length > 0 && <MergedBoxes boxes={glass} material={materials.windowGlass} />}
+    </>
   );
 }
 
@@ -185,26 +215,7 @@ export function RoomShell({
             if (group) walls.current[wall] = group;
           }}
         >
-          {wallBoxes(room, wall).map((box, i) => (
-            <BoxMesh key={i} box={box} material={materials[wallColour(wall)]} />
-          ))}
-          {skirtingBoxes(room, wall).map((box, i) => (
-            <BoxMesh key={`skirting-${i}`} box={box} material={materials.skirting} />
-          ))}
-          {room.beams.walls.includes(wall) && <BoxMesh box={beamBox(room, wall)} material={materials.wall} />}
-          {room.openings
-            .filter((opening) => opening.wall === wall && opening.kind === 'window')
-            .map((opening) => {
-              const { frame, glass } = windowBoxes(room, opening);
-              return (
-                <group key={opening.id}>
-                  {frame.map((box, i) => (
-                    <BoxMesh key={i} box={box} material={materials.windowFrame} />
-                  ))}
-                  <BoxMesh box={glass} material={materials.windowGlass} />
-                </group>
-              );
-            })}
+          <WallMeshes room={room} wall={wall} materials={materials} />
           <FittingPlates room={room} surface={wall} materials={materials} />
           {wallContents[wall]}
         </group>
