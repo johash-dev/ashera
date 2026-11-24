@@ -10,6 +10,7 @@ import {
   monitorBoxes,
   mouseBoxes,
   ps5Boxes,
+  rugBoxes,
   sofaArmSides,
   sofaBoxes,
   soundbarBoxes,
@@ -309,6 +310,12 @@ function within(inner: Box, outer: Box): boolean {
   });
 }
 
+/** The Item's size laid out along the Room axes: width and depth swap when it faces east or west. */
+function itemBoxSize(item: Item): Box['size'] {
+  const [width, height, depth] = item.size;
+  return item.facing === 'east' || item.facing === 'west' ? [depth, height, width] : item.size;
+}
+
 describe('sofaArmSides', () => {
   const armCentres = (choice: 'compact' | 'l') =>
     starterArrangement(ASHERS_ROOM, 55, choice)
@@ -393,9 +400,145 @@ describe('sofaBoxes', () => {
       expect(within(part, box)).toBe(true);
   });
 
+  it('keeps the feet and back cushions within the Item box too, for every arm arrangement', () => {
+    for (const arms of [BOTH_ARMS, [-1], [1], []] as const) {
+      const { backCushions, feet } = sofaBoxes(SOFA, arms);
+      for (const part of [...backCushions, ...feet]) expect(within(part, box)).toBe(true);
+    }
+  });
+
+  it('stands the base on four feet in its corners, from the floor to the base’s underside', () => {
+    const { base, feet } = sofaBoxes(SOFA, BOTH_ARMS);
+    expect(feet).toHaveLength(4);
+    for (const foot of feet) {
+      expect(foot.position[1] - foot.size[1] / 2).toBeCloseTo(0);
+      expect(foot.position[1] + foot.size[1] / 2).toBeCloseTo(base.position[1] - base.size[1] / 2);
+    }
+    expect(new Set(feet.map((foot) => `${foot.position[0]},${foot.position[2]}`)).size).toBe(4);
+  });
+
+  it('puts a back cushion in front of the back frame (north) behind each seat cushion, rising above the arms', () => {
+    const { back, arms, cushions, backCushions } = sofaBoxes(SOFA, BOTH_ARMS);
+    expect(backCushions).toHaveLength(cushions.length);
+    // The test sofa faces north, so its back is on the south side and the cushions lie to the north of it.
+    backCushions.forEach((backCushion, i) => {
+      const seat = cushions[i];
+      if (!seat) throw new Error('expected a seat cushion');
+      expect(backCushion.position[0]).toBeCloseTo(seat.position[0]);
+      expect(backCushion.size[0]).toBeCloseTo(seat.size[0]);
+      expect(backCushion.position[2]).toBeLessThan(back.position[2]); // north of the frame
+      expect(backCushion.position[2]).toBeGreaterThan(seat.position[2] + seat.size[2] / 2 - 1e-9); // behind the seat
+      for (const arm of arms)
+        expect(backCushion.position[1] + backCushion.size[1] / 2).toBeGreaterThan(
+          arm.position[1] + arm.size[1] / 2,
+        );
+    });
+  });
+
+  it('keeps the back cushions clear of the back frame and the seat cushions, so no faces overlap', () => {
+    const { back, cushions, backCushions } = sofaBoxes(SOFA, BOTH_ARMS);
+    const [cushion] = backCushions;
+    const [seat] = cushions;
+    if (!cushion || !seat) throw new Error('expected cushions');
+    // South face of the back cushion meets the frame's north face; its north face meets the seat's south face.
+    expect(cushion.position[2] + cushion.size[2] / 2).toBeCloseTo(back.position[2] - back.size[2] / 2);
+    expect(cushion.position[2] - cushion.size[2] / 2).toBeCloseTo(seat.position[2] + seat.size[2] / 2);
+  });
+
+  it('keeps every part within the Item box for each sofa of both arrangements, as the editor places them', () => {
+    for (const choice of ['compact', 'l'] as const) {
+      for (const item of starterArrangement(ASHERS_ROOM, 55, choice).filter((i) =>
+        i.type.startsWith('sofa'),
+      )) {
+        const { base, back, arms, cushions, backCushions, feet } = sofaBoxes(item, sofaArmSides(item.type));
+        const itemBox = { position: item.position, size: itemBoxSize(item) };
+        for (const part of [base, back, ...arms, ...cushions, ...backCushions, ...feet]) {
+          expect(within(part, itemBox)).toBe(true);
+        }
+      }
+    }
+  });
+
+  it('keeps every part within the Item box whichever way the sofa faces', () => {
+    for (const facing of ['north', 'south', 'east', 'west'] as const) {
+      const item: Item = { ...SOFA, facing };
+      const { base, back, arms, cushions, backCushions, feet } = sofaBoxes(item, BOTH_ARMS);
+      const itemBox = { position: item.position, size: itemBoxSize(item) };
+      for (const part of [base, back, ...arms, ...cushions, ...backCushions, ...feet]) {
+        expect(within(part, itemBox)).toBe(true);
+      }
+    }
+  });
+
+  it('stays within a part budget: a piece is at most 20 boxes however wide', () => {
+    const { base, back, arms, cushions, backCushions, feet } = sofaBoxes(SOFA, BOTH_ARMS);
+    expect([base, back, ...arms, ...cushions, ...backCushions, ...feet].length).toBeLessThanOrEqual(20);
+  });
+
   it('gives a narrow seat one cushion', () => {
     const narrow: Item = { ...SOFA, size: [2, 2.5, 3] };
     expect(sofaBoxes(narrow, [-1]).cushions).toHaveLength(1);
+  });
+});
+
+describe('rugBoxes', () => {
+  const RUG: Item = {
+    id: 'rug',
+    type: 'rug',
+    position: [0, 0.5 / 24, 0],
+    size: [5, 0.5 / 12, 3.5],
+    facing: 'north',
+  };
+  const BOX = { position: RUG.position, size: RUG.size };
+
+  it('keeps every part within the Item box, the top layer reaching the rug’s top', () => {
+    const { base, field, lines } = rugBoxes(RUG);
+    for (const part of [base, field, ...lines]) expect(within(part, BOX)).toBe(true);
+    for (const layer of [field, ...lines]) {
+      expect(layer.position[1] + layer.size[1] / 2).toBeCloseTo(0.5 / 12);
+    }
+  });
+
+  it('lays a base the full footprint, resting on the floor', () => {
+    const { base } = rugBoxes(RUG);
+    expect(base.size[0]).toBe(5);
+    expect(base.size[2]).toBe(3.5);
+    expect(base.position[1] - base.size[1] / 2).toBeCloseTo(0);
+  });
+
+  it('insets the field from the edge all round, leaving a border', () => {
+    const { field } = rugBoxes(RUG);
+    expect(field.size[0]).toBeLessThan(5);
+    expect(field.size[2]).toBeLessThan(3.5);
+    expect((5 - field.size[0]) / 2).toBeCloseTo((3.5 - field.size[2]) / 2); // same border on every side
+    expect(field.position[0]).toBeCloseTo(0);
+    expect(field.position[2]).toBeCloseTo(0);
+  });
+
+  it('runs an accent line round the middle of the border, never over the field', () => {
+    const { field, lines } = rugBoxes(RUG);
+    expect(lines).toHaveLength(4);
+    const fieldEdge = [field.size[0] / 2, field.size[2] / 2];
+    for (const line of lines) {
+      const reachX = Math.abs(line.position[0]) - line.size[0] / 2;
+      const reachZ = Math.abs(line.position[2]) - line.size[2] / 2;
+      // Each line lies wholly outside the field's footprint on at least one axis.
+      const outside = reachX >= (fieldEdge[0] ?? 0) - 1e-9 || reachZ >= (fieldEdge[1] ?? 0) - 1e-9;
+      expect(outside).toBe(true);
+    }
+  });
+
+  it('closes the ring: its four lines meet at the corners without overlapping', () => {
+    const { lines } = rugBoxes(RUG);
+    for (let i = 0; i < lines.length; i++) {
+      for (let j = i + 1; j < lines.length; j++) {
+        const [a, b] = [lines[i], lines[j]];
+        if (!a || !b) throw new Error('expected lines');
+        const overlapX = Math.abs(a.position[0] - b.position[0]) < (a.size[0] + b.size[0]) / 2 - 1e-9;
+        const overlapZ = Math.abs(a.position[2] - b.position[2]) < (a.size[2] + b.size[2]) / 2 - 1e-9;
+        expect(overlapX && overlapZ).toBe(false);
+      }
+    }
   });
 });
 

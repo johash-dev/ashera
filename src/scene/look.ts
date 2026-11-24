@@ -37,6 +37,9 @@ export const LOOK = {
   sofaCushion: '#2b2d3c',
   /** Rug: dark, with a faint violet cast, a shade lighter than the floor so its edge reads. */
   rug: '#2a2840',
+  /** The rug's darker border and the dim accent line round it. */
+  rugBorder: '#1e1d30',
+  rugLine: '#3b3070',
   /** Pegboard: a black board that stands out against the lighter wall tiles. */
   pegboard: '#15161d',
   /** Picture frames: black frames around dark art, with a faint accent line so they read. */

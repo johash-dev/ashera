@@ -10,6 +10,7 @@ import {
   monitorBoxes,
   mouseBoxes,
   ps5Boxes,
+  rugBoxes,
   sofaArmSides,
   sofaBoxes,
   soundbarBoxes,
@@ -42,6 +43,8 @@ type ItemMaterials = Record<
   | 'sofaFrame'
   | 'sofaCushion'
   | 'rug'
+  | 'rugBorder'
+  | 'rugLine'
   | 'pegboard'
   | 'frame'
   | 'frameArt'
@@ -217,17 +220,29 @@ function ChairMeshes({ item, materials }: { item: Item; materials: ItemMaterials
 }
 
 function SofaMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
-  const { base, back, arms, cushions } = sofaBoxes(item, sofaArmSides(item.type));
+  const { base, back, arms, cushions, backCushions, feet } = useMemo(
+    () => sofaBoxes(item, sofaArmSides(item.type)),
+    [item],
+  );
+  const frame = useMemo(() => [base, back, ...arms, ...feet], [base, back, arms, feet]);
+  const soft = useMemo(() => [...cushions, ...backCushions], [cushions, backCushions]);
   return (
     <>
-      <BoxMesh box={base} material={materials.sofaFrame} />
-      <BoxMesh box={back} material={materials.sofaFrame} />
-      {arms.map((box, i) => (
-        <BoxMesh key={i} box={box} material={materials.sofaFrame} />
-      ))}
-      {cushions.map((box, i) => (
-        <BoxMesh key={i} box={box} material={materials.sofaCushion} />
-      ))}
+      <MergedBoxes boxes={frame} material={materials.sofaFrame} />
+      <MergedBoxes boxes={soft} material={materials.sofaCushion} />
+    </>
+  );
+}
+
+function RugMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
+  const { base, field, lines } = useMemo(() => rugBoxes(item), [item]);
+  const baseBoxes = useMemo(() => [base], [base]);
+  const fieldBoxes = useMemo(() => [field], [field]);
+  return (
+    <>
+      <MergedBoxes boxes={baseBoxes} material={materials.rugBorder} />
+      <MergedBoxes boxes={fieldBoxes} material={materials.rug} />
+      <MergedBoxes boxes={lines} material={materials.rugLine} />
     </>
   );
 }
@@ -258,7 +273,7 @@ function ItemMeshes({ item, materials }: { item: Item; materials: ItemMaterials 
     case 'sofa-l-short':
       return <SofaMeshes item={item} materials={materials} />;
     case 'rug':
-      return <BoxMesh box={itemBox(item)} material={materials.rug} />;
+      return <RugMeshes item={item} materials={materials} />;
     case 'pegboard':
       return <BoxMesh box={itemBox(item)} material={materials.pegboard} />;
     case 'frame': {
@@ -322,6 +337,8 @@ export function Items({ items }: { items: readonly Item[] }) {
       sofaFrame: new MeshStandardMaterial({ color: LOOK.sofaFrame, roughness: 0.9 }),
       sofaCushion: new MeshStandardMaterial({ color: LOOK.sofaCushion, roughness: 0.9 }),
       rug: new MeshStandardMaterial({ color: LOOK.rug, roughness: 1 }),
+      rugBorder: new MeshStandardMaterial({ color: LOOK.rugBorder, roughness: 1 }),
+      rugLine: new MeshStandardMaterial({ color: LOOK.rugLine, roughness: 0.9 }),
       frame: new MeshStandardMaterial({ color: LOOK.frame, roughness: 0.6 }),
       frameArt: new MeshStandardMaterial({ color: LOOK.frameArt, roughness: 0.8 }),
       frameLine: new MeshStandardMaterial({ color: LOOK.frameLine, roughness: 0.8 }),
