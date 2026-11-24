@@ -1,5 +1,5 @@
 ---
-status: in-progress # draft | approved | in-progress | done | superseded
+status: done # draft | approved | in-progress | done | superseded
 updated: 2026-11-25
 phase: 2
 ---
@@ -60,7 +60,7 @@ All must pass:
 - [x] The Slat panel is visually unchanged (before/after compare in the `entrance` View)
 - [x] Draw calls < 100 in every View (e2e)
 - [x] No new Room measurements, so no new "Measured values" rows (stated in the log entry)
-- [ ] Owner said "looks good" on before/after screenshots of every View
+- [x] Owner said "looks good" on before/after screenshots of every View
 - [x] docs updated (room-spec "Real colours" matches the final look, concept "Visual style" already updated), `docs/log.md` entry added
 
 ## Slices

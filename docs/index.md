@@ -39,6 +39,8 @@ One per feature, from [the template](specs/_template.md).
 - [object-detail](specs/object-detail.md) — detail pass: shapes, materials and small details for every existing Item, one group per slice
 - [real-colours](specs/real-colours.md) — real room colours: white floor and walls, grey PC wall, black desk and TV, charcoal sofa
 
+- [photoreal-pass](specs/photoreal-pass.md) — draft, Phase 3: game-engine diorama look (live light rig, soft shadows, glow, bevels), not photoreal
+
 ## History
 
 - [log.md](log.md) — append-only work log

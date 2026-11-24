@@ -305,3 +305,14 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Colours only: no geometry, size or Catalog change; no new Room measurements, so no new "Measured values" rows. The Slat panel's colours are untouched in the diff (the look file's slat values did not change).
 - With this slice every Done-when item is in; the spec is marked done once the owner approves (Done-when ticked except the owner's "looks good"; the Slat panel check is a visual compare on the Approval card).
 - Noticed, not fixed: untracked `.agents/` and `.claude/skills/threejs-*` files (from another session) fail Prettier in a local `npm run verify`; they are not part of this change.
+
+## [2026-11-25] decision | Diorama look pass drafted (spec only)
+
+- Four read-only reviews (lighting, materials, post-processing and camera, geometry) found: no environment light, no shadows or corner darkening, sharp box edges, flat colours, untuned tone curve. Drafted `docs/specs/photoreal-pass.md`.
+- Owner then set the target: not photoreal, but a subtle game-engine diorama look like three isometric references, with every light live so the Twin can mirror real light changes later. Spec rewritten around a data-driven light rig and "no baked light"; concept.md's "Not photoreal" stays true.
+- No code changed; nothing rendered or measured. Open: which lights first, post-processing library ADR, backdrop colour, lens, draw-call gate.
+
+## [2026-11-25] decision | Diorama look spec reordered: Room and props first
+
+- Owner: light placements are decided later; the Room and its props still need work. Checked the dev server (Overview, Entrance): black furniture merges into the black Slat panel wall, edges are sharp boxes, no trim or depth, Overview is small with the open door in the way.
+- `docs/specs/photoreal-pass.md` now starts with rounded edges, redone props, room details and black-on-black separation (slices 1 to 4); the light rig, shadows, glow and finish pass follow (slices 5 to 8). Spec only; no code changed.
