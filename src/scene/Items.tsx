@@ -64,6 +64,67 @@ function MergedBoxes({ boxes, material }: { boxes: readonly DrawnBox[]; material
   return <mesh geometry={geometry} material={material} />;
 }
 
+function StandMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
+  const { body, top, doors, handles } = useMemo(() => standBoxes(item, TV_STAND_DOORS), [item]);
+  const carcass = useMemo(() => [body], [body]);
+  const lighter = useMemo(() => [top, ...doors], [top, doors]);
+  return (
+    <>
+      <MergedBoxes boxes={carcass} material={materials.standBody} />
+      <MergedBoxes boxes={lighter} material={materials.standDoor} />
+      <MergedBoxes boxes={handles} material={materials.deviceTrim} />
+    </>
+  );
+}
+
+function TvMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
+  const { panel, housing, screen, led, legs } = useMemo(() => tvBoxes(item, TV_LEG_HEIGHT), [item]);
+  const panelBoxes = useMemo(() => [panel], [panel]);
+  const housingBoxes = useMemo(() => [housing], [housing]);
+  const screenBoxes = useMemo(() => [screen], [screen]);
+  const ledBoxes = useMemo(() => [led], [led]);
+  return (
+    <>
+      <MergedBoxes boxes={panelBoxes} material={materials.tvPanel} />
+      <MergedBoxes boxes={housingBoxes} material={materials.deviceBody} />
+      <MergedBoxes boxes={screenBoxes} material={materials.tvScreen} />
+      <MergedBoxes boxes={ledBoxes} material={materials.accentGlow} />
+      {legs.map((leg, i) => (
+        <mesh key={i} position={[...leg.position]} rotation-z={leg.angleRad} material={materials.tvPanel}>
+          <boxGeometry args={[...leg.size]} />
+        </mesh>
+      ))}
+    </>
+  );
+}
+
+function Ps5Meshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
+  const { core, sides, base, strip } = useMemo(() => ps5Boxes(item), [item]);
+  const dark = useMemo(() => [core, base], [core, base]);
+  const stripBoxes = useMemo(() => [strip], [strip]);
+  return (
+    <>
+      <MergedBoxes boxes={dark} material={materials.ps5Core} />
+      <MergedBoxes boxes={sides} material={materials.ps5Side} />
+      <MergedBoxes boxes={stripBoxes} material={materials.accentGlow} />
+    </>
+  );
+}
+
+function SoundbarMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
+  const { body, grille, led } = useMemo(() => soundbarBoxes(item), [item]);
+  const bodyBoxes = useMemo(() => [body], [body]);
+  const grilleBoxes = useMemo(() => [grille], [grille]);
+  const ledBoxes = useMemo(() => [led], [led]);
+  return (
+    <>
+      <MergedBoxes boxes={bodyBoxes} material={materials.soundbarBody} />
+      <MergedBoxes boxes={grilleBoxes} material={materials.soundbarGrille} />
+      <MergedBoxes boxes={ledBoxes} material={materials.accentGlow} />
+    </>
+  );
+}
+
 function DeskMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
   const { top, legs, rails } = useMemo(() => deskBoxes(item), [item]);
   const frame = useMemo(() => [...legs, ...rails], [legs, rails]);
@@ -173,52 +234,15 @@ function SofaMeshes({ item, materials }: { item: Item; materials: ItemMaterials 
 
 function ItemMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
   switch (item.type) {
-    case 'tv-stand': {
-      const { body, doors } = standBoxes(item, TV_STAND_DOORS);
-      return (
-        <>
-          <BoxMesh box={body} material={materials.standBody} />
-          {doors.map((door, i) => (
-            <BoxMesh key={i} box={door} material={materials.standDoor} />
-          ))}
-        </>
-      );
-    }
+    case 'tv-stand':
+      return <StandMeshes item={item} materials={materials} />;
     case 'tv-55':
-    case 'tv-65': {
-      const { panel, screen, legs } = tvBoxes(item, TV_LEG_HEIGHT);
-      return (
-        <>
-          <BoxMesh box={panel} material={materials.tvPanel} />
-          <BoxMesh box={screen} material={materials.tvScreen} />
-          {legs.map((leg, i) => (
-            <mesh key={i} position={[...leg.position]} rotation-z={leg.angleRad} material={materials.tvPanel}>
-              <boxGeometry args={[...leg.size]} />
-            </mesh>
-          ))}
-        </>
-      );
-    }
-    case 'ps5': {
-      const { core, sides } = ps5Boxes(item);
-      return (
-        <>
-          <BoxMesh box={core} material={materials.ps5Core} />
-          {sides.map((side, i) => (
-            <BoxMesh key={i} box={side} material={materials.ps5Side} />
-          ))}
-        </>
-      );
-    }
-    case 'soundbar': {
-      const { body, grille } = soundbarBoxes(item);
-      return (
-        <>
-          <BoxMesh box={body} material={materials.soundbarBody} />
-          <BoxMesh box={grille} material={materials.soundbarGrille} />
-        </>
-      );
-    }
+    case 'tv-65':
+      return <TvMeshes item={item} materials={materials} />;
+    case 'ps5':
+      return <Ps5Meshes item={item} materials={materials} />;
+    case 'soundbar':
+      return <SoundbarMeshes item={item} materials={materials} />;
     case 'desk':
       return <DeskMeshes item={item} materials={materials} />;
     case 'monitor':
