@@ -276,3 +276,11 @@ Recent entries: `grep "^## \[" docs/log.md | tail -5`
 - Everything stays inside each Item's size box (unit tests for the sofa with every arm arrangement, and for the rug). Sizes and spots unchanged.
 - Parts sharing a material are merged: each sofa piece is now 2 draw calls (frame, cushions) instead of 6 for the compact sofa (base, back, two arms, two cushions) and fewer for the L's pieces, the rug 3 instead of 1. Draw calls 72–81 in the overview and top-down with the compact sofa, 74 with the L; budget < 100.
 - No new Room measurements, so no new "Measured values" rows.
+
+## [2026-11-25] feature | Object detail slice 4: wall décor
+
+- Pegboard gains a lighter frame round its edge, standing a little proud of the board. Headphones gain arms joining the band to each cup, an ear pad on each cup's inner face and a pad under the headband. The shelf gets a lip along its front and a rail along its back. Each picture frame gets a mat between the black frame and the art, so the art sits in a border; the accent line stays.
+- Everything stays inside each Item's size box and no parts overlap (unit tests, including that the pegboard's frame never overlaps its board and that each frame layer starts where the one behind ends). Sizes and spots unchanged. The headphones and shelf now hang 0.3 in off the board's recessed face, which is not visible at room scale.
+- Parts sharing a material are merged: pegboard 2 draw calls, shelf 1, headphones 2, each frame 4 (it was 3). Draw calls 57 in the right-from-entrance close-up; the e2e budget check (< 100) passes in every View.
+- The pegboard's holes are still not drawn (out of scope in the spec). With this slice every group of the object-detail spec is in; the spec is marked done once the owner approves.
+- No new Room measurements, so no new "Measured values" rows.

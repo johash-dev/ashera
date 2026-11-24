@@ -288,47 +288,111 @@ export function monitorBoxes(item: Item): {
   };
 }
 
-/** Headphones on a hook: a band across the top, a cup at each end and the hook behind the band. */
-export function headphonesBoxes(item: Item): { band: Box; cups: Box[]; hook: Box } {
+/** Width of the pegboard's frame, and the depth of the board inside it (feet); the frame stands proud of the board. */
+const PEGBOARD_RIM = inches(0.75);
+const PEGBOARD_BOARD_DEPTH = inches(0.7);
+
+/** A pegboard: the board at the back and a frame round its edge, standing a little proud of it. */
+export function pegboardBoxes(item: Item): { board: Box; rails: Box[] } {
   const [width, height, depth] = item.size;
-  const bandHeight = inches(1);
-  const cupWidth = inches(2);
-  const hookDepth = inches(1);
+  const sideHeight = height - 2 * PEGBOARD_RIM;
   return {
-    band: part(item, 0, height - bandHeight, 0, [width, bandHeight, inches(1)]),
-    cups: [-1, 1].map((side) =>
-      part(item, (side * (width - cupWidth)) / 2, 0, 0, [cupWidth, height - bandHeight, depth]),
-    ),
-    hook: part(item, 0, height - bandHeight, -depth / 2 + hookDepth / 2, [
-      inches(0.6),
-      bandHeight,
-      hookDepth,
+    board: part(item, 0, PEGBOARD_RIM, -depth / 2 + PEGBOARD_BOARD_DEPTH / 2, [
+      width - 2 * PEGBOARD_RIM,
+      sideHeight,
+      PEGBOARD_BOARD_DEPTH,
     ]),
+    rails: [
+      part(item, 0, 0, 0, [width, PEGBOARD_RIM, depth]),
+      part(item, 0, height - PEGBOARD_RIM, 0, [width, PEGBOARD_RIM, depth]),
+      ...[-1, 1].map((side) =>
+        part(item, side * (width / 2 - PEGBOARD_RIM / 2), PEGBOARD_RIM, 0, [PEGBOARD_RIM, sideHeight, depth]),
+      ),
+    ],
+  };
+}
+
+/** Thickness of a shelf's board, and of the lip along its front and the rail along its back (feet). */
+const SHELF_BOARD = inches(0.4);
+const SHELF_EDGE = inches(0.3);
+
+/** A small shelf: a thin board with a lip along its front edge and a rail along its back. */
+export function shelfBoxes(item: Item): { board: Box; lip: Box; rail: Box } {
+  const [width, height, depth] = item.size;
+  return {
+    board: part(item, 0, 0, 0, [width, SHELF_BOARD, depth - 2 * SHELF_EDGE]),
+    lip: part(item, 0, 0, depth / 2 - SHELF_EDGE / 2, [width, height, SHELF_EDGE]),
+    rail: part(item, 0, 0, -depth / 2 + SHELF_EDGE / 2, [width, height, SHELF_EDGE]),
   };
 }
 
 /**
- * A picture frame: the black body at the back, the dark art inset in front of it leaving a border,
- * and a thin accent line across the art.
+ * Headphones on a hook: a headband across the top with a pad under its middle, an arm down each side to
+ * a cup with an ear pad on its inner face, and the hook behind the band.
  */
-export function frameBoxes(item: Item): { body: Box; art: Box; line: Box } {
+export function headphonesBoxes(item: Item): {
+  band: Box;
+  arms: Box[];
+  cups: Box[];
+  pads: Box[];
+  headbandPad: Box;
+  hook: Box;
+} {
   const [width, height, depth] = item.size;
-  const border = inches(1.2);
-  const artDepth = inches(0.2);
-  const lineDepth = inches(0.1);
+  const bandHeight = inches(1);
+  const cupWidth = inches(2);
+  const cupHeight = inches(4.5);
+  const armWidth = inches(0.7);
+  const padWidth = inches(0.5);
+  const hookDepth = inches(1);
+  const cupLateral = (width - cupWidth) / 2;
+  const bandBottom = height - bandHeight;
+  return {
+    band: part(item, 0, bandBottom, 0, [width, bandHeight, inches(1)]),
+    arms: [-1, 1].map((side) =>
+      part(item, side * cupLateral, cupHeight, 0, [armWidth, bandBottom - cupHeight, inches(1)]),
+    ),
+    cups: [-1, 1].map((side) => part(item, side * cupLateral, 0, 0, [cupWidth, cupHeight, depth])),
+    pads: [-1, 1].map((side) =>
+      part(item, side * (cupLateral - cupWidth / 2 - padWidth / 2), inches(0.5), 0, [
+        padWidth,
+        cupHeight - inches(1),
+        depth - inches(1),
+      ]),
+    ),
+    headbandPad: part(item, 0, bandBottom - inches(0.4), 0, [inches(3.5), inches(0.4), inches(0.8)]),
+    hook: part(item, 0, bandBottom, -depth / 2 + hookDepth / 2, [inches(0.6), bandHeight, hookDepth]),
+  };
+}
+
+/** Width of the frame's rim, of the mat inside it and the share of the art's width the accent line spans. */
+const FRAME_RIM = inches(0.6);
+const FRAME_MAT = inches(1.2);
+const FRAME_LINE_SHARE = 0.75;
+
+/**
+ * A picture frame: the black body at the back, a mat inset in front of it leaving a rim, the dark art
+ * inset in front of the mat leaving a border, and a thin accent line across the art.
+ */
+export function frameBoxes(item: Item): { body: Box; mat: Box; art: Box; line: Box } {
+  const [width, height, depth] = item.size;
+  const layer = inches(0.1);
   const lineHeight = inches(0.4);
-  const bodyDepth = depth - artDepth - lineDepth;
+  const bodyDepth = depth - 3 * layer;
+  const artWidth = width - 2 * (FRAME_RIM + FRAME_MAT);
+  const layerForward = (n: number) => -depth / 2 + bodyDepth + (n + 0.5) * layer;
   return {
     body: part(item, 0, 0, -depth / 2 + bodyDepth / 2, [width, height, bodyDepth]),
-    art: part(item, 0, border, -depth / 2 + bodyDepth + artDepth / 2, [
-      width - 2 * border,
-      height - 2 * border,
-      artDepth,
+    mat: part(item, 0, FRAME_RIM, layerForward(0), [width - 2 * FRAME_RIM, height - 2 * FRAME_RIM, layer]),
+    art: part(item, 0, FRAME_RIM + FRAME_MAT, layerForward(1), [
+      artWidth,
+      height - 2 * (FRAME_RIM + FRAME_MAT),
+      layer,
     ]),
-    line: part(item, 0, (height - lineHeight) / 2, depth / 2 - lineDepth / 2, [
-      width - 4 * border,
+    line: part(item, 0, (height - lineHeight) / 2, layerForward(2), [
+      artWidth * FRAME_LINE_SHARE,
       lineHeight,
-      lineDepth,
+      layer,
     ]),
   };
 }

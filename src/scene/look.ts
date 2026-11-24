@@ -42,6 +42,9 @@ export const LOOK = {
   rugLine: '#3b3070',
   /** Pegboard: a black board that stands out against the lighter wall tiles. */
   pegboard: '#15161d',
+  /** The pegboard's frame, a shade lighter than its board, and the mat inside each picture frame. */
+  pegboardRim: '#262731',
+  frameMat: '#23243a',
   /** Picture frames: black frames around dark art, with a faint accent line so they read. */
   frame: '#0c0c11',
   frameArt: '#1c1d2a',

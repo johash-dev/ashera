@@ -9,8 +9,10 @@ import {
   keyboardBoxes,
   monitorBoxes,
   mouseBoxes,
+  pegboardBoxes,
   ps5Boxes,
   rugBoxes,
+  shelfBoxes,
   sofaArmSides,
   sofaBoxes,
   soundbarBoxes,
@@ -787,6 +789,91 @@ describe('chairBoxes', () => {
   });
 });
 
+// A 4 × 2 ft pegboard on the east wall (x = 5), facing west.
+const PEGBOARD: Item = {
+  id: 'pegboard',
+  type: 'pegboard',
+  position: [5 - 1 / 24, 5.5, 0],
+  size: [4, 2, 1 / 12],
+  facing: 'west',
+};
+
+describe('pegboardBoxes', () => {
+  const BOX = { position: PEGBOARD.position, size: [1 / 12, 2, 4] as const };
+
+  it('keeps the board and its frame within the Item box', () => {
+    const { board, rails } = pegboardBoxes(PEGBOARD);
+    for (const part of [board, ...rails]) expect(within(part, BOX)).toBe(true);
+  });
+
+  it('frames the board with four rails that stand proud of it on the front (west)', () => {
+    const { board, rails } = pegboardBoxes(PEGBOARD);
+    expect(rails).toHaveLength(4);
+    for (const rail of rails) {
+      expect(rail.position[0] - rail.size[0] / 2).toBeLessThan(board.position[0] - board.size[0] / 2);
+    }
+    expect(board.position[0] + board.size[0] / 2).toBeLessThanOrEqual(5 + 1e-9);
+  });
+
+  it('puts the frame all the way round: top, bottom and both sides, with the board in the middle', () => {
+    const { board, rails } = pegboardBoxes(PEGBOARD);
+    const top = Math.max(...rails.map((rail) => rail.position[1] + rail.size[1] / 2));
+    const bottom = Math.min(...rails.map((rail) => rail.position[1] - rail.size[1] / 2));
+    const north = Math.min(...rails.map((rail) => rail.position[2] - rail.size[2] / 2));
+    const south = Math.max(...rails.map((rail) => rail.position[2] + rail.size[2] / 2));
+    expect(top).toBeCloseTo(5.5 + 1);
+    expect(bottom).toBeCloseTo(5.5 - 1);
+    expect(north).toBeCloseTo(-2);
+    expect(south).toBeCloseTo(2);
+    expect(board.position[1]).toBeCloseTo(5.5);
+    expect(board.position[2]).toBeCloseTo(0);
+  });
+
+  it('never overlaps the board with its frame, so no faces share a plane', () => {
+    const { board, rails } = pegboardBoxes(PEGBOARD);
+    for (const rail of rails) {
+      const overlaps = ([0, 1, 2] as const).every(
+        (axis) =>
+          Math.abs(rail.position[axis] - board.position[axis]) <
+          (rail.size[axis] + board.size[axis]) / 2 - 1e-9,
+      );
+      expect(overlaps).toBe(false);
+    }
+  });
+});
+
+// A shelf on the pegboard's front face, facing west.
+const SHELF: Item = {
+  id: 'shelf',
+  type: 'shelf',
+  position: [5 - 1 / 12 - 2 / 12, 5.2, 1.3],
+  size: [1, 1 / 12, 1 / 3],
+  facing: 'west',
+};
+
+describe('shelfBoxes', () => {
+  const BOX = { position: SHELF.position, size: [1 / 3, 1 / 12, 1] as const };
+
+  it('keeps the board, lip and back rail within the Item box', () => {
+    const { board, lip, rail } = shelfBoxes(SHELF);
+    for (const part of [board, lip, rail]) expect(within(part, BOX)).toBe(true);
+  });
+
+  it('puts a lip along the front edge (west) and a rail along the back, both taller than the board', () => {
+    const { board, lip, rail } = shelfBoxes(SHELF);
+    expect(lip.position[0]).toBeLessThan(board.position[0]);
+    expect(rail.position[0]).toBeGreaterThan(board.position[0]);
+    expect(lip.size[1]).toBeGreaterThan(board.size[1]);
+    expect(rail.size[1]).toBeGreaterThan(board.size[1]);
+  });
+
+  it('keeps the board between the lip and the rail without overlapping them', () => {
+    const { board, lip, rail } = shelfBoxes(SHELF);
+    expect(board.position[0] - board.size[0] / 2).toBeCloseTo(lip.position[0] + lip.size[0] / 2);
+    expect(board.position[0] + board.size[0] / 2).toBeCloseTo(rail.position[0] - rail.size[0] / 2);
+  });
+});
+
 // Headphones hung on the pegboard on the east wall, facing west.
 const HEADPHONES: Item = {
   id: 'headphones',
@@ -797,10 +884,13 @@ const HEADPHONES: Item = {
 };
 
 describe('headphonesBoxes', () => {
-  it('keeps the band, both cups and the hook within the Item box', () => {
-    const { band, cups, hook } = headphonesBoxes(HEADPHONES);
-    const box = { position: HEADPHONES.position, size: [3.5 / 12, 8 / 12, 7 / 12] as const };
-    for (const part of [band, hook, ...cups]) expect(within(part, box)).toBe(true);
+  const BOX = { position: HEADPHONES.position, size: [3.5 / 12, 8 / 12, 7 / 12] as const };
+
+  it('keeps every part within the Item box', () => {
+    const { band, arms, cups, pads, headbandPad, hook } = headphonesBoxes(HEADPHONES);
+    for (const part of [band, ...arms, ...cups, ...pads, headbandPad, hook]) {
+      expect(within(part, BOX)).toBe(true);
+    }
   });
 
   it('puts a cup at each side, hanging below the band, with the hook behind at the top', () => {
@@ -810,6 +900,34 @@ describe('headphonesBoxes', () => {
     expect((north ?? 0) + (south ?? 0)).toBeCloseTo(2 * HEADPHONES.position[2]);
     for (const cup of cups) expect(cup.position[1] + cup.size[1] / 2).toBeLessThanOrEqual(band.position[1]);
     expect(hook.position[0]).toBeGreaterThan(band.position[0]); // towards the wall (east)
+  });
+
+  it('joins each cup to the band with an arm that spans the gap between them', () => {
+    const { band, arms, cups } = headphonesBoxes(HEADPHONES);
+    expect(arms).toHaveLength(2);
+    arms.forEach((arm, i) => {
+      const cup = cups[i];
+      if (!cup) throw new Error('expected a cup');
+      expect(arm.position[2]).toBeCloseTo(cup.position[2]);
+      expect(arm.position[1] - arm.size[1] / 2).toBeCloseTo(cup.position[1] + cup.size[1] / 2);
+      expect(arm.position[1] + arm.size[1] / 2).toBeCloseTo(band.position[1] - band.size[1] / 2);
+    });
+  });
+
+  it('puts an ear pad on the inner face of each cup, between the cups, and a pad under the headband', () => {
+    const { band, cups, pads, headbandPad } = headphonesBoxes(HEADPHONES);
+    expect(pads).toHaveLength(2);
+    pads.forEach((pad, i) => {
+      const cup = cups[i];
+      if (!cup) throw new Error('expected a cup');
+      const towardsMiddle = Math.sign(HEADPHONES.position[2] - cup.position[2]);
+      expect(Math.sign(pad.position[2] - cup.position[2])).toBe(towardsMiddle);
+      expect(Math.abs(pad.position[2] - cup.position[2])).toBeGreaterThan(cup.size[2] / 2);
+    });
+    expect(headbandPad.position[1] + headbandPad.size[1] / 2).toBeCloseTo(
+      band.position[1] - band.size[1] / 2,
+    );
+    expect(headbandPad.position[2]).toBeCloseTo(HEADPHONES.position[2]);
   });
 });
 
@@ -823,22 +941,38 @@ const FRAME: Item = {
 };
 
 describe('frameBoxes', () => {
-  it('keeps the body, art and accent line within the Item box', () => {
-    const { body, art, line } = frameBoxes(FRAME);
+  it('keeps the body, mat, art and accent line within the Item box', () => {
+    const { body, mat, art, line } = frameBoxes(FRAME);
     const box = { position: FRAME.position, size: [1, 1.5, 1 / 12] as const };
-    for (const part of [body, art, line]) expect(within(part, box)).toBe(true);
+    for (const part of [body, mat, art, line]) expect(within(part, box)).toBe(true);
   });
 
-  it('puts the art on the frame’s front, north of the frame body, leaving a border', () => {
-    const { body, art } = frameBoxes(FRAME);
-    expect(art.position[2]).toBeLessThan(body.position[2]);
-    expect(art.size[0]).toBeLessThan(FRAME.size[0]);
-    expect(art.size[1]).toBeLessThan(FRAME.size[1]);
+  it('stacks body, mat, art and line from the wall outwards (north), each a layer in front of the last', () => {
+    const { body, mat, art, line } = frameBoxes(FRAME);
+    const layers = [body, mat, art, line];
+    for (let i = 1; i < layers.length; i++) {
+      const behind = layers[i - 1];
+      const ahead = layers[i];
+      if (!behind || !ahead) throw new Error('expected layers');
+      expect(ahead.position[2]).toBeLessThan(behind.position[2]);
+      // A layer starts where the previous one ends: no overlap, so no shared plane to flicker.
+      expect(ahead.position[2] + ahead.size[2] / 2).toBeCloseTo(behind.position[2] - behind.size[2] / 2);
+    }
+    expect(line.position[2] - line.size[2] / 2).toBeCloseTo(4.5 - 1 / 12); // flush with the frame's front face
   });
 
-  it('puts the accent line across the art, in front of it', () => {
+  it('leaves a rim round the mat and a wider border round the art, each smaller than the one behind', () => {
+    const { body, mat, art } = frameBoxes(FRAME);
+    expect(mat.size[0]).toBeLessThan(body.size[0]);
+    expect(mat.size[1]).toBeLessThan(body.size[1]);
+    expect(art.size[0]).toBeLessThan(mat.size[0]);
+    expect(art.size[1]).toBeLessThan(mat.size[1]);
+    expect((body.size[0] - mat.size[0]) / 2).toBeLessThan((mat.size[0] - art.size[0]) / 2);
+  });
+
+  it('puts the accent line across the art, narrower than it', () => {
     const { art, line } = frameBoxes(FRAME);
-    expect(line.position[2]).toBeLessThan(art.position[2]);
+    expect(line.size[2]).toBeLessThan(0.05);
     expect(line.size[0]).toBeLessThan(art.size[0]);
   });
 });
