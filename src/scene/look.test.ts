@@ -25,4 +25,11 @@ describe('LOOK', () => {
     expect(brightness(LOOK.tvEdge)).toBeLessThan(20);
     expect(TV_EDGE_GLOW).toBe(0);
   });
+
+  it('makes the desk legs black and the sofa charcoal, its cushions a shade lighter than the frame', () => {
+    expect(brightness(LOOK.deskLeg)).toBeLessThan(20);
+    expect(brightness(LOOK.sofaCushion)).toBeGreaterThan(brightness(LOOK.sofaFrame));
+    expect(brightness(LOOK.sofaFrame)).toBeGreaterThan(brightness(LOOK.deskTop));
+    expect(brightness(LOOK.wallGrey)).toBeGreaterThan(brightness(LOOK.sofaCushion));
+  });
 });

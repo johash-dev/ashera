@@ -1,5 +1,5 @@
 ---
-status: done # draft | approved | in-progress | done | superseded
+status: in-progress # draft | approved | in-progress | done | superseded
 updated: 2026-11-25
 phase: 2
 ---
