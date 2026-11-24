@@ -28,8 +28,18 @@ const STAND: Item = {
 };
 
 describe('standBoxes', () => {
-  it('draws the body at the Item box', () => {
-    expect(standBoxes(STAND, 2).body).toEqual({ position: [0, 1.25, -4], size: [8, 1.5, 1] });
+  const BOX = { position: STAND.position, size: STAND.size };
+
+  it('keeps every part within the Item box', () => {
+    const { body, top, doors, handles } = standBoxes(STAND, 2);
+    for (const part of [body, top, ...doors, ...handles]) expect(within(part, BOX)).toBe(true);
+  });
+
+  it('lays a top slab over the whole footprint, flush with the stand’s top', () => {
+    const { top } = standBoxes(STAND, 2);
+    expect(top.size[0]).toBe(8);
+    expect(top.size[2]).toBe(1);
+    expect(top.position[1] + top.size[1] / 2).toBeCloseTo(1.25 + 0.75);
   });
 
   it('puts the doors side by side on the front face, with equal gaps around them', () => {
@@ -39,22 +49,69 @@ describe('standBoxes', () => {
     if (!left || !right) throw new Error('expected two doors');
     expect(left.position[0]).toBeCloseTo(-right.position[0]);
     expect(left.size[0]).toBeCloseTo(right.size[0]);
-    const gap = right.position[0] - right.size[0] / 2 - (left.position[0] + left.size[0] / 2);
-    expect(4 - (right.position[0] + right.size[0] / 2)).toBeCloseTo(gap); // edge gap = middle gap
-    expect(left.position[2] - left.size[2] / 2).toBeCloseTo(-3.5); // on the front face (south)
-    expect(left.position[1]).toBe(1.25);
+    const gap = Math.abs(right.position[0] - left.position[0]) - left.size[0];
+    expect(4 - (Math.max(left.position[0], right.position[0]) + left.size[0] / 2)).toBeCloseTo(gap); // edge gap = middle gap
+    expect(left.position[2] + left.size[2] / 2).toBeLessThan(-3.5); // set into the front face (south)
+    expect(left.position[2] + left.size[2] / 2).toBeGreaterThan(-3.5 - 0.05);
+  });
+
+  it('keeps the doors clear of the top slab and the floor-side edge, a gap above and below', () => {
+    const { top, doors } = standBoxes(STAND, 2);
+    const [door] = doors;
+    if (!door) throw new Error('expected a door');
+    expect(door.position[1] + door.size[1] / 2).toBeLessThan(top.position[1] - top.size[1] / 2);
+    expect(door.position[1] - door.size[1] / 2).toBeGreaterThan(0.5);
+  });
+
+  it('puts a handle on each door’s inner edge, in front of the door, flush with the stand’s front', () => {
+    const { doors, handles } = standBoxes(STAND, 2);
+    expect(handles).toHaveLength(2);
+    handles.forEach((handle, i) => {
+      const door = doors[i];
+      if (!door) throw new Error('expected a door');
+      expect(handle.position[2]).toBeGreaterThan(door.position[2]);
+      expect(handle.position[2] + handle.size[2] / 2).toBeCloseTo(-3.5);
+      // Towards the middle of the stand: closer to x = 0 than the door's centre.
+      expect(Math.abs(handle.position[0])).toBeLessThan(Math.abs(door.position[0]));
+      expect(Math.abs(handle.position[0] - door.position[0])).toBeLessThan(door.size[0] / 2);
+    });
   });
 });
 
 describe('tvBoxes', () => {
   // A 4 ft wide TV, 2.5 ft tall overall on 0.25 ft feet, standing on a floor at y = 2.
   const TV: Item = { id: 'tv', type: 'tv-55', position: [0, 3.25, -4], size: [4, 2.5, 0.2], facing: 'south' };
+  const BOX = { position: TV.position, size: TV.size };
 
-  it('puts the panel above the feet, the full width and depth of the Item', () => {
+  it('keeps the panel, housing, screen and status light within the Item box', () => {
+    const { panel, housing, screen, led } = tvBoxes(TV, 0.25);
+    for (const part of [panel, housing, screen, led]) expect(within(part, BOX)).toBe(true);
+  });
+
+  it('keeps the slanted legs within the Item box, along the width', () => {
+    const { legs } = tvBoxes(TV, 0.25);
+    for (const leg of legs) {
+      const reach =
+        (leg.size[1] / 2) * Math.sin(Math.abs(leg.angleRad)) + (leg.size[0] / 2) * Math.cos(leg.angleRad);
+      expect(Math.abs(leg.position[0]) + reach).toBeLessThanOrEqual(2 + 1e-9);
+    }
+  });
+
+  it('puts the panel above the feet, the full width of the Item, thinner than the Item', () => {
     const { panel } = tvBoxes(TV, 0.25);
-    expect(panel.size).toEqual([4, 2.25, 0.2]);
+    expect(panel.size[0]).toBe(4);
+    expect(panel.size[1]).toBeCloseTo(2.25);
+    expect(panel.size[2]).toBeLessThan(0.1);
     expect(panel.position[1] - panel.size[1] / 2).toBeCloseTo(2.25);
     expect(panel.position[1] + panel.size[1] / 2).toBeCloseTo(4.5);
+  });
+
+  it('puts a housing behind the panel (north), narrower and shorter than it, so the back bulges', () => {
+    const { panel, housing } = tvBoxes(TV, 0.25);
+    expect(housing.position[2]).toBeLessThan(panel.position[2]);
+    expect(housing.size[0]).toBeLessThan(panel.size[0]);
+    expect(housing.size[1]).toBeLessThan(panel.size[1]);
+    expect(housing.position[2] - housing.size[2] / 2).toBeCloseTo(-4.1); // back of the Item
   });
 
   it('stands on two thin legs that slant outward from under the panel down to the floor, mirrored', () => {
@@ -81,12 +138,22 @@ describe('tvBoxes', () => {
     for (const leg of legs) expect(Math.abs(leg.position[0]) + leg.size[1]).toBeLessThan(2);
   });
 
-  it('puts the screen on the panel front, inside its edge', () => {
+  it('puts the screen on the panel front, inside its edge, flush with the Item’s front', () => {
     const { panel, screen } = tvBoxes(TV, 0.25);
     expect(screen.size[0]).toBeLessThan(panel.size[0]);
     expect(screen.size[1]).toBeLessThan(panel.size[1]);
-    expect(screen.position[1]).toBe(panel.position[1]);
-    expect(screen.position[2] - screen.size[2] / 2).toBeCloseTo(-3.9);
+    expect(screen.position[1]).toBeCloseTo(panel.position[1]);
+    expect(screen.position[2] + screen.size[2] / 2).toBeCloseTo(-3.9); // front face (south)
+    expect(screen.position[2] - screen.size[2] / 2).toBeCloseTo(panel.position[2] + panel.size[2] / 2);
+  });
+
+  it('puts a small status light in the bottom edge, centred, below the screen', () => {
+    const { screen, led } = tvBoxes(TV, 0.25);
+    expect(led.position[0]).toBeCloseTo(0);
+    expect(led.position[1] + led.size[1] / 2).toBeLessThanOrEqual(
+      screen.position[1] - screen.size[1] / 2 + 1e-9,
+    );
+    expect(led.size[0]).toBeLessThan(0.1);
   });
 });
 
@@ -98,15 +165,41 @@ describe('ps5Boxes', () => {
     size: [0.3, 1.2, 0.7],
     facing: 'south',
   };
+  const BOX = { position: PS5.position, size: PS5.size };
 
-  it('puts the white side panels on its east and west faces around a black core, filling the Item box', () => {
+  it('keeps every part within the Item box', () => {
+    const { core, sides, base, strip } = ps5Boxes(PS5);
+    for (const part of [core, ...sides, base, strip]) expect(within(part, BOX)).toBe(true);
+  });
+
+  it('puts the white side panels on its east and west faces around a black core, filling the Item width', () => {
     const { core, sides } = ps5Boxes(PS5);
-    const [west, east] = sides;
+    const [west, east] = [...sides].sort((p, q) => p.position[0] - q.position[0]);
     if (!west || !east) throw new Error('expected two side panels');
     expect(west.position[0] - west.size[0] / 2).toBeCloseTo(-3.15);
     expect(east.position[0] + east.size[0] / 2).toBeCloseTo(-2.85);
     expect(core.size[0] + west.size[0] + east.size[0]).toBeCloseTo(0.3);
-    expect(core.size[1]).toBe(1.2);
+  });
+
+  it('stands the panels and core on a base plate that fills the footprint, reaching the full height', () => {
+    const { core, sides, base } = ps5Boxes(PS5);
+    expect(base.size[0]).toBeCloseTo(0.3);
+    expect(base.size[2]).toBeCloseTo(0.7);
+    expect(base.position[1] - base.size[1] / 2).toBeCloseTo(2);
+    for (const upright of [core, ...sides]) {
+      expect(upright.position[1] - upright.size[1] / 2).toBeCloseTo(base.position[1] + base.size[1] / 2);
+      expect(upright.position[1] + upright.size[1] / 2).toBeCloseTo(3.2);
+    }
+  });
+
+  it('runs a light strip down the front of the core, on the centre line, flush with the front (south)', () => {
+    const { core, strip } = ps5Boxes(PS5);
+    expect(strip.position[0]).toBeCloseTo(-3);
+    expect(strip.size[0]).toBeLessThan(core.size[0]);
+    expect(strip.size[1]).toBeGreaterThan(0.5);
+    expect(strip.position[2] + strip.size[2] / 2).toBeCloseTo(-4 + 0.35);
+    // In front of the core, not inside it, so their faces never overlap.
+    expect(strip.position[2] - strip.size[2] / 2).toBeCloseTo(core.position[2] + core.size[2] / 2);
   });
 });
 
@@ -118,13 +211,30 @@ describe('soundbarBoxes', () => {
     size: [2.5, 0.2, 0.33],
     facing: 'south',
   };
+  const BOX = { position: BAR.position, size: BAR.size };
 
-  it('draws the body at the Item box and the grille on its front face, inside its edge', () => {
+  it('keeps the body, grille and status light within the Item box', () => {
+    const { body, grille, led } = soundbarBoxes(BAR);
+    for (const part of [body, grille, led]) expect(within(part, BOX)).toBe(true);
+  });
+
+  it('draws the grille on the front face, inside the body’s edge, flush with the Item’s front', () => {
     const { body, grille } = soundbarBoxes(BAR);
-    expect(body).toEqual({ position: [0, 2.1, -3.67], size: [2.5, 0.2, 0.33] });
     expect(grille.size[0]).toBeLessThan(2.5);
     expect(grille.size[1]).toBeLessThan(0.2);
-    expect(grille.position[2] - grille.size[2] / 2).toBeCloseTo(-3.67 + 0.165);
+    expect(grille.position[2] + grille.size[2] / 2).toBeCloseTo(-3.67 + 0.165);
+    expect(grille.position[2] - grille.size[2] / 2).toBeCloseTo(body.position[2] + body.size[2] / 2);
+  });
+
+  it('puts a small status light in the body’s edge at one end, beside the grille, not over it', () => {
+    const { grille, led } = soundbarBoxes(BAR);
+    const grilleStart = grille.position[0] - grille.size[0] / 2;
+    const grilleEnd = grille.position[0] + grille.size[0] / 2;
+    const ledStart = led.position[0] - led.size[0] / 2;
+    const ledEnd = led.position[0] + led.size[0] / 2;
+    const clear = ledStart >= grilleEnd - 1e-9 || ledEnd <= grilleStart + 1e-9;
+    expect(clear).toBe(true);
+    expect(Math.abs(led.position[0])).toBeGreaterThan(1);
   });
 });
 

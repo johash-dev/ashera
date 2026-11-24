@@ -3,52 +3,136 @@ import { type Box } from './roomBoxes';
 
 /** Gap around and between the stand's doors, so they read as separate doors. */
 const DOOR_GAP = 0.03;
-/** How far each door stands proud of the stand's front face. */
+/** Thickness of each door, of the handle bar on its front, and of the stand's top slab (feet). */
 const DOOR_THICKNESS = 0.02;
+const HANDLE_THICKNESS = 0.01;
+const STAND_TOP = 0.05;
+/** Handle bar width and height, and how far it sits in from the door's inner edge. */
+const HANDLE_WIDTH = 0.03;
+const HANDLE_HEIGHT = 0.5;
+const HANDLE_INSET = 0.12;
 
-/** A stand's body, and its doors as thin panels side by side on its front (south) face. */
-export function standBoxes(item: Item, doorCount: number): { body: Box; doors: Box[] } {
+type Vec3 = Box['size'];
+
+/** Unit vector (west–east, north–south) of the way an Item's front points. */
+const FRONT: Record<Facing, readonly [number, number]> = {
+  north: [0, -1],
+  south: [0, 1],
+  east: [1, 0],
+  west: [-1, 0],
+};
+
+/**
+ * A part of an Item, in the Item's own frame: `lateral` to its right, `bottom` above the Item's floor
+ * (feet) and `forward` towards its front, from the Item's centre. Sized width × height × depth in that frame.
+ */
+function part(item: Item, lateral: number, bottom: number, forward: number, size: Vec3): Box {
+  const [fx, fz] = FRONT[item.facing];
+  const [rx, rz] = [-fz, fx];
   const [x, y, z] = item.position;
-  const [width, height, depth] = item.size;
-  const doorWidth = (width - DOOR_GAP * (doorCount + 1)) / doorCount;
-  const doorZ = z + depth / 2 + DOOR_THICKNESS / 2;
-  const doors = Array.from({ length: doorCount }, (_, i): Box => ({
-    position: [x - width / 2 + DOOR_GAP + doorWidth / 2 + i * (doorWidth + DOOR_GAP), y, doorZ],
-    size: [doorWidth, height - 2 * DOOR_GAP, DOOR_THICKNESS],
-  }));
-  return { body: { position: item.position, size: item.size }, doors };
+  const [width, height, depth] = size;
+  const turned = fx !== 0;
+  return {
+    position: [
+      x + rx * lateral + fx * forward,
+      y - item.size[1] / 2 + bottom + height / 2,
+      z + rz * lateral + fz * forward,
+    ],
+    size: turned ? [depth, height, width] : size,
+  };
 }
 
+/**
+ * A stand: its body, a top slab over the whole footprint, the doors side by side on its front face,
+ * and a handle bar on each door's inner edge. Everything lies within the Item's box; the doors and
+ * handles are set into its front.
+ */
+export function standBoxes(
+  item: Item,
+  doorCount: number,
+): { body: Box; top: Box; doors: Box[]; handles: Box[] } {
+  const [width, height, depth] = item.size;
+  const doorWidth = (width - DOOR_GAP * (doorCount + 1)) / doorCount;
+  const doorHeight = height - STAND_TOP - 2 * DOOR_GAP;
+  const doorLateral = (i: number) => -width / 2 + DOOR_GAP + doorWidth / 2 + i * (doorWidth + DOOR_GAP);
+  const bodyDepth = depth - DOOR_THICKNESS - HANDLE_THICKNESS;
+  return {
+    body: part(item, 0, 0, -depth / 2 + bodyDepth / 2, [width, height - STAND_TOP, bodyDepth]),
+    top: part(item, 0, height - STAND_TOP, 0, [width, STAND_TOP, depth]),
+    doors: Array.from({ length: doorCount }, (_, i) =>
+      part(item, doorLateral(i), DOOR_GAP, depth / 2 - HANDLE_THICKNESS - DOOR_THICKNESS / 2, [
+        doorWidth,
+        doorHeight,
+        DOOR_THICKNESS,
+      ]),
+    ),
+    handles: Array.from({ length: doorCount }, (_, i) =>
+      part(
+        item,
+        doorLateral(i) - Math.sign(doorLateral(i)) * (doorWidth / 2 - HANDLE_INSET),
+        DOOR_GAP + (doorHeight - HANDLE_HEIGHT) / 2,
+        depth / 2 - HANDLE_THICKNESS / 2,
+        [HANDLE_WIDTH, HANDLE_HEIGHT, HANDLE_THICKNESS],
+      ),
+    ),
+  };
+}
+
+/** How far the screen and the status light stand proud of the panel front (feet), within the Item's depth. */
+const SCREEN_THICKNESS = inches(0.1);
 /** Width of the panel edge left showing around the screen. */
 const TV_EDGE = 0.04;
-/** How far the screen stands proud of the panel front. */
-const SCREEN_THICKNESS = 0.01;
+/** Depth of the thin panel; the housing behind it takes the rest of the Item's depth. */
+const TV_PANEL_DEPTH = inches(0.7);
 /** Each leg's thickness, its slant from upright, and where its top sits in from the panel's ends (share of the width). */
 const TV_LEG_THICKNESS = 0.04;
 const TV_LEG_SLANT_RAD = (35 * Math.PI) / 180;
 const TV_LEG_INSET = 1 / 6;
+/** The housing behind the panel: its share of the panel's width and height, and how far up from the panel's bottom (share of height). */
+const TV_HOUSING_WIDTH = 0.7;
+const TV_HOUSING_HEIGHT = 0.7;
+const TV_HOUSING_RAISE = 0.15;
 
 /** A box tilted about the z axis (from the front): a positive angle tilts its top towards -x. */
 export interface TiltedBox extends Box {
   readonly angleRad: number;
 }
 
-/** A TV on its legs: the panel, the screen on its front (south) face, and two legs slanting outward below. */
-export function tvBoxes(item: Item, legHeight: number): { panel: Box; screen: Box; legs: TiltedBox[] } {
+/**
+ * A TV on its legs: a thin panel with the screen on its front, a housing behind the panel's middle, a
+ * status light in the bottom edge, and two legs slanting outward below. Everything lies within the
+ * Item's box.
+ */
+export function tvBoxes(
+  item: Item,
+  legHeight: number,
+): { panel: Box; housing: Box; screen: Box; led: Box; legs: TiltedBox[] } {
   const [x, y, z] = item.position;
   const [width, height, depth] = item.size;
   const floor = y - height / 2;
   const panelHeight = height - legHeight;
-  const panelY = floor + legHeight + panelHeight / 2;
+  const panelForward = depth / 2 - SCREEN_THICKNESS - TV_PANEL_DEPTH / 2;
+  const housingDepth = depth - SCREEN_THICKNESS - TV_PANEL_DEPTH;
   const legLength = legHeight / Math.cos(TV_LEG_SLANT_RAD);
   // Each leg's top is set in from the panel end; its centre is half the slant further out.
   const legOffset = width / 2 - width * TV_LEG_INSET + (legHeight / 2) * Math.tan(TV_LEG_SLANT_RAD);
   return {
-    panel: { position: [x, panelY, z], size: [width, panelHeight, depth] },
-    screen: {
-      position: [x, panelY, z + depth / 2 + SCREEN_THICKNESS / 2],
-      size: [width - 2 * TV_EDGE, panelHeight - 2 * TV_EDGE, SCREEN_THICKNESS],
-    },
+    panel: part(item, 0, legHeight, panelForward, [width, panelHeight, TV_PANEL_DEPTH]),
+    housing: part(item, 0, legHeight + panelHeight * TV_HOUSING_RAISE, -depth / 2 + housingDepth / 2, [
+      width * TV_HOUSING_WIDTH,
+      panelHeight * TV_HOUSING_HEIGHT,
+      housingDepth,
+    ]),
+    screen: part(item, 0, legHeight + TV_EDGE, depth / 2 - SCREEN_THICKNESS / 2, [
+      width - 2 * TV_EDGE,
+      panelHeight - 2 * TV_EDGE,
+      SCREEN_THICKNESS,
+    ]),
+    led: part(item, 0, legHeight + TV_EDGE / 4, depth / 2 - SCREEN_THICKNESS / 2, [
+      inches(0.6),
+      TV_EDGE / 2,
+      SCREEN_THICKNESS,
+    ]),
     legs: [-1, 1].map((side): TiltedBox => ({
       position: [x + side * legOffset, floor + legHeight / 2, z],
       size: [TV_LEG_THICKNESS, legLength, depth],
@@ -58,38 +142,53 @@ export function tvBoxes(item: Item, legHeight: number): { panel: Box; screen: Bo
   };
 }
 
-/** Share of the PS5's width taken by each white side panel. */
+/** Share of the PS5's width taken by each white side panel, and the height of its base plate. */
 const PS5_SIDE_SHARE = 0.3;
+const PS5_BASE = inches(0.6);
 
-/** An upright PS5: a black core between white side panels on its east and west faces. */
-export function ps5Boxes(item: Item): { core: Box; sides: Box[] } {
-  const [x, y, z] = item.position;
+/**
+ * An upright PS5: a black core between white side panels on its east and west faces, a thin base plate
+ * under them, and a glowing light strip down the front of the core.
+ */
+export function ps5Boxes(item: Item): { core: Box; sides: Box[]; base: Box; strip: Box } {
   const [width, height, depth] = item.size;
   const side = width * PS5_SIDE_SHARE;
+  const stripDepth = inches(0.1);
   return {
-    core: { position: [x, y, z], size: [width - 2 * side, height, depth] },
-    sides: [-1, 1].map((dir): Box => ({
-      position: [x + (dir * (width - side)) / 2, y, z],
-      size: [side, height, depth],
-    })),
+    core: part(item, 0, PS5_BASE, -stripDepth / 2, [width - 2 * side, height - PS5_BASE, depth - stripDepth]),
+    sides: [-1, 1].map((dir) =>
+      part(item, (dir * (width - side)) / 2, PS5_BASE, 0, [side, height - PS5_BASE, depth]),
+    ),
+    base: part(item, 0, 0, 0, [width, PS5_BASE, depth]),
+    strip: part(item, 0, PS5_BASE + inches(1), depth / 2 - stripDepth / 2, [
+      inches(0.3),
+      height - PS5_BASE - inches(2),
+      stripDepth,
+    ]),
   };
 }
 
 /** Width of the soundbar body left showing around its grille. */
 const SOUNDBAR_EDGE = 0.03;
-/** How far the grille stands proud of the soundbar front. */
+/** How far the grille is set into the soundbar front. */
 const GRILLE_THICKNESS = 0.01;
 
-/** A soundbar: its body and the grille on its front (south) face. */
-export function soundbarBoxes(item: Item): { body: Box; grille: Box } {
-  const [x, y, z] = item.position;
+/** A soundbar: its body, the grille on its front face and a status light at its right-hand end. */
+export function soundbarBoxes(item: Item): { body: Box; grille: Box; led: Box } {
   const [width, height, depth] = item.size;
+  const ledSize = inches(0.2);
   return {
-    body: { position: item.position, size: item.size },
-    grille: {
-      position: [x, y, z + depth / 2 + GRILLE_THICKNESS / 2],
-      size: [width - 2 * SOUNDBAR_EDGE, height - 2 * SOUNDBAR_EDGE, GRILLE_THICKNESS],
-    },
+    body: part(item, 0, 0, -GRILLE_THICKNESS / 2, [width, height, depth - GRILLE_THICKNESS]),
+    grille: part(item, 0, SOUNDBAR_EDGE, depth / 2 - GRILLE_THICKNESS / 2, [
+      width - 2 * SOUNDBAR_EDGE,
+      height - 2 * SOUNDBAR_EDGE,
+      GRILLE_THICKNESS,
+    ]),
+    led: part(item, width / 2 - SOUNDBAR_EDGE / 2, (height - ledSize) / 2, depth / 2 - GRILLE_THICKNESS / 2, [
+      ledSize,
+      ledSize,
+      GRILLE_THICKNESS,
+    ]),
   };
 }
 
@@ -142,36 +241,6 @@ export function deskBoxes(item: Item): { top: Box; legs: Box[]; rails: Box[] } {
         size: [betweenX, DESK_STRETCHER_HEIGHT, DESK_STRETCHER_THICKNESS],
       })),
     ],
-  };
-}
-
-type Vec3 = Box['size'];
-
-/** Unit vector (west–east, north–south) of the way an Item's front points. */
-const FRONT: Record<Facing, readonly [number, number]> = {
-  north: [0, -1],
-  south: [0, 1],
-  east: [1, 0],
-  west: [-1, 0],
-};
-
-/**
- * A part of an Item, in the Item's own frame: `lateral` to its right, `bottom` above the Item's floor
- * (feet) and `forward` towards its front, from the Item's centre. Sized width × height × depth in that frame.
- */
-function part(item: Item, lateral: number, bottom: number, forward: number, size: Vec3): Box {
-  const [fx, fz] = FRONT[item.facing];
-  const [rx, rz] = [-fz, fx];
-  const [x, y, z] = item.position;
-  const [width, height, depth] = size;
-  const turned = fx !== 0;
-  return {
-    position: [
-      x + rx * lateral + fx * forward,
-      y - item.size[1] / 2 + bottom + height / 2,
-      z + rz * lateral + fz * forward,
-    ],
-    size: turned ? [depth, height, width] : size,
   };
 }
 
