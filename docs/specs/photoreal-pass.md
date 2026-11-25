@@ -1,5 +1,5 @@
 ---
-status: draft
+status: in-progress
 updated: 2026-11-25
 phase: 3
 ---
@@ -47,7 +47,7 @@ Owner direction (2026-11-25): the Room and its props come first; where lights go
 
 What the current render shows (Overview, Entrance, checked in the dev server): black desk, TV, chair and PC gear melt into the black Slat panel wall and read as dark blobs; every edge is a sharp box; the Room has no depth cues (no shadows, no sill, no architrave); the Overview frames the Room small with the open door covering the view.
 
-1. **Rounded edges, room shell and props** — rounded corners inside the box merger with a small radius per box; the room shell is merged the same way (frees about 20 to 40 draw calls). — _you'll see: every edge of the desk, sofa, TV, skirting and walls softly rounded instead of razor-sharp, in every View._
+1. **Rounded edges, room shell and props** (done, awaiting owner "looks good": Wall pieces stay sharp so Opening seams do not show) — rounded corners inside the box merger with a small radius per box; the room shell is merged the same way (frees about 20 to 40 draw calls). — _you'll see: every edge of the desk, sofa, TV, skirting and walls softly rounded instead of razor-sharp, in every View._
 2. **Props redone with real shapes** — chair back and seat, headphones band and cups, mouse, keyboard keys, monitor and TV stand, sofa cushions with soft puffy forms, rug edge; generated shapes, footprints unchanged. — _you'll see: a gaming chair, headphones and sofa that look like those objects, not stacks of boxes._
 3. **Room details** — window sill, frame bars and a glass pane that reads as glass; door architrave and handle; skirting profile; ceiling beam edges; socket and switch plates; vent. Sizes from `room.config.ts` only. — _you'll see: a Room that looks built, with a proper window, door frame and trim._
 4. **Black-on-black separation and framing** — a gentle fill so black furniture reads against the black Slat panel (edge highlights from slice 1 plus a faint cool rim light and soft corner darkening); Overview framed larger with the door not blocking the view; narrower lens for the isometric feel. This is the minimum lighting needed to see the props; it is not the light layout. — _you'll see: the desk, chair and TV clearly outlined against the dark wall, and a bigger Overview._

@@ -21,7 +21,7 @@ import {
   tvBoxes,
 } from './itemBoxes';
 import { ACCENT_GLOW, LOOK, TV_EDGE_GLOW } from './look';
-import { type DrawnBox, mergeBoxes } from './mergedBoxes';
+import { MergedBoxes } from './MergedBoxesMesh';
 
 type ItemMaterials = Record<
   | 'standBody'
@@ -54,13 +54,6 @@ type ItemMaterials = Record<
   | 'frameLine',
   MeshStandardMaterial
 >;
-
-/** Boxes drawn as one mesh: parts of an Item sharing a material cost one draw call however many there are. */
-function MergedBoxes({ boxes, material }: { boxes: readonly DrawnBox[]; material: MeshStandardMaterial }) {
-  const geometry = useMemo(() => mergeBoxes(boxes), [boxes]);
-  useEffect(() => () => geometry.dispose(), [geometry]);
-  return <mesh geometry={geometry} material={material} />;
-}
 
 function StandMeshes({ item, materials }: { item: Item; materials: ItemMaterials }) {
   const { body, top, doors, handles } = useMemo(() => standBoxes(item, TV_STAND_DOORS), [item]);
